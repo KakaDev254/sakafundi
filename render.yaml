@@ -1,0 +1,42 @@
+# render.yaml
+services:
+  # Web Service
+  - type: web
+    name: sakafundi
+    runtime: python
+    buildCommand: |
+      cd src
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: cd src && daphne -b 0.0.0.0 -p $PORT config.asgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings_production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sakafundi_db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: sakafundi_redis
+          type: redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: .onrender.com
+
+  # Redis Service
+  - type: redis
+    name: sakafundi_redis
+    plan: free
+    maxmemoryPolicy: noeviction
+
+databases:
+  - name: sakafundi_db
+    plan: free
+    databaseName: sakafundi
+    user: sakafundi_user
