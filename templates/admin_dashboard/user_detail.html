@@ -1,0 +1,157 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold" style="color: #0F172A;">
+        <i class="fas fa-user" style="color: #2563EB;"></i> User Details
+    </h4>
+    <a href="{% url 'admin_dashboard:users' %}" class="btn btn-outline-secondary rounded-3">
+        <i class="fas fa-arrow-left"></i> Back to Users
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- User Profile -->
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body text-center">
+                <img src="{{ user_detail.profile_image.url }}" class="rounded-circle mb-3" 
+                     style="width: 120px; height: 120px; object-fit: cover; border: 4px solid #E2E8F0;">
+                <h5 class="fw-bold">{{ user_detail.get_full_name|default:user_detail.username }}</h5>
+                <p class="text-secondary small">{{ user_detail.email }}</p>
+                <p class="text-secondary small">
+                    <i class="fas fa-phone"></i> {{ user_detail.phone_number }}
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                    <span class="badge {% if user_detail.user_type == 'provider' %}bg-primary{% elif user_detail.user_type == 'both' %}bg-info{% else %}bg-secondary{% endif %}">
+                        {{ user_detail.get_user_type_display }}
+                    </span>
+                    <span class="badge {% if user_detail.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                        {% if user_detail.is_active %}Active{% else %}Suspended{% endif %}
+                    </span>
+                    <span class="badge {% if user_detail.verification_status == 'verified' %}bg-success{% elif user_detail.verification_status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ user_detail.get_verification_status_display }}
+                    </span>
+                </div>
+                {% if user_detail.is_staff %}
+                    <span class="badge bg-primary mt-1">Admin</span>
+                {% endif %}
+                <hr>
+                <p class="text-secondary small mb-1">
+                    <i class="fas fa-calendar-alt"></i> Joined: {{ user_detail.date_joined|date:"M d, Y" }}
+                </p>
+                <p class="text-secondary small">
+                    <i class="fas fa-map-marker-alt"></i> {{ user_detail.location|default:"Location not set" }}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Stats & Actions -->
+    <div class="col-md-8">
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+                    <div class="card-body p-2">
+                        <h6 class="fw-bold text-primary">{{ total_services }}</h6>
+                        <small class="text-muted">Services</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+                    <div class="card-body p-2">
+                        <h6 class="fw-bold text-success">{{ total_projects|add:total_customer_projects }}</h6>
+                        <small class="text-muted">Projects</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+                    <div class="card-body p-2">
+                        <h6 class="fw-bold text-info">KSh {{ total_earnings|floatformat:0|intcomma }}</h6>
+                        <small class="text-muted">Earnings</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+                    <div class="card-body p-2">
+                        <h6 class="fw-bold text-warning">{{ wallet.balance|floatformat:0|intcomma }}</h6>
+                        <small class="text-muted">Wallet</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <h6 class="fw-bold" style="color: #0F172A;">Actions</h6>
+                <form method="post" class="row g-2">
+                    {% csrf_token %}
+                    <div class="col-md-4">
+                        <select name="action" class="form-select form-select-sm rounded-3">
+                            <option value="">Select Action</option>
+                            {% if user_detail.verification_status != 'verified' %}
+                                <option value="verify">Verify User</option>
+                            {% endif %}
+                            {% if user_detail.verification_status != 'rejected' %}
+                                <option value="reject">Reject User</option>
+                            {% endif %}
+                            {% if user_detail.is_active %}
+                                <option value="suspend">Suspend User</option>
+                            {% else %}
+                                <option value="activate">Activate User</option>
+                            {% endif %}
+                            {% if not user_detail.is_staff %}
+                                <option value="make_admin">Make Admin</option>
+                            {% else %}
+                                <option value="remove_admin">Remove Admin</option>
+                            {% endif %}
+                            <option value="delete" class="text-danger">Delete User</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary btn-sm rounded-3 w-100">Apply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Recent Projects -->
+        <div class="card shadow-sm border-0 rounded-3 mt-3">
+            <div class="card-header bg-white fw-semibold" style="color: #0F172A;">
+                <i class="fas fa-briefcase" style="color: #2563EB;"></i> Recent Projects
+            </div>
+            <div class="card-body">
+                {% if user_detail.is_provider %}
+                    {% for project in user_detail.projects_as_provider.all|slice:":5" %}
+                        <div class="d-flex justify-content-between border-bottom py-2">
+                            <div>
+                                <a href="{% url 'admin_dashboard:project_detail' project.id %}" class="text-primary text-decoration-none">
+                                    {{ project.title|truncatechars:30 }}
+                                </a>
+                                <br>
+                                <small class="text-muted">Customer: {{ project.customer.get_full_name }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge {% if project.status == 'completed' %}bg-success{% elif project.status == 'in_progress' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                    {{ project.get_status_display }}
+                                </span>
+                                <br>
+                                <small class="text-muted">KSh {{ project.agreed_price|floatformat:0|intcomma }}</small>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted text-center py-2">No projects as provider</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

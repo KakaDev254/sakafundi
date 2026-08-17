@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Add Service - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3" style="color: #0F172A;">
+                        <i class="fas fa-plus-circle" style="color: #2563EB;"></i> Add New Service
+                    </h4>
+                    <p class="text-secondary">List your service and start earning</p>
+                    
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category *</label>
+                            {% render_field form.category class="form-select rounded-3" %}
+                            {% if form.category.errors %}
+                                <div class="text-danger small">{{ form.category.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Service Title *</label>
+                            {% render_field form.title class="form-control rounded-3" placeholder="Enter service title" %}
+                            {% if form.title.errors %}
+                                <div class="text-danger small">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Description *</label>
+                            {% render_field form.description class="form-control rounded-3" rows="5" placeholder="Describe your service in detail" %}
+                            {% if form.description.errors %}
+                                <div class="text-danger small">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.price_min.id_for_label }}" class="form-label fw-semibold">Min Price (KSh) *</label>
+                                {% render_field form.price_min class="form-control rounded-3" placeholder="Minimum price" %}
+                                {% if form.price_min.errors %}
+                                    <div class="text-danger small">{{ form.price_min.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.price_max.id_for_label }}" class="form-label fw-semibold">Max Price (KSh) *</label>
+                                {% render_field form.price_max class="form-control rounded-3" placeholder="Maximum price" %}
+                                {% if form.price_max.errors %}
+                                    <div class="text-danger small">{{ form.price_max.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.deposit_percentage.id_for_label }}" class="form-label fw-semibold">Deposit Percentage (%)</label>
+                                {% render_field form.deposit_percentage class="form-control rounded-3" %}
+                                {% if form.deposit_percentage.errors %}
+                                    <div class="text-danger small">{{ form.deposit_percentage.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.delivery_time_days.id_for_label }}" class="form-label fw-semibold">Delivery Time (Days)</label>
+                                {% render_field form.delivery_time_days class="form-control rounded-3" %}
+                                {% if form.delivery_time_days.errors %}
+                                    <div class="text-danger small">{{ form.delivery_time_days.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.portfolio_images.id_for_label }}" class="form-label fw-semibold">Portfolio Images</label>
+                            <input type="file" name="portfolio_images" multiple class="form-control rounded-3" accept="image/*">
+                            <small class="text-muted">Upload up to 5 images to showcase your work</small>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary rounded-3 px-4">
+                                <i class="fas fa-check"></i> Create Service
+                            </button>
+                            <a href="{% url 'services:list' %}" class="btn btn-outline-secondary rounded-3 px-4">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

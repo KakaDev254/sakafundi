@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ provider.get_full_name }} - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body text-center">
+                    <img src="{{ provider.profile_image.url }}" alt="{{ provider.get_full_name }}"
+                         class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #E2E8F0;">
+                    <h5 class="fw-bold">{{ provider.get_full_name }}</h5>
+                    <p class="text-secondary small">{{ provider.location|default:"Kenya" }}</p>
+                    <div class="text-warning mb-2">
+                        <i class="fas fa-star"></i> {{ provider.rating|floatformat:1 }}
+                        <small class="text-muted">({{ total_reviews }} reviews)</small>
+                    </div>
+                    <div class="d-grid gap-2">
+                        {% if can_review %}
+                            <a href="{% url 'reviews:create' provider.id %}" class="btn btn-primary rounded-3">
+                                <i class="fas fa-star"></i> Write a Review
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'chat:start_with_user' provider.id %}" class="btn btn-outline-primary rounded-3">
+                            <i class="fas fa-comment"></i> Message
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm border-0 rounded-3 mt-3">
+                <div class="card-body">
+                    <h6 class="fw-bold" style="color: #0F172A;">Stats</h6>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Services</span>
+                        <strong>{{ total_services }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Projects Completed</span>
+                        <strong>{{ completed_projects }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Reviews</span>
+                        <strong>{{ total_reviews }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <!-- Bio -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body">
+                    <h6 class="fw-bold" style="color: #0F172A;">About</h6>
+                    <p class="text-secondary">{{ provider.bio|default:"No bio provided" }}</p>
+                    
+                    {% if provider.skills %}
+                        <h6 class="fw-bold mt-3" style="color: #0F172A;">Skills</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for skill in provider.skills %}
+                                <span class="badge bg-light text-dark">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Services -->
+            <div class="card shadow-sm border-0 rounded-3 mt-3">
+                <div class="card-header bg-white fw-semibold" style="color: #0F172A;">
+                    <i class="fas fa-tools" style="color: #2563EB;"></i> Services
+                </div>
+                <div class="card-body">
+                    {% if services %}
+                        {% for service in services %}
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div>
+                                    <a href="{% url 'services:detail' service.id %}" class="text-primary text-decoration-none fw-semibold">
+                                        {{ service.title|truncatechars:30 }}
+                                    </a>
+                                    <br>
+                                    <small class="text-muted">{{ service.category.name }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fw-bold text-primary">KSh {{ service.price_min|floatformat:0|intcomma }}</span>
+                                    <br>
+                                    <small class="text-muted">- {{ service.price_max|floatformat:0|intcomma }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">No services available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

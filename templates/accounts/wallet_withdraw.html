@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block title %}Withdraw - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3" style="color: #0F172A;">
+                        <i class="fas fa-arrow-up" style="color: #2563EB;"></i> Withdraw from Wallet
+                    </h4>
+                    
+                    <div class="alert alert-info">
+                        <strong>Available Balance:</strong> KSh {{ wallet.balance|floatformat:0|intcomma }}
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Amount (KSh)</label>
+                            <input type="number" name="amount" class="form-control rounded-3" 
+                                   placeholder="Enter amount" min="100" max="{{ wallet.balance }}" step="100" required>
+                            <small class="text-muted">Maximum: KSh {{ wallet.balance|floatformat:0|intcomma }}</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Withdrawal Method</label>
+                            <select name="method" class="form-select rounded-3">
+                                <option value="mpesa">M-PESA</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="text" name="phone_number" class="form-control rounded-3" 
+                                   placeholder="254712345678">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100 rounded-3 py-2">
+                            <i class="fas fa-arrow-up"></i> Withdraw Funds
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'accounts:wallet' %}" class="text-decoration-none small">
+                            <i class="fas fa-arrow-left"></i> Back to Wallet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

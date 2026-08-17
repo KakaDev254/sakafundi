@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Deposit - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3" style="color: #0F172A;">
+                        <i class="fas fa-plus-circle" style="color: #2563EB;"></i> Deposit to Wallet
+                    </h4>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Amount (KSh)</label>
+                            <input type="number" name="amount" class="form-control rounded-3" 
+                                   placeholder="Enter amount" min="100" step="100" required>
+                            <small class="text-muted">Minimum deposit: KSh 100</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Payment Method</label>
+                            <select name="payment_method" class="form-select rounded-3">
+                                <option value="mpesa">M-PESA</option>
+                                <option value="stripe">Stripe</option>
+                                <option value="paypal">PayPal</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="text" name="phone_number" class="form-control rounded-3" 
+                                   placeholder="254712345678">
+                            <small class="text-muted">For M-PESA payments</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 rounded-3 py-2">
+                            <i class="fas fa-money-bill-wave"></i> Deposit Funds
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'accounts:wallet' %}" class="text-decoration-none small">
+                            <i class="fas fa-arrow-left"></i> Back to Wallet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

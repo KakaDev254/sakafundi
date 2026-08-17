@@ -1,0 +1,192 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold" style="color: #0F172A;">
+        <i class="fas fa-users" style="color: #2563EB;"></i> Users
+        <span class="badge bg-primary ms-2">{{ users.paginator.count }}</span>
+    </h4>
+    <div>
+        <a href="{% url 'admin_dashboard:dashboard' %}" class="btn btn-outline-secondary rounded-3">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-2">
+            <div class="col-md-3">
+                <select name="type" class="form-select form-select-sm rounded-3">
+                    <option value="">All Types</option>
+                    {% for type in user_types %}
+                        <option value="{{ type.0 }}" {% if request.GET.type == type.0 %}selected{% endif %}>
+                            {{ type.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="verification" class="form-select form-select-sm rounded-3">
+                    <option value="">All Verification</option>
+                    {% for status in verification_statuses %}
+                        <option value="{{ status.0 }}" {% if request.GET.verification == status.0 %}selected{% endif %}>
+                            {{ status.1 }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select name="active" class="form-select form-select-sm rounded-3">
+                    <option value="">All Status</option>
+                    <option value="true" {% if request.GET.active == 'true' %}selected{% endif %}>Active</option>
+                    <option value="false" {% if request.GET.active == 'false' %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control form-control-sm" 
+                           placeholder="Search users..." value="{{ request.GET.search|default:'' }}">
+                    <button class="btn btn-primary btn-sm" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="card shadow-sm border-0 rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead style="background: #F8FAFC;">
+                    <tr>
+                        <th style="width: 40px;">
+                            <input type="checkbox" id="select-all">
+                        </th>
+                        <th>User</th>
+                        <th>Type</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Verification</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="user-select" value="{{ user.id }}">
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ user.profile_image.url }}" class="rounded-circle me-2" 
+                                         style="width: 35px; height: 35px; object-fit: cover;">
+                                    <div>
+                                        <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge {% if user.user_type == 'provider' %}bg-primary{% elif user.user_type == 'both' %}bg-info{% else %}bg-secondary{% endif %}">
+                                    {{ user.get_user_type_display }}
+                                </span>
+                            </td>
+                            <td>{{ user.phone_number }}</td>
+                            <td>
+                                <span class="badge {% if user.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                    {% if user.is_active %}Active{% else %}Suspended{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if user.verification_status == 'verified' %}bg-success{% elif user.verification_status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ user.get_verification_status_display }}
+                                </span>
+                            </td>
+                            <td><small>{{ user.date_joined|date:"M d, Y" }}</small></td>
+                            <td>
+                                <a href="{% url 'admin_dashboard:user_detail' user.id %}" class="btn btn-sm btn-primary rounded-3">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">No users found</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions & Pagination -->
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <div>
+        <form method="post" action="{% url 'admin_dashboard:bulk_action' %}" class="d-flex gap-2">
+            {% csrf_token %}
+            <input type="hidden" name="selected_ids" id="selected-ids">
+            <select name="bulk_action" class="form-select form-select-sm" style="width: 150px;">
+                <option value="">Bulk Actions</option>
+                <option value="verify">Verify</option>
+                <option value="suspend">Suspend</option>
+                <option value="activate">Activate</option>
+                <option value="delete">Delete</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-secondary rounded-3">Apply</button>
+        </form>
+    </div>
+    <div>
+        {% if users.has_other_pages %}
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    {% if users.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users.previous_page_number }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.verification %}&verification={{ request.GET.verification }}{% endif %}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for i in users.paginator.page_range %}
+                        <li class="page-item {% if users.number == i %}active{% endif %}">
+                            <a class="page-link" href="?page={{ i }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.verification %}&verification={{ request.GET.verification }}{% endif %}">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    {% if users.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ users.next_page_number }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.verification %}&verification={{ request.GET.verification }}{% endif %}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Select all checkbox
+    document.getElementById('select-all')?.addEventListener('change', function() {
+        document.querySelectorAll('.user-select').forEach(cb => cb.checked = this.checked);
+    });
+    
+    // Collect selected IDs for bulk action
+    document.querySelector('form[action*="bulk_action"]')?.addEventListener('submit', function() {
+        const selected = [];
+        document.querySelectorAll('.user-select:checked').forEach(cb => selected.push(cb.value));
+        document.getElementById('selected-ids').value = selected.join(',');
+    });
+</script>
+{% endblock %}

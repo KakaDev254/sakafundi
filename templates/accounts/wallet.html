@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}My Wallet - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Wallet Balance -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body text-center">
+                    <h6 class="text-muted small">Available Balance</h6>
+                    <h2 class="fw-bold" style="color: #0F172A;">KSh {{ wallet.balance|floatformat:0|intcomma }}</h2>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:wallet_deposit' %}" class="btn btn-success rounded-3">
+                            <i class="fas fa-plus-circle"></i> Deposit
+                        </a>
+                        <a href="{% url 'accounts:wallet_withdraw' %}" class="btn btn-outline-primary rounded-3">
+                            <i class="fas fa-arrow-up"></i> Withdraw
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Wallet Stats -->
+            <div class="card shadow-sm border-0 rounded-3 mt-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Total Deposited</span>
+                        <strong>KSh {{ total_deposited|floatformat:0|intcomma }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Total Withdrawn</span>
+                        <strong>KSh {{ total_withdrawn|floatformat:0|intcomma }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted small">Total Earned</span>
+                        <strong>KSh {{ total_earned|floatformat:0|intcomma }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted small">Total Spent</span>
+                        <strong>KSh {{ total_spent|floatformat:0|intcomma }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <!-- Transactions -->
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-white fw-semibold" style="color: #0F172A;">
+                    <i class="fas fa-history" style="color: #2563EB;"></i> Recent Transactions
+                </div>
+                <div class="card-body">
+                    {% if transactions %}
+                        {% for transaction in transactions %}
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div>
+                                    <span class="fw-semibold">{{ transaction.get_transaction_type_display }}</span>
+                                    <br>
+                                    <small class="text-muted">{{ transaction.created_at|date:"M d, Y H:i" }}</small>
+                                </div>
+                                <div>
+                                    <span class="fw-bold {% if transaction.amount > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if transaction.amount > 0 %}+{% endif %}KSh {{ transaction.amount|floatformat:0|intcomma }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">Balance: KSh {{ transaction.balance_after|floatformat:0|intcomma }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">No transactions yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

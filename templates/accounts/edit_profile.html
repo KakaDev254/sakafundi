@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Edit Profile - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4">
+                    <h4 class="fw-bold mb-3" style="color: #0F172A;">
+                        <i class="fas fa-edit" style="color: #2563EB;"></i> Edit Profile
+                    </h4>
+                    
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold">First Name</label>
+                                {% render_field form.first_name class="form-control rounded-3" placeholder="First name" %}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold">Last Name</label>
+                                {% render_field form.last_name class="form-control rounded-3" placeholder="Last name" %}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Email</label>
+                                {% render_field form.email class="form-control rounded-3" placeholder="Email address" %}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-semibold">Phone Number</label>
+                                {% render_field form.phone_number class="form-control rounded-3" placeholder="Phone number" %}
+                                {% if form.phone_number.errors %}
+                                    <div class="text-danger small">{{ form.phone_number.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">Location</label>
+                                {% render_field form.location class="form-control rounded-3" placeholder="Your location" %}
+                                {% if form.location.errors %}
+                                    <div class="text-danger small">{{ form.location.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.county.id_for_label }}" class="form-label fw-semibold">County</label>
+                                {% render_field form.county class="form-control rounded-3" placeholder="Your county" %}
+                                {% if form.county.errors %}
+                                    <div class="text-danger small">{{ form.county.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label for="{{ form.bio.id_for_label }}" class="form-label fw-semibold">Bio</label>
+                                {% render_field form.bio class="form-control rounded-3" rows="4" placeholder="Tell us about yourself" %}
+                                {% if form.bio.errors %}
+                                    <div class="text-danger small">{{ form.bio.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label for="{{ form.profile_image.id_for_label }}" class="form-label fw-semibold">Profile Image</label>
+                                {% render_field form.profile_image class="form-control rounded-3" %}
+                                {% if form.profile_image.errors %}
+                                    <div class="text-danger small">{{ form.profile_image.errors }}</div>
+                                {% endif %}
+                                <small class="text-muted">Upload a square image for best results</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary rounded-3 px-4">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary rounded-3 px-4">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

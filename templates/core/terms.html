@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Terms of Service - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <h1 class="fw-bold" style="color: #0F172A;">Terms of Service</h1>
+                        <p class="text-secondary">Last Updated: August 4, 2026</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Table of Contents -->
+                    <div class="bg-light p-3 rounded-3 mb-4">
+                        <h6 class="fw-bold" style="color: #0F172A;">Table of Contents</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <ul class="list-unstyled small">
+                                    <li><a href="#section1" class="text-primary text-decoration-none">1. Acceptance of Terms</a></li>
+                                    <li><a href="#section2" class="text-primary text-decoration-none">2. Definitions</a></li>
+                                    <li><a href="#section3" class="text-primary text-decoration-none">3. User Accounts</a></li>
+                                    <li><a href="#section4" class="text-primary text-decoration-none">4. Services and Projects</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <ul class="list-unstyled small">
+                                    <li><a href="#section5" class="text-primary text-decoration-none">5. Payments and Fees</a></li>
+                                    <li><a href="#section6" class="text-primary text-decoration-none">6. User Conduct</a></li>
+                                    <li><a href="#section7" class="text-primary text-decoration-none">7. Disputes</a></li>
+                                    <li><a href="#section8" class="text-primary text-decoration-none">8. Termination</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <ul class="list-unstyled small">
+                                    <li><a href="#section9" class="text-primary text-decoration-none">9. Intellectual Property</a></li>
+                                    <li><a href="#section10" class="text-primary text-decoration-none">10. Disclaimer of Warranties</a></li>
+                                    <li><a href="#section11" class="text-primary text-decoration-none">11. Limitation of Liability</a></li>
+                                    <li><a href="#section12" class="text-primary text-decoration-none">12. Governing Law</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section 1 -->
+                    <h5 id="section1" class="fw-bold mt-4" style="color: #0F172A;">1. Acceptance of Terms</h5>
+                    <p class="text-secondary">
+                        By using SakaFundi ("the Platform"), you agree to be bound by these Terms of Service ("Terms"). 
+                        If you do not agree to these Terms, please do not use the Platform. We reserve the right to update 
+                        these Terms at any time, and your continued use constitutes acceptance of the updated Terms.
+                    </p>
+                    
+                    <!-- Section 2 -->
+                    <h5 id="section2" class="fw-bold mt-4" style="color: #0F172A;">2. Definitions</h5>
+                    <ul class="text-secondary">
+                        <li><strong>"Platform"</strong> refers to SakaFundi, the online marketplace connecting customers and service providers.</li>
+                        <li><strong>"User"</strong> refers to any individual or entity using the Platform.</li>
+                        <li><strong>"Customer"</strong> refers to a User who purchases services through the Platform.</li>
+                        <li><strong>"Provider"</strong> refers to a User who offers services through the Platform.</li>
+                        <li><strong>"Project"</strong> refers to a service agreement between a Customer and a Provider.</li>
+                        <li><strong>"Platform Fee"</strong> refers to the 10% fee charged on completed projects.</li>
+                    </ul>
+                    
+                    <!-- Section 3 -->
+                    <h5 id="section3" class="fw-bold mt-4" style="color: #0F172A;">3. User Accounts</h5>
+                    <p class="text-secondary">
+                        To use the Platform, you must create an account and provide accurate information. You are responsible 
+                        for maintaining the security of your account and for all activities that occur under your account. 
+                        You must be at least 18 years old to use the Platform.
+                    </p>
+                    
+                    <!-- Section 4 -->
+                    <h5 id="section4" class="fw-bold mt-4" style="color: #0F172A;">4. Services and Projects</h5>
+                    <p class="text-secondary">
+                        Providers list services on the Platform, and Customers can hire them for projects. The terms of 
+                        each project, including price, timeline, and deliverables, are agreed upon between the Customer 
+                        and Provider. The Platform facilitates the transaction but is not responsible for the quality 
+                        or completion of services.
+                    </p>
+                    
+                    <!-- Section 5 -->
+                    <h5 id="section5" class="fw-bold mt-4" style="color: #0F172A;">5. Payments and Fees</h5>
+                    <p class="text-secondary">
+                        <strong>Deposit:</strong> A deposit of {{ platform_fee|default:"30" }}% of the agreed price is required to start a project.<br>
+                        <strong>Platform Fee:</strong> A {{ platform_fee|default:"10" }}% fee is charged on the total project price.<br>
+                        <strong>Payment Methods:</strong> We accept M-PESA, Airtel Money, and other payment methods.<br>
+                        <strong>Refunds:</strong> Refunds are processed in accordance with our dispute resolution policy.
+                    </p>
+                    
+                    <!-- Section 6 -->
+                    <h5 id="section6" class="fw-bold mt-4" style="color: #0F172A;">6. User Conduct</h5>
+                    <p class="text-secondary">Users agree to:</p>
+                    <ul class="text-secondary">
+                        <li>Provide accurate and truthful information</li>
+                        <li>Not engage in fraudulent or deceptive activities</li>
+                        <li>Not harass, abuse, or harm other users</li>
+                        <li>Not upload malicious content or viruses</li>
+                        <li>Not violate any applicable laws or regulations</li>
+                        <li>Not use the Platform for illegal purposes</li>
+                    </ul>
+                    
+                    <!-- Section 7 -->
+                    <h5 id="section7" class="fw-bold mt-4" style="color: #0F172A;">7. Disputes</h5>
+                    <p class="text-secondary">
+                        In case of a dispute between a Customer and Provider, both parties are encouraged to resolve the 
+                        issue amicably. If resolution is not possible, either party can escalate the dispute to the Platform 
+                        for mediation. The Platform's decision is final and binding.
+                    </p>
+                    
+                    <!-- Section 8 -->
+                    <h5 id="section8" class="fw-bold mt-4" style="color: #0F172A;">8. Termination</h5>
+                    <p class="text-secondary">
+                        We reserve the right to suspend or terminate your account at any time for violation of these Terms 
+                        or for any other reason. You may also terminate your account at any time by contacting us. Upon 
+                        termination, any outstanding payments will be processed in accordance with our policies.
+                    </p>
+                    
+                    <!-- Section 9 -->
+                    <h5 id="section9" class="fw-bold mt-4" style="color: #0F172A;">9. Intellectual Property</h5>
+                    <p class="text-secondary">
+                        The Platform and its content, including logos, trademarks, and designs, are the property of SakaFundi. 
+                        Users retain ownership of their content but grant SakaFundi a license to use it for platform operations.
+                    </p>
+                    
+                    <!-- Section 10 -->
+                    <h5 id="section10" class="fw-bold mt-4" style="color: #0F172A;">10. Disclaimer of Warranties</h5>
+                    <p class="text-secondary">
+                        The Platform is provided "as is" without warranties of any kind. We do not guarantee the accuracy, 
+                        reliability, or completeness of any content or services provided through the Platform.
+                    </p>
+                    
+                    <!-- Section 11 -->
+                    <h5 id="section11" class="fw-bold mt-4" style="color: #0F172A;">11. Limitation of Liability</h5>
+                    <p class="text-secondary">
+                        To the maximum extent permitted by law, SakaFundi shall not be liable for any indirect, incidental, 
+                        special, or consequential damages arising from the use of the Platform. Our total liability shall not 
+                        exceed the amount paid by you to us in the preceding 12 months.
+                    </p>
+                    
+                    <!-- Section 12 -->
+                    <h5 id="section12" class="fw-bold mt-4" style="color: #0F172A;">12. Governing Law</h5>
+                    <p class="text-secondary">
+                        These Terms shall be governed by and construed in accordance with the laws of the Republic of Kenya. 
+                        Any disputes shall be resolved in the courts of Kenya.
+                    </p>
+                    
+                    <!-- Contact -->
+                    <hr>
+                    <div class="text-center">
+                        <h6 class="fw-bold" style="color: #0F172A;">Questions?</h6>
+                        <p class="text-secondary">
+                            If you have any questions about these Terms, please contact us at:<br>
+                            <i class="fas fa-envelope text-primary"></i> legal@sakafundi.co.ke<br>
+                            <i class="fas fa-phone text-primary"></i> +254 700 123456
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

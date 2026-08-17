@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ project.title }} - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Project Header -->
+            <div class="card shadow-sm border-0 rounded-3 mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4 class="fw-bold" style="color: #0F172A;">{{ project.title }}</h4>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <span class="badge {% if project.status == 'completed' %}bg-success{% elif project.status == 'in_progress' %}bg-primary{% elif project.status == 'negotiating' %}bg-warning{% elif project.status == 'deposit_paid' %}bg-info{% elif project.status == 'disputed' %}bg-danger{% elif project.status == 'cancelled' %}bg-secondary{% else %}bg-secondary{% endif %}">
+                                    {{ project.get_status_display }}
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-tag"></i> {{ project.service.category.name|default:"General" }}
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-calendar-alt"></i> {{ project.created_at|date:"M d, Y" }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="fw-bold" style="color: #2563EB;">
+                                KSh {{ project.agreed_price|floatformat:0|intcomma }}
+                            </h5>
+                            <small class="text-muted">Agreed Price</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Details -->
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- Description -->
+                    <div class="card shadow-sm border-0 rounded-3 mb-4">
+                        <div class="card-body">
+                            <h6 class="fw-bold" style="color: #0F172A;">Description</h6>
+                            <p class="text-secondary">{{ project.description|linebreaks }}</p>
+                            {% if project.requirements %}
+                                <h6 class="fw-bold mt-3" style="color: #0F172A;">Requirements</h6>
+                                <p class="text-secondary">{{ project.requirements|linebreaks }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Updates -->
+                    {% if updates %}
+                        <div class="card shadow-sm border-0 rounded-3 mb-4">
+                            <div class="card-header bg-white fw-semibold" style="color: #0F172A;">
+                                <i class="fas fa-clock"></i> Project Updates
+                            </div>
+                            <div class="card-body">
+                                {% for update in updates %}
+                                    <div class="border-bottom py-2">
+                                        <div class="d-flex justify-content-between">
+                                            <strong>{{ update.user.get_full_name }}</strong>
+                                            <small class="text-muted">{{ update.created_at|timesince }} ago</small>
+                                        </div>
+                                        <p class="text-secondary small mb-0">{{ update.content }}</p>
+                                        {% if update.attachment %}
+                                            <a href="{{ update.attachment.url }}" class="text-primary small">
+                                                <i class="fas fa-paperclip"></i> Attachment
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- Project Info Sidebar -->
+                    <div class="card shadow-sm border-0 rounded-3 mb-4">
+                        <div class="card-body">
+                            <h6 class="fw-bold" style="color: #0F172A;">Project Info</h6>
+                            <hr>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Customer</small>
+                                <strong>{{ project.customer.get_full_name }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Provider</small>
+                                <strong>{{ project.provider.get_full_name }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Service</small>
+                                <strong>{{ project.service.title|default:"N/A" }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Deposit</small>
+                                <strong>KSh {{ project.deposit_amount|floatformat:0|intcomma }}</strong>
+                                <small class="text-muted">({{ project.deposit_percentage }}%)</small>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Platform Fee</small>
+                                <strong>KSh {{ project.platform_fee|floatformat:0|intcomma }}</strong>
+                            </div>
+                            <div class="mb-2">
+                                <small class="text-muted d-block">Provider Payout</small>
+                                <strong>KSh {{ project.provider_payout|floatformat:0|intcomma }}</strong>
+                            </div>
+                            <hr>
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2">
+                                {% if can_pay_deposit %}
+                                    <a href="{% url 'projects:pay_deposit' project.id %}" class="btn btn-primary rounded-3">
+                                        <i class="fas fa-money-bill-wave"></i> Pay Deposit
+                                    </a>
+                                {% endif %}
+                                
+                                {% if can_accept %}
+                                    <a href="{% url 'projects:accept' project.id %}" class="btn btn-success rounded-3">
+                                        <i class="fas fa-check-circle"></i> Accept Project
+                                    </a>
+                                {% endif %}
+                                
+                                {% if can_start %}
+                                    <a href="{% url 'projects:start' project.id %}" class="btn btn-primary rounded-3">
+                                        <i class="fas fa-play"></i> Start Working
+                                    </a>
+                                {% endif %}
+                                
+                                {% if can_submit %}
+                                    <a href="{% url 'projects:submit_work' project.id %}" class="btn btn-warning rounded-3">
+                                        <i class="fas fa-upload"></i> Submit Work
+                                    </a>
+                                {% endif %}
+                                
+                                {% if can_complete %}
+                                    <a href="{% url 'projects:complete' project.id %}" class="btn btn-success rounded-3">
+                                        <i class="fas fa-check-circle"></i> Complete Project
+                                    </a>
+                                {% endif %}
+                                
+                                {% if can_pay_final %}
+                                    <a href="{% url 'projects:pay_final' project.id %}" class="btn btn-primary rounded-3">
+                                        <i class="fas fa-money-bill-wave"></i> Pay Final
+                                    </a>
+                                {% endif %}
+                                
+                                {% if can_dispute %}
+                                    <a href="{% url 'projects:create_dispute' project.id %}" class="btn btn-danger rounded-3">
+                                        <i class="fas fa-gavel"></i> Raise Dispute
+                                    </a>
+                                {% endif %}
+                                
+                                <a href="{% url 'chat:start_from_project' project.id %}" class="btn btn-outline-primary rounded-3">
+                                    <i class="fas fa-comment"></i> Chat
+                                </a>
+                                
+                                <a href="{% url 'projects:add_update' project.id %}" class="btn btn-outline-secondary rounded-3">
+                                    <i class="fas fa-plus-circle"></i> Add Update
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

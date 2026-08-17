@@ -1,0 +1,122 @@
+<!-- templates/admin_dashboard/base_admin.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Admin Dashboard - SakaFundi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-sidebar {
+        background: #0F172A;
+        min-height: 100vh;
+        padding: 20px 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    .admin-sidebar .nav-link {
+        color: #94A3B8;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin: 2px 10px;
+        transition: all 0.2s ease;
+    }
+    .admin-sidebar .nav-link:hover {
+        background: rgba(255,255,255,0.05);
+        color: #FFFFFF;
+    }
+    .admin-sidebar .nav-link.active {
+        background: rgba(37, 99, 235, 0.2);
+        color: #FFFFFF;
+    }
+    .admin-sidebar .nav-link i {
+        width: 20px;
+        margin-right: 10px;
+    }
+    .admin-sidebar .nav-link .badge {
+        float: right;
+        margin-top: 3px;
+    }
+    .admin-sidebar .nav-header {
+        color: #64748B;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 10px 20px 5px;
+        font-weight: 600;
+    }
+    .admin-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+    }
+    .admin-sidebar::-webkit-scrollbar-track {
+        background: #0F172A;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <div class="col-md-2 admin-sidebar d-none d-md-block">
+            <div class="text-center mb-4">
+                <h5 class="text-white fw-bold">
+                    <i class="fas fa-shield-alt text-primary"></i> Admin
+                </h5>
+                <small class="text-muted">{{ user.get_full_name }}</small>
+            </div>
+            
+            <div class="nav flex-column">
+                <div class="nav-header">Main</div>
+                <a href="{% url 'admin_dashboard:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </a>
+                
+                <div class="nav-header mt-3">Management</div>
+                <a href="{% url 'admin_dashboard:users' %}" class="nav-link {% if 'users' in request.path %}active{% endif %}">
+                    <i class="fas fa-users"></i> Users
+                    <span class="badge bg-primary">{{ stats.total_users|default:0 }}</span>
+                </a>
+                <a href="{% url 'admin_dashboard:services' %}" class="nav-link {% if 'services' in request.path %}active{% endif %}">
+                    <i class="fas fa-tools"></i> Services
+                    <span class="badge bg-primary">{{ stats.total_services|default:0 }}</span>
+                </a>
+                <a href="{% url 'admin_dashboard:projects' %}" class="nav-link {% if 'projects' in request.path %}active{% endif %}">
+                    <i class="fas fa-briefcase"></i> Projects
+                    <span class="badge bg-primary">{{ stats.total_projects|default:0 }}</span>
+                </a>
+                
+                <div class="nav-header mt-3">Financial</div>
+                <a href="{% url 'admin_dashboard:payments' %}" class="nav-link {% if 'payments' in request.path %}active{% endif %}">
+                    <i class="fas fa-money-bill-wave"></i> Payments
+                </a>
+                
+                <div class="nav-header mt-3">Support</div>
+                <a href="{% url 'admin_dashboard:disputes' %}" class="nav-link {% if 'disputes' in request.path %}active{% endif %}">
+                    <i class="fas fa-gavel"></i> Disputes
+                    <span class="badge bg-danger">{{ stats.open_disputes|default:0 }}</span>
+                </a>
+                <a href="{% url 'admin_dashboard:reviews' %}" class="nav-link {% if 'reviews' in request.path %}active{% endif %}">
+                    <i class="fas fa-star"></i> Reviews
+                </a>
+                
+                <div class="nav-header mt-3">System</div>
+                <a href="{% url 'admin:index' %}" class="nav-link" target="_blank">
+                    <i class="fas fa-cog"></i> Django Admin
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-10 p-4" style="background: #F8FAFC; min-height: 100vh;">
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}

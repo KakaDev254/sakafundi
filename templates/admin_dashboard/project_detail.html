@@ -1,0 +1,156 @@
+{% extends 'admin_dashboard/base_admin.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold" style="color: #0F172A;">
+        <i class="fas fa-briefcase" style="color: #2563EB;"></i> Project Details
+    </h4>
+    <a href="{% url 'admin_dashboard:projects' %}" class="btn btn-outline-secondary rounded-3">
+        <i class="fas fa-arrow-left"></i> Back to Projects
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="fw-bold">{{ project.title }}</h5>
+                    <span class="badge {% if project.status == 'completed' %}bg-success{% elif project.status == 'in_progress' %}bg-primary{% elif project.status == 'negotiating' %}bg-warning{% elif project.status == 'disputed' %}bg-danger{% elif project.status == 'cancelled' %}bg-secondary{% else %}bg-secondary{% endif %}" style="font-size: 0.9rem;">
+                        {{ project.get_status_display }}
+                    </span>
+                </div>
+                
+                <h6 class="fw-semibold mt-3">Description</h6>
+                <p class="text-secondary">{{ project.description|linebreaks }}</p>
+                
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Agreed Price</small>
+                        <strong>KSh {{ project.agreed_price|floatformat:0|intcomma }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Deposit</small>
+                        <strong>KSh {{ project.deposit_amount|floatformat:0|intcomma }} ({{ project.deposit_percentage }}%)</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Platform Fee</small>
+                        <strong>KSh {{ project.platform_fee|floatformat:0|intcomma }}</strong>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Customer</small>
+                        <a href="{% url 'admin_dashboard:user_detail' project.customer.id %}" class="text-primary text-decoration-none">
+                            {{ project.customer.get_full_name }}
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Provider</small>
+                        <a href="{% url 'admin_dashboard:user_detail' project.provider.id %}" class="text-primary text-decoration-none">
+                            {{ project.provider.get_full_name }}
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Service</small>
+                        <strong>{{ project.service.title|default:"N/A" }}</strong>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Created</small>
+                        <strong>{{ project.created_at|date:"M d, Y H:i" }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Started</small>
+                        <strong>{{ project.started_at|date:"M d, Y H:i"|default:"Not started" }}</strong>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-muted d-block">Completed</small>
+                        <strong>{{ project.completed_at|date:"M d, Y H:i"|default:"Not completed" }}</strong>
+                    </div>
+                </div>
+                
+                <!-- Payment Status -->
+                <div class="mt-3">
+                    <div class="d-flex gap-4">
+                        <div>
+                            <small class="text-muted d-block">Deposit Paid</small>
+                            <span class="badge {% if project.deposit_paid %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if project.deposit_paid %}Yes{% else %}No{% endif %}
+                            </span>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Final Paid</small>
+                            <span class="badge {% if project.final_paid %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if project.final_paid %}Yes{% else %}No{% endif %}
+                            </span>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Dispute</small>
+                            <span class="badge {% if project.dispute_resolved %}bg-success{% else %}bg-warning{% endif %}">
+                                {% if project.dispute_resolved %}Resolved{% else %}None{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Actions -->
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <h6 class="fw-bold" style="color: #0F172A;">Actions</h6>
+                <form method="post" class="d-grid gap-2">
+                    {% csrf_token %}
+                    {% if project.status != 'completed' %}
+                        <button type="submit" name="action" value="mark_completed" class="btn btn-success rounded-3">
+                            <i class="fas fa-check-circle"></i> Mark Completed
+                        </button>
+                    {% endif %}
+                    {% if project.status != 'cancelled' and project.status != 'completed' %}
+                        <button type="submit" name="action" value="cancel" class="btn btn-danger rounded-3">
+                            <i class="fas fa-times-circle"></i> Cancel Project
+                        </button>
+                    {% endif %}
+                    {% if project.deposit_paid and not project.final_paid %}
+                        <button type="submit" name="action" value="refund" class="btn btn-warning rounded-3">
+                            <i class="fas fa-undo"></i> Refund Deposit
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        
+        <!-- Dispute Info -->
+        {% if project.disputes.exists %}
+            <div class="card shadow-sm border-0 rounded-3 mt-3">
+                <div class="card-body">
+                    <h6 class="fw-bold text-danger">
+                        <i class="fas fa-gavel"></i> Dispute
+                    </h6>
+                    {% for dispute in project.disputes.all %}
+                        <div class="border-bottom py-2">
+                            <small class="text-muted d-block">{{ dispute.created_at|date:"M d, Y" }}</small>
+                            <strong>{{ dispute.title }}</strong>
+                            <br>
+                            <span class="badge {% if dispute.status == 'open' %}bg-danger{% elif dispute.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ dispute.get_status_display }}
+                            </span>
+                            <a href="{% url 'admin_dashboard:dispute_detail' dispute.id %}" class="btn btn-sm btn-primary mt-1 d-block">
+                                View Dispute
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

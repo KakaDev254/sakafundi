@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Account - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-body p-4 text-center">
+                    <i class="fas fa-exclamation-triangle fa-4x" style="color: #DC2626;"></i>
+                    <h4 class="fw-bold mt-3" style="color: #0F172A;">Delete Account</h4>
+                    <p class="text-secondary">Are you sure you want to delete your account?</p>
+                    <p class="text-danger small">This action cannot be undone. All your data will be permanently removed.</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-3 justify-content-center">
+                            <button type="submit" class="btn btn-danger rounded-3 px-4">
+                                <i class="fas fa-trash"></i> Yes, Delete
+                            </button>
+                            <a href="{% url 'accounts:settings' %}" class="btn btn-outline-secondary rounded-3 px-4">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,260 @@
+<!-- templates/admin_dashboard/dashboard.html -->
+{% extends 'admin_dashboard/base_admin.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block admin_content %}
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted small">Total Users</h6>
+                        <h4 class="fw-bold mb-0">{{ stats.total_users }}</h4>
+                        <small class="text-success">+{{ stats.new_users }} this week</small>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted small">Active Services</h6>
+                        <h4 class="fw-bold mb-0">{{ stats.total_services }}</h4>
+                        <small class="text-success">+{{ stats.new_services }} this week</small>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                        <i class="fas fa-tools fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted small">Total Projects</h6>
+                        <h4 class="fw-bold mb-0">{{ stats.total_projects }}</h4>
+                        <small class="text-success">+{{ stats.new_projects }} this week</small>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                        <i class="fas fa-briefcase fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-muted small">Revenue</h6>
+                        <h4 class="fw-bold mb-0">KSh {{ stats.total_revenue|floatformat:0|intcomma }}</h4>
+                        <small class="text-muted">Platform fees</small>
+                    </div>
+                    <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                        <i class="fas fa-money-bill-wave fa-2x text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-2 col-md-4 col-6">
+        <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+            <div class="card-body p-2">
+                <h6 class="fw-bold" style="color: #8B5CF6;">{{ stats.providers }}</h6>
+                <small class="text-muted">Providers</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+        <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+            <div class="card-body p-2">
+                <h6 class="fw-bold" style="color: #16A34A;">{{ stats.completed_projects }}</h6>
+                <small class="text-muted">Completed</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+        <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+            <div class="card-body p-2">
+                <h6 class="fw-bold" style="color: #DC2626;">{{ stats.open_disputes }}</h6>
+                <small class="text-muted">Open Disputes</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+        <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+            <div class="card-body p-2">
+                <h6 class="fw-bold" style="color: #F59E0B;">{{ stats.total_reviews }}</h6>
+                <small class="text-muted">Reviews</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+        <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+            <div class="card-body p-2">
+                <h6 class="fw-bold" style="color: #2563EB;">{{ stats.avg_rating|floatformat:1 }}</h6>
+                <small class="text-muted">⭐ Avg Rating</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-6">
+        <div class="card shadow-sm border-0 rounded-3 text-center p-2">
+            <div class="card-body p-2">
+                <h6 class="fw-bold" style="color: #E74C3C;">{{ stats.total_disputes }}</h6>
+                <small class="text-muted">Total Disputes</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row g-4">
+    <div class="col-xl-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white fw-semibold" style="color: #0F172A; border-bottom: 1px solid #E2E8F0;">
+                <i class="fas fa-users" style="color: #2563EB;"></i> Recent Users
+            </div>
+            <div class="card-body">
+                {% if recent_users %}
+                    {% for user in recent_users %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <a href="{% url 'admin_dashboard:user_detail' user.id %}" class="text-primary text-decoration-none fw-semibold">
+                                    {{ user.get_full_name|default:user.username }}
+                                </a>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-envelope"></i> {{ user.email }}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge {% if user.user_type == 'provider' %}bg-primary{% elif user.user_type == 'both' %}bg-info{% else %}bg-secondary{% endif %}">
+                                    {{ user.get_user_type_display }}
+                                </span>
+                                <br>
+                                <small class="text-muted">{{ user.date_joined|timesince }} ago</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">No users yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white fw-semibold" style="color: #0F172A; border-bottom: 1px solid #E2E8F0;">
+                <i class="fas fa-briefcase" style="color: #2563EB;"></i> Recent Projects
+            </div>
+            <div class="card-body">
+                {% if recent_projects %}
+                    {% for project in recent_projects %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <a href="{% url 'admin_dashboard:project_detail' project.id %}" class="text-primary text-decoration-none fw-semibold">
+                                    {{ project.title|truncatechars:25 }}
+                                </a>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-user"></i> {{ project.customer.get_full_name }} → {{ project.provider.get_full_name }}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge {% if project.status == 'completed' %}bg-success{% elif project.status == 'in_progress' %}bg-primary{% elif project.status == 'disputed' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                    {{ project.get_status_display }}
+                                </span>
+                                <br>
+                                <small class="text-muted">KSh {{ project.agreed_price|floatformat:0|intcomma }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">No projects yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Payments and Disputes -->
+<div class="row g-4 mt-2">
+    <div class="col-xl-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white fw-semibold" style="color: #0F172A; border-bottom: 1px solid #E2E8F0;">
+                <i class="fas fa-money-bill-wave" style="color: #16A34A;"></i> Recent Payments
+            </div>
+            <div class="card-body">
+                {% if recent_payments %}
+                    {% for payment in recent_payments %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <span class="fw-semibold">{{ payment.user.get_full_name }}</span>
+                                <br>
+                                <small class="text-muted">{{ payment.get_payment_type_display }}</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="fw-bold text-success">KSh {{ payment.amount|floatformat:0|intcomma }}</span>
+                                <br>
+                                <small class="text-muted">{{ payment.created_at|timesince }} ago</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">No payments yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white fw-semibold" style="color: #0F172A; border-bottom: 1px solid #E2E8F0;">
+                <i class="fas fa-gavel" style="color: #DC2626;"></i> Recent Disputes
+            </div>
+            <div class="card-body">
+                {% if recent_disputes %}
+                    {% for dispute in recent_disputes %}
+                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                            <div>
+                                <a href="{% url 'admin_dashboard:dispute_detail' dispute.id %}" class="text-primary text-decoration-none fw-semibold">
+                                    {{ dispute.title|truncatechars:25 }}
+                                </a>
+                                <br>
+                                <small class="text-muted">
+                                    <i class="fas fa-user"></i> {{ dispute.user.get_full_name }}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge {% if dispute.status == 'open' %}bg-danger{% elif dispute.status == 'under_review' %}bg-warning{% elif dispute.status == 'resolved' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ dispute.get_status_display }}
+                                </span>
+                                <br>
+                                <small class="text-muted">{{ dispute.created_at|timesince }} ago</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-3">No disputes yet</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

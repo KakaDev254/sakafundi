@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Dashboard - KenyaMarket{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <img src="{{ user.profile_image.url }}" alt="{{ user.get_full_name }}"
+                         class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    <h5 class="fw-bold">{{ user.get_full_name }}</h5>
+                    <p class="text-muted small">
+                        <span class="badge bg-info text-white">
+                            {{ user.get_user_type_display }}
+                        </span>
+                    </p>
+                    <hr>
+                    <div class="text-start">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Wallet Balance</span>
+                            <span class="fw-bold" style="color: #005EB8;">
+                                KSh {{ user.balance|floatformat:2|intcomma }}
+                            </span>
+                        </div>
+                        {% if user.is_provider %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Total Earned</span>
+                            <span class="fw-bold" style="color: #27AE60;">
+                                KSh {{ user.total_earned|floatformat:2|intcomma }}
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-user"></i> Edit Profile
+                        </a>
+                        <a href="{% url 'accounts:wallet' %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-wallet"></i> Wallet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h4 class="fw-bold mb-4">
+                <i class="fas fa-chart-line" style="color: #005EB8;"></i> Dashboard
+            </h4>
+            
+            {% if user.is_provider %}
+            <!-- Provider Dashboard -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #F39C12;">{{ pending_projects }}</h3>
+                            <p class="text-muted small">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #3498DB;">{{ in_progress }}</h3>
+                            <p class="text-muted small">In Progress</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #27AE60;">{{ completed }}</h3>
+                            <p class="text-muted small">Completed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #005EB8;">
+                                KSh {{ total_earnings|floatformat:0|intcomma }}
+                            </h3>
+                            <p class="text-muted small">Total Earnings</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Projects -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="fas fa-briefcase"></i> Recent Projects
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in recent_projects %}
+                                <tr>
+                                    <td>{{ project.title|truncatechars:30 }}</td>
+                                    <td>{{ project.customer.get_full_name }}</td>
+                                    <td>KSh {{ project.agreed_price|floatformat:2|intcomma }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if project.status == 'deposit_paid' %}bg-warning
+                                            {% elif project.status == 'in_progress' %}bg-info
+                                            {% elif project.status == 'completed' %}bg-success
+                                            {% elif project.status == 'disputed' %}bg-danger
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ project.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'projects:detail' project.id %}" 
+                                           class="btn btn-sm btn-primary">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No projects yet
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            {% else %}
+            <!-- Customer Dashboard -->
+            <div class="row mb-4">
+                <div class="col-md-4 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #3498DB;">{{ active_projects }}</h3>
+                            <p class="text-muted small">Active Projects</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #27AE60;">{{ completed }}</h3>
+                            <p class="text-muted small">Completed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-6 mb-3">
+                    <div class="card shadow-sm border-0 text-center">
+                        <div class="card-body">
+                            <h3 class="fw-bold" style="color: #005EB8;">
+                                KSh {{ total_spent|floatformat:0|intcomma }}
+                            </h3>
+                            <p class="text-muted small">Total Spent</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Projects -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="fas fa-briefcase"></i> My Projects
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Provider</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in recent_projects %}
+                                <tr>
+                                    <td>{{ project.title|truncatechars:30 }}</td>
+                                    <td>{{ project.provider.get_full_name }}</td>
+                                    <td>KSh {{ project.agreed_price|floatformat:2|intcomma }}</td>
+                                    <td>
+                                        <span class="badge 
+                                            {% if project.status == 'deposit_paid' %}bg-warning
+                                            {% elif project.status == 'in_progress' %}bg-info
+                                            {% elif project.status == 'completed' %}bg-success
+                                            {% elif project.status == 'disputed' %}bg-danger
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ project.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'projects:detail' project.id %}" 
+                                           class="btn btn-sm btn-primary">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No projects yet. 
+                                        <a href="{% url 'services:list' %}" class="text-primary">
+                                            Find a service
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

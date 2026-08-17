@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top bg-white" style="border-bottom: 1px solid #E2E8F0; box-shadow: 0 4px 20px rgba(15,23,42,0.05);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'core:home' %}" style="color: #2563EB; font-size: 1.5rem;">
+                <i class="fas fa-handshake" style="color: #F59E0B;"></i> SakaFundi
+                <span class="small fw-normal text-secondary" style="font-size: 0.65rem;">Tafuta Ujuzi</span>
+            </a>
+            
+            <!-- Custom Hamburger Menu -->
+            <button class="navbar-toggler custom-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'services:list' %}" style="color: #334155; font-weight: 500;">
+                            <i class="fas fa-search"></i> Browse Services
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'projects:list' %}" style="color: #334155; font-weight: 500;">
+                            <i class="fas fa-briefcase"></i> Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'core:dashboard' %}" style="color: #334155; font-weight: 500;">
+                            <i class="fas fa-chart-line"></i> Dashboard
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Search Bar -->
+                <form action="{% url 'services:list' %}" method="get" class="d-none d-lg-flex me-3" style="max-width: 280px;">
+                    <div class="input-group" style="border-radius: 50px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+                        <input type="text" name="q" class="form-control border-0" placeholder="Search services..." 
+                               style="background: #F8FAFC; padding: 8px 16px; font-size: 0.9rem;">
+                        <button class="btn" type="submit" style="background: #F8FAFC; color: #2563EB; padding: 8px 16px;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <!-- Notifications -->
+                    <li class="nav-item me-2 position-relative">
+                        <a class="nav-link" href="{% url 'notifications:list' %}" style="color: #334155;" title="Notifications">
+                            <i class="fas fa-bell" style="font-size: 1.2rem;"></i>
+                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle" 
+                                  id="notification-badge" style="font-size: 0.6rem; padding: 3px 6px;">0</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Messages -->
+                    <li class="nav-item me-2 position-relative">
+                        <a class="nav-link" href="{% url 'chat:list' %}" style="color: #334155;" title="Messages">
+                            <i class="fas fa-envelope" style="font-size: 1.2rem;"></i>
+                            <span class="badge bg-success rounded-pill position-absolute top-0 start-100 translate-middle" 
+                                  id="chat-badge" style="font-size: 0.6rem; padding: 3px 6px;">0</span>
+                        </a>
+                    </li>
+                    
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown" style="color: #334155;">
+                            <img src="{{ user.profile_image.url }}" class="rounded-circle me-1" 
+                                 style="width: 32px; height: 32px; object-fit: cover; border: 2px solid #E2E8F0;">
+                            <span class="d-none d-md-inline" style="font-weight: 500;">{{ user.get_full_name|default:user.username|truncatechars:12 }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 py-2" style="min-width: 220px;">
+                            <li><a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
+                                <i class="fas fa-user me-2" style="color: #2563EB;"></i> Profile
+                            </a></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'accounts:wallet' %}">
+                                <i class="fas fa-wallet me-2" style="color: #16A34A;"></i> Wallet
+                                <span class="badge bg-success ms-2">KSh {{ user.balance|floatformat:0 }}</span>
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% if user.is_provider %}
+                            <li><a class="dropdown-item py-2" href="{% url 'services:create' %}">
+                                <i class="fas fa-plus-circle me-2" style="color: #F59E0B;"></i> Add Service
+                            </a></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'services:my_services' %}">
+                                <i class="fas fa-list me-2" style="color: #64748B;"></i> My Services
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item py-2 text-danger" href="{% url 'accounts:logout' %}">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <!-- Guest User -->
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="{% url 'accounts:login' %}" style="color: #334155; font-weight: 500;">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn" href="{% url 'accounts:register' %}" 
+                           style="background: #F59E0B; color: #fff; font-weight: 600; border-radius: 50px; padding: 8px 24px; border: none;">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert" style="border-left: 4px solid {% if message.tags == 'success' %}#16A34A{% elif message.tags == 'error' %}#DC2626{% elif message.tags == 'warning' %}#F59E0B{% else %}#2563EB{% endif %};">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white py-5 mt-5" style="border-top: 1px solid #E2E8F0;">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <h5 class="fw-bold" style="color: #0F172A;">
+                        <i class="fas fa-handshake" style="color: #F59E0B;"></i> SakaFundi
+                        <span class="small fw-normal text-secondary" style="font-size: 0.65rem;">Tafuta Ujuzi</span>
+                    </h5>
+                    <p class="text-secondary small" style="line-height: 1.8; max-width: 300px;">
+                        Connecting skilled professionals with customers across Kenya. Secure payments with M-PESA.
+                    </p>
+                    <div class="mt-3">
+                        <a href="#" class="text-secondary me-3"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-secondary me-3"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-secondary me-3"><i class="fab fa-instagram fa-lg"></i></a>
+                        <a href="#" class="text-secondary me-3"><i class="fab fa-linkedin fa-lg"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="fw-bold" style="color: #0F172A; font-size: 0.9rem;">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'core:about' %}" class="text-secondary text-decoration-none small" style="line-height: 2.2;">About Us</a></li>
+                        <li><a href="{% url 'core:how_it_works' %}" class="text-secondary text-decoration-none small" style="line-height: 2.2;">How It Works</a></li>
+                        <li><a href="{% url 'services:list' %}" class="text-secondary text-decoration-none small" style="line-height: 2.2;">Services</a></li>
+                        <li><a href="{% url 'services:categories' %}" class="text-secondary text-decoration-none small" style="line-height: 2.2;">Categories</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold" style="color: #0F172A; font-size: 0.9rem;">For Professionals</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'accounts:register' %}" class="text-secondary text-decoration-none small" style="line-height: 2.2;">Become a Provider</a></li>
+                        <li><a href="{% url 'services:create' %}" class="text-secondary text-decoration-none small" style="line-height: 2.2;">Add Your Service</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none small" style="line-height: 2.2;">Tips for Success</a></li>
+                        <li><a href="#" class="text-secondary text-decoration-none small" style="line-height: 2.2;">How to Get Paid</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold" style="color: #0F172A; font-size: 0.9rem;">Contact</h6>
+                    <ul class="list-unstyled text-secondary small" style="line-height: 2.2;">
+                        <li><i class="fas fa-phone me-2" style="color: #F59E0B;"></i> +254 700 123456</li>
+                        <li><i class="fas fa-envelope me-2" style="color: #F59E0B;"></i> info@sakafundi.co.ke</li>
+                        <li><i class="fas fa-map-marker-alt me-2" style="color: #F59E0B;"></i> Nairobi, Kenya</li>
+                        <li><i class="fas fa-clock me-2" style="color: #F59E0B;"></i> Mon-Fri: 8AM - 6PM</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: #E2E8F0;">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-secondary small mb-0">
+                        &copy; {% now "Y" %} SakaFundi. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="{% url 'core:terms' %}" class="text-secondary text-decoration-none small me-3">Terms</a>
+                    <a href="{% url 'core:privacy' %}" class="text-secondary text-decoration-none small me-3">Privacy</a>
+                    <a href="{% url 'core:cookies' %}" class="text-secondary text-decoration-none small">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    <style>
+        /* Custom Hamburger Menu Styles */
+        .custom-toggler {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent !important;
+            box-shadow: none !important;
+            outline: none !important;
+            border: none !important;
+        }
+        
+        .custom-toggler:focus,
+        .custom-toggler:active,
+        .custom-toggler:focus-visible {
+            outline: none !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        
+        .custom-toggler .navbar-toggler-icon {
+            background-image: none !important;
+            position: relative;
+            width: 28px;
+            height: 3px;
+            background-color: #334155;
+            border-radius: 2px;
+            transition: all 0.3s ease-in-out;
+            display: block;
+        }
+        
+        .custom-toggler .navbar-toggler-icon::before,
+        .custom-toggler .navbar-toggler-icon::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 28px;
+            height: 3px;
+            background-color: #334155;
+            border-radius: 2px;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .custom-toggler .navbar-toggler-icon::before {
+            top: -8px;
+        }
+        
+        .custom-toggler .navbar-toggler-icon::after {
+            bottom: -8px;
+        }
+        
+        /* When menu is open (collapsed state) - turns into X */
+        .custom-toggler[aria-expanded="true"] .navbar-toggler-icon {
+            background-color: transparent !important;
+        }
+        
+        .custom-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
+            transform: rotate(45deg);
+            top: 0;
+        }
+        
+        .custom-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
+            transform: rotate(-45deg);
+            bottom: 0;
+        }
+        
+        /* Hover effect */
+        .custom-toggler:hover .navbar-toggler-icon,
+        .custom-toggler:hover .navbar-toggler-icon::before,
+        .custom-toggler:hover .navbar-toggler-icon::after {
+            background-color: #2563EB;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .navbar-nav {
+                padding-top: 12px;
+            }
+            .navbar-nav .nav-item {
+                padding: 4px 0;
+            }
+        }
+    </style>
+    
+    <script>
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+        }
+
+        function updateBadges() {
+            fetch('/notifications/unread-count/')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-badge');
+                    if (badge) {
+                        if (data.unread_count > 0) {
+                            badge.textContent = data.unread_count;
+                            badge.style.display = 'inline';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching notification count:', error));
+            
+            fetch('/chat/unread-count/')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('chat-badge');
+                    if (badge) {
+                        if (data.unread_count > 0) {
+                            badge.textContent = data.unread_count;
+                            badge.style.display = 'inline';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching chat count:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBadges();
+            setInterval(updateBadges, 30000);
+            
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

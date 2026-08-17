@@ -1,0 +1,328 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Provider Dashboard - SakaFundi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 16px;
+        border: 1px solid #E2E8F0;
+        background: #FFFFFF;
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    }
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .chart-container {
+        position: relative;
+        height: 280px;
+    }
+    .activity-item {
+        border-left: 3px solid #2563EB;
+        padding-left: 16px;
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #F1F5F9;
+    }
+    .activity-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Welcome Section -->
+        <div class="col-12 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h4 class="fw-bold" style="color: #0F172A;">
+                        <i class="fas fa-chart-line" style="color: #2563EB;"></i> Provider Dashboard
+                    </h4>
+                    <p class="text-secondary mb-0">Welcome back, {{ user.get_full_name|default:user.username }}! 👋</p>
+                </div>
+                <div class="mt-2 mt-sm-0">
+                    <a href="{% url 'services:create' %}" class="btn btn-primary rounded-3">
+                        <i class="fas fa-plus-circle"></i> Add Service
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row 1 -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card card p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-primary bg-opacity-10 me-3">
+                            <i class="fas fa-briefcase text-primary fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0" style="color: #0F172A;">{{ stats.total_projects }}</h5>
+                            <small class="text-muted">Total Projects</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card card p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-success bg-opacity-10 me-3">
+                            <i class="fas fa-check-circle text-success fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0" style="color: #0F172A;">{{ stats.completed_projects }}</h5>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card card p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-warning bg-opacity-10 me-3">
+                            <i class="fas fa-clock text-warning fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0" style="color: #0F172A;">{{ stats.pending_projects }}</h5>
+                            <small class="text-muted">In Progress</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card card p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon bg-info bg-opacity-10 me-3">
+                            <i class="fas fa-money-bill-wave text-info fa-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-0" style="color: #0F172A;">KSh {{ stats.total_earnings|floatformat:0|intcomma }}</h5>
+                            <small class="text-muted">Total Earnings</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row 2 -->
+        <div class="row g-3 mb-4">
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="stat-card card p-3 text-center">
+                    <h6 class="fw-bold mb-0" style="color: #2563EB;">{{ stats.total_services }}</h6>
+                    <small class="text-muted">Services</small>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="stat-card card p-3 text-center">
+                    <h6 class="fw-bold mb-0" style="color: #F59E0B;">{{ stats.total_views }}</h6>
+                    <small class="text-muted">Total Views</small>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="stat-card card p-3 text-center">
+                    <h6 class="fw-bold mb-0" style="color: #16A34A;">{{ stats.total_reviews }}</h6>
+                    <small class="text-muted">Reviews</small>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="stat-card card p-3 text-center">
+                    <h6 class="fw-bold mb-0" style="color: #8B5CF6;">{{ stats.avg_rating|floatformat:1 }}</h6>
+                    <small class="text-muted">⭐ Rating</small>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="stat-card card p-3 text-center">
+                    <h6 class="fw-bold mb-0" style="color: #DC2626;">{{ stats.unread_messages }}</h6>
+                    <small class="text-muted">💬 Unread</small>
+                </div>
+            </div>
+            <div class="col-xl-2 col-md-4 col-6">
+                <div class="stat-card card p-3 text-center">
+                    <h6 class="fw-bold mb-0" style="color: #E74C3C;">{{ stats.unread_notifications }}</h6>
+                    <small class="text-muted">🔔 Alerts</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-8">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-body">
+                        <h6 class="fw-bold" style="color: #0F172A;">Earnings (Last 30 Days)</h6>
+                        <div class="chart-container">
+                            <canvas id="earningsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-body">
+                        <h6 class="fw-bold" style="color: #0F172A;">Project Status</h6>
+                        <div class="chart-container" style="height: 230px;">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity and Projects -->
+        <div class="row g-4">
+            <div class="col-xl-6">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white fw-semibold" style="color: #0F172A; border-bottom: 1px solid #E2E8F0;">
+                        <i class="fas fa-clock" style="color: #2563EB;"></i> Recent Activity
+                    </div>
+                    <div class="card-body">
+                        {% if recent_activities %}
+                            {% for activity in recent_activities %}
+                                <div class="activity-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>{{ activity.user.get_full_name }}</strong>
+                                            <span class="text-secondary small">{{ activity.get_activity_type_display }}</span>
+                                            <span class="text-secondary small">on</span>
+                                            <a href="{% url 'projects:detail' activity.project.id %}" class="text-primary text-decoration-none">
+                                                {{ activity.project.title|truncatechars:25 }}
+                                            </a>
+                                        </div>
+                                        <small class="text-muted">{{ activity.created_at|timesince }} ago</small>
+                                    </div>
+                                    <p class="text-secondary small mb-0">{{ activity.description|truncatechars:80 }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted text-center py-3">No recent activity</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white fw-semibold" style="color: #0F172A; border-bottom: 1px solid #E2E8F0;">
+                        <i class="fas fa-briefcase" style="color: #2563EB;"></i> Recent Projects
+                    </div>
+                    <div class="card-body">
+                        {% if recent_projects %}
+                            {% for project in recent_projects %}
+                                <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                    <div>
+                                        <a href="{% url 'projects:detail' project.id %}" class="text-primary text-decoration-none fw-semibold">
+                                            {{ project.title|truncatechars:25 }}
+                                        </a>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-user"></i> {{ project.customer.get_full_name }}
+                                        </small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge {% if project.status == 'completed' %}bg-success{% elif project.status == 'in_progress' %}bg-primary{% elif project.status == 'negotiating' %}bg-warning{% elif project.status == 'disputed' %}bg-danger{% elif project.status == 'cancelled' %}bg-secondary{% else %}bg-secondary{% endif %}">
+                                            {{ project.get_status_display }}
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">KSh {{ project.agreed_price|floatformat:0|intcomma }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted text-center py-3">No recent projects</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Earnings Chart
+        const earningsCtx = document.getElementById('earningsChart');
+        if (earningsCtx) {
+            new Chart(earningsCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ earnings_data.dates|safe }},
+                    datasets: [{
+                        label: 'Daily Earnings (KSh)',
+                        data: {{ earnings_data.values|safe }},
+                        borderColor: '#2563EB',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'KSh ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Status Distribution Chart
+        const statusCtx = document.getElementById('statusChart');
+        if (statusCtx) {
+            const statusData = {{ status_distribution|safe }};
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Negotiating', 'Agreed', 'Deposit Paid', 'In Progress', 'Submitted', 'Completed', 'Disputed', 'Cancelled'],
+                    datasets: [{
+                        data: [
+                            statusData.negotiating || 0,
+                            statusData.agreed || 0,
+                            statusData.deposit_paid || 0,
+                            statusData.in_progress || 0,
+                            statusData.submitted || 0,
+                            statusData.completed || 0,
+                            statusData.disputed || 0,
+                            statusData.cancelled || 0
+                        ],
+                        backgroundColor: ['#F59E0B', '#2563EB', '#8B5CF6', '#3B82F6', '#06B6D4', '#16A34A', '#DC2626', '#6B7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

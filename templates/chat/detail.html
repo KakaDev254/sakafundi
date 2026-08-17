@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Chat - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12 col-lg-8 offset-lg-2">
+            <!-- Chat Header -->
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body py-2">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <a href="{% url 'chat:list' %}" class="btn btn-outline-secondary me-3">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                            {% if other_participant %}
+                                <img src="{{ other_participant.profile_image.url|default:'/static/images/default-avatar.png' }}" 
+                                     class="rounded-circle me-3" 
+                                     style="width: 45px; height: 45px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">
+                                        {{ other_participant.get_full_name|default:other_participant.username }}
+                                        <span id="online-status" class="ms-2" style="font-size: 0.75rem;">
+                                            {% if other_participant.is_online %}
+                                                <span class="text-success"><i class="fas fa-circle"></i> Online</span>
+                                            {% else %}
+                                                <span class="text-secondary"><i class="fas fa-circle"></i> Offline</span>
+                                            {% endif %}
+                                        </span>
+                                    </h6>
+                                    <small class="text-muted" id="typing-indicator" style="display: none;">
+                                        <span id="typing-user"></span> is typing...
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            {% if project %}
+                                <a href="{% url 'projects:detail' project.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-briefcase"></i> View Project
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Messages Area -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-0">
+                    <div id="chat-messages" class="p-3" 
+                         style="height: 480px; overflow-y: auto; background-color: #F8F9FA;">
+                        {% for message in messages %}
+                            <div class="message {% if message.sender == request.user %}message-sent{% else %}message-received{% endif %}" 
+                                 data-message-id="{{ message.id }}">
+                                <div class="message-bubble">
+                                    <div class="mb-1">
+                                        <small class="{% if message.sender == request.user %}text-white-50{% else %}text-muted{% endif %}">
+                                            {% if message.sender == request.user %}
+                                                You
+                                            {% else %}
+                                                {{ message.sender.get_full_name|default:message.sender.username }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                    <div class="message-content">{{ message.content|linebreaksbr }}</div>
+                                    {% if message.attachment %}
+                                        <div class="mt-2">
+                                            <a href="{% url 'chat:view_attachment' message.id %}" 
+                                               target="_blank" 
+                                               class="btn btn-sm {% if message.sender == request.user %}btn-light{% else %}btn-outline-primary{% endif %}">
+                                                <i class="fas fa-paperclip"></i> {{ message.attachment_name|default:"Attachment" }}
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    <div class="mt-1">
+                                        <small class="{% if message.sender == request.user %}text-white-50{% else %}text-muted{% endif %}" 
+                                               style="font-size: 10px;">
+                                            {{ message.created_at|date:"M d, Y H:i" }}
+                                            {% if message.is_read and message.sender == request.user %}
+                                                <i class="fas fa-check-double text-success ms-1"></i>
+                                            {% elif message.sender == request.user %}
+                                                <i class="fas fa-check text-white-50 ms-1"></i>
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Message Input -->
+                    <div class="p-3 border-top">
+                        <div class="d-flex gap-2">
+                            <input type="text" id="message-input" class="form-control" 
+                                   placeholder="Type your message..." autocomplete="off">
+                            <label class="btn btn-outline-secondary" title="Attach file">
+                                <i class="fas fa-paperclip"></i>
+                                <input type="file" id="file-input" style="display: none;" accept="image/*,.pdf,.doc,.docx,.txt,.zip">
+                            </label>
+                            <button id="send-btn" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // WebSocket connection
+    const conversationId = {{ conversation.id }};
+    const currentUserId = {{ request.user.id }};
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${wsProtocol}//${window.location.host}/ws/chat/${conversationId}/`;
+    const socket = new WebSocket(wsUrl);
+    
+    const chatMessages = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('message-input');
+    const fileInput = document.getElementById('file-input');
+    const sendBtn = document.getElementById('send-btn');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const typingUser = document.getElementById('typing-user');
+    const onlineStatus = document.getElementById('online-status');
+    
+    let typingTimeout = null;
+    let isTyping = false;
+    
+    // Scroll to bottom
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    scrollToBottom();
+    
+    // WebSocket events
+    socket.onopen = function(e) {
+        console.log('WebSocket connected');
+    };
+    
+    socket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'message') {
+            addMessageToChat(data);
+            scrollToBottom();
+        } else if (data.type === 'typing') {
+            if (data.is_typing && data.user_id !== currentUserId) {
+                typingUser.textContent = data.username;
+                typingIndicator.style.display = 'block';
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                }, 3000);
+            } else {
+                typingIndicator.style.display = 'none';
+            }
+        } else if (data.type === 'user_status') {
+            if (data.user_id !== currentUserId) {
+                if (data.status === 'online') {
+                    onlineStatus.innerHTML = '<span class="text-success"><i class="fas fa-circle"></i> Online</span>';
+                } else {
+                    onlineStatus.innerHTML = '<span class="text-secondary"><i class="fas fa-circle"></i> Offline</span>';
+                }
+            }
+        } else if (data.type === 'messages_read') {
+            // Update read receipts
+            if (data.user_id !== currentUserId) {
+                document.querySelectorAll('.message-sent .fa-check').forEach(el => {
+                    el.className = 'fas fa-check-double text-success ms-1';
+                });
+            }
+        }
+    };
+    
+    socket.onclose = function(e) {
+        console.log('WebSocket disconnected');
+        // Attempt to reconnect after 3 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
+    };
+    
+    socket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
+    
+    // Send message
+    function sendMessage() {
+        const content = messageInput.value.trim();
+        const file = fileInput.files[0];
+        
+        if (!content && !file) return;
+        
+        const data = {
+            type: 'message',
+            content: content,
+        };
+        
+        if (file) {
+            // Handle file upload via AJAX first, then send message
+            const formData = new FormData();
+            formData.append('attachment', file);
+            formData.append('content', content);
+            
+            fetch(`/chat/conversation/${conversationId}/send/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    socket.send(JSON.stringify({
+                        type: 'message',
+                        content: data.content,
+                        attachment: data.attachment_url
+                    }));
+                }
+            });
+        } else {
+            socket.send(JSON.stringify({
+                type: 'message',
+                content: content
+            }));
+        }
+        
+        messageInput.value = '';
+        fileInput.value = '';
+    }
+    
+    // Add message to chat
+    function addMessageToChat(data) {
+        const isOwn = data.sender_id === currentUserId;
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isOwn ? 'message-sent' : 'message-received'}`;
+        
+        let attachmentHtml = '';
+        if (data.attachment_url) {
+            attachmentHtml = `
+                <div class="mt-2">
+                    <a href="${data.attachment_url}" target="_blank" 
+                       class="btn btn-sm ${isOwn ? 'btn-light' : 'btn-outline-primary'}">
+                        <i class="fas fa-paperclip"></i> ${data.attachment_name || 'Attachment'}
+                    </a>
+                </div>
+            `;
+        }
+        
+        messageDiv.innerHTML = `
+            <div class="message-bubble">
+                <div class="mb-1">
+                    <small class="${isOwn ? 'text-white-50' : 'text-muted'}">
+                        ${isOwn ? 'You' : data.sender_name}
+                    </small>
+                </div>
+                <div class="message-content">${data.content.replace(/\n/g, '<br>')}</div>
+                ${attachmentHtml}
+                <div class="mt-1">
+                    <small class="${isOwn ? 'text-white-50' : 'text-muted'}" style="font-size: 10px;">
+                        ${new Date(data.created_at).toLocaleString()}
+                        ${isOwn ? '<i class="fas fa-check text-white-50 ms-1"></i>' : ''}
+                    </small>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+    }
+    
+    // Typing indicator
+    messageInput.addEventListener('input', function() {
+        if (!isTyping) {
+            isTyping = true;
+            socket.send(JSON.stringify({
+                type: 'typing',
+                is_typing: true
+            }));
+        }
+        
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+            isTyping = false;
+            socket.send(JSON.stringify({
+                type: 'typing',
+                is_typing: false
+            }));
+        }, 2000);
+    });
+    
+    // Send on button click
+    sendBtn.addEventListener('click', sendMessage);
+    
+    // Send on Enter (Shift+Enter for new line)
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    // Mark as read when conversation is loaded
+    socket.send(JSON.stringify({
+        type: 'mark_read'
+    }));
+    
+    // Get CSRF token
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+    
+    // File input handler
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB.');
+                this.value = '';
+                return;
+            }
+            const label = this.parentElement;
+            label.innerHTML = `<i class="fas fa-paperclip"></i> ${file.name}`;
+        }
+    });
+</script>
+{% endblock %}
