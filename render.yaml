@@ -9,21 +9,8 @@ services:
     plan: free  # Change to starter or professional for production
     pythonVersion: 3.13.0  # Use Python 3.13 (compatible with Pillow)
     
-    # Build Command - Updated with retry logic and pip focus
-    buildCommand: |
-      # Install system dependencies for Pillow
-      apt-get update && apt-get install -y \
-        libjpeg-dev \
-        zlib1g-dev \
-        libpng-dev \
-        libfreetype6-dev \
-        libwebp-dev \
-        python3-dev \
-        && cd src \
-        && python -m pip install --upgrade pip \
-        && python -m pip install --retries 10 --timeout 60 -r requirements.txt \
-        && python manage.py collectstatic --noinput \
-        && python manage.py migrate --noinput
+    # Build Command - Using build.sh for better control
+    buildCommand: ./build.sh
     
     # Start Command (using Daphne for WebSocket support)
     startCommand: cd src && daphne -b 0.0.0.0 -p $PORT config.asgi:application
@@ -63,7 +50,7 @@ services:
           type: redis
           property: connectionString
       
-      # M-PESA Settings
+      # M-PESA Settings (Set these in Render Dashboard)
       - key: MPESA_CONSUMER_KEY
         sync: false
       
@@ -88,7 +75,7 @@ services:
       - key: MPESA_RESULT_URL
         value: "https://sakafundi.onrender.com/payments/mpesa/result/"
       
-      # Email Settings
+      # Email Settings (Set these in Render Dashboard)
       - key: EMAIL_HOST
         sync: false
       
@@ -148,14 +135,14 @@ services:
       - key: X_FRAME_OPTIONS
         value: "DENY"
       
-      # Google OAuth (Optional)
+      # Google OAuth (Optional - Set in Render Dashboard)
       - key: GOOGLE_OAUTH_CLIENT_ID
         sync: false
       
       - key: GOOGLE_OAUTH_CLIENT_SECRET
         sync: false
       
-      # Facebook OAuth (Optional)
+      # Facebook OAuth (Optional - Set in Render Dashboard)
       - key: FACEBOOK_APP_ID
         sync: false
       
@@ -176,7 +163,7 @@ services:
 # ============================================================
 databases:
   - name: sakafundi_db
-    plan: paid  
+    plan: paid  # Using paid plan for production
     databaseName: sakafundi
     user: sakafundi_user
     ipAllowList: []  # Allow all IPs (Render internal only)
