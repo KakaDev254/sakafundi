@@ -1,15 +1,14 @@
 #!/bin/bash
-# build.sh - Complete build script for Render
+# build.sh
 
 echo "=========================================="
 echo "Building SakaFundi for Render..."
 echo "=========================================="
 
-# ============================================================
-# 1. Install System Dependencies (for Pillow)
-# ============================================================
+# Install system dependencies
 echo "Installing system dependencies..."
-apt-get update && apt-get install -y \
+apt-get update
+apt-get install -y \
     libjpeg-dev \
     zlib1g-dev \
     libpng-dev \
@@ -17,35 +16,28 @@ apt-get update && apt-get install -y \
     libwebp-dev \
     python3-dev
 
-# ============================================================
-# 2. Upgrade pip
-# ============================================================
-echo "Upgrading pip..."
-pip install --upgrade pip
-
-# ============================================================
-# 3. Install Python Dependencies
-# ============================================================
-echo "Installing Python dependencies..."
-# Navigate to src where requirements.txt is
 cd src
-pip install --retries 5 --timeout 30 -r requirements.txt
 
-# ============================================================
-# 4. Django Commands
-# ============================================================
+# Create logs directory (just in case)
+mkdir -p logs
+touch logs/django.log
+
+# Upgrade pip
+echo "Upgrading pip..."
+python -m pip install --upgrade pip
+
+# Install django-redis FIRST
+echo "Installing django-redis..."
+python -m pip install --retries 5 --timeout 30 django-redis==5.4.0 redis hiredis
+
+# Install the rest of requirements
+echo "Installing all requirements..."
+python -m pip install --retries 10 --timeout 60 -r requirements.txt
+
+# Run Django commands
 echo "Running Django commands..."
-
-# Collect static files
 python manage.py collectstatic --noinput
-
-# Run migrations
 python manage.py migrate --noinput
-
-# ============================================================
-# 5. Create Superuser (Optional - skip if not needed)
-# ============================================================
-# echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'admin123')" | python manage.py shell
 
 echo "=========================================="
 echo "Build complete! ✅"

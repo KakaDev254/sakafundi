@@ -407,94 +407,50 @@ RATELIMIT_HEADER_REMAINING = 'X-RateLimit-Remaining'
 RATELIMIT_HEADER_RESET = 'X-RateLimit-Reset'
 
 # ============================================================
-# LOGGING
+# LOGGING - Console Only (No File Handler)
 # ============================================================
 
-if ENVIRONMENT == 'production':
-    # Production: Only use console logging
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'verbose': {
-                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-                'style': '{',
-            },
-            'simple': {
-                'format': '{levelname} {asctime} {message}',
-                'style': '{',
-            },
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
         },
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple',
-            },
+        'simple': {
+            'format': '{levelname} {asctime} {message}',
+            'style': '{',
         },
-        'root': {
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
             'handlers': ['console'],
-            'level': 'WARNING',
+            'level': 'INFO',
+            'propagate': False,
         },
-        'loggers': {
-            'django': {
-                'handlers': ['console'],
-                'level': 'INFO',
-                'propagate': False,
-            },
-            'django_redis': {
-                'handlers': ['console'],
-                'level': 'INFO',
-                'propagate': False,
-            },
-            'channels': {
-                'handlers': ['console'],
-                'level': 'INFO',
-            },
+        'django_redis': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
         },
-    }
-else:
-    # Development: Use console and file logging
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'verbose': {
-                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-                'style': '{',
-            },
-            'simple': {
-                'format': '{levelname} {asctime} {message}',
-                'style': '{',
-            },
+        'channels': {
+            'handlers': ['console'],
+            'level': 'INFO',
         },
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple',
-            },
-            'file': {
-                'level': 'INFO',
-                'class': 'logging.FileHandler',
-                'filename': BASE_DIR / 'logs/django.log',
-                'formatter': 'verbose',
-            },
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['console', 'file'],
-                'level': 'INFO',
-            },
-            'django_redis': {
-                'handlers': ['console', 'file'],
-                'level': 'INFO',
-                'propagate': False,
-            },
-            'channels': {
-                'handlers': ['console', 'file'],
-                'level': 'INFO',
-            },
-        },
-    }
+    },
+}
+
 # ============================================================
 # M-PESA SETTINGS
 # ============================================================
@@ -536,3 +492,22 @@ DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TIMEZONE = TIME_ZONE
+
+# ============================================================
+# FORCE DEVELOPMENT CACHE SETTINGS (SAFETY NET)
+# ============================================================
+
+if ENVIRONMENT == 'development':
+    # Override cache to use LocMemCache
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
+    RATELIMIT_ENABLE = False
+    
+    import sys
+    print("🔧 Development Mode Active", file=sys.stderr)
+    print(f"   Cache: {CACHES['default']['BACKEND']}", file=sys.stderr)
+    print(f"   Ratelimit: {RATELIMIT_ENABLE}", file=sys.stderr)
