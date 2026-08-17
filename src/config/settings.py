@@ -1,4 +1,5 @@
 # config/settings.py
+
 import os
 import sys
 from pathlib import Path
@@ -7,16 +8,6 @@ import dj_database_url
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ============================================================
-# DEBUG OUTPUT - TO SEE WHAT'S HAPPENING ON RENDER
-# ============================================================
-
-print("=" * 60, file=sys.stderr)
-print(f"DJANGO_ENV: {os.environ.get('DJANGO_ENV', 'NOT SET')}", file=sys.stderr)
-print(f"DJANGO_SETTINGS_MODULE: {os.environ.get('DJANGO_SETTINGS_MODULE', 'NOT SET')}", file=sys.stderr)
-print(f"ALLOWED_HOSTS env: {os.environ.get('ALLOWED_HOSTS', 'NOT SET')}", file=sys.stderr)
-print("=" * 60, file=sys.stderr)
 
 # ============================================================
 # ENVIRONMENT DETECTION
@@ -35,6 +26,15 @@ except ImportError:
     pass
 
 # ============================================================
+# DEBUG OUTPUT
+# ============================================================
+
+print("=" * 60, file=sys.stderr)
+print(f"DJANGO_ENV: {os.environ.get('DJANGO_ENV', 'NOT SET')}", file=sys.stderr)
+print(f"ALLOWED_HOSTS env: {os.environ.get('ALLOWED_HOSTS', 'NOT SET')}", file=sys.stderr)
+print("=" * 60, file=sys.stderr)
+
+# ============================================================
 # BASE SECURITY SETTINGS
 # ============================================================
 
@@ -46,10 +46,10 @@ else:
     DEBUG = True
 
 # ============================================================
-# ALLOWED_HOSTS - EXPLICITLY SET (OVERRIDES EVERYTHING)
+# ALLOWED_HOSTS - EXPLICITLY SET
 # ============================================================
 
-# Method 1: Hardcode for Render (MOST RELIABLE)
+# This is the definitive ALLOWED_HOSTS - it overrides everything
 ALLOWED_HOSTS = [
     '.onrender.com',
     'sakafundi.onrender.com',
@@ -58,14 +58,7 @@ ALLOWED_HOSTS = [
     '0.0.0.0',
 ]
 
-# Method 2: Try to read from environment (fallback)
-allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
-if allowed_hosts_env:
-    env_hosts = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
-    if env_hosts:
-        ALLOWED_HOSTS = env_hosts
-
-print(f"✅ FINAL ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"✅ ALLOWED_HOSTS SET TO: {ALLOWED_HOSTS}", file=sys.stderr)
 
 # ============================================================
 # APPLICATION DEFINITION
@@ -79,7 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django.contrib.sites',
+    'django.contrib.sites',  # Required for allauth
     
     # Third party apps
     'crispy_forms',
@@ -90,7 +83,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'import_export',
     
-    # Allauth
+    # Allauth - must be in this order
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -477,10 +470,28 @@ MPESA_RESULT_URL = config('MPESA_RESULT_URL', default='')
 DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 
 # ============================================================
-# FORCE ALLOWED_HOSTS AGAIN (Emergency Safety Net)
+# SESSION CONFIGURATION (Optional)
 # ============================================================
 
-# This ensures ALLOWED_HOSTS is always set correctly
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
+
+# ============================================================
+# CELERY CONFIGURATION (Optional)
+# ============================================================
+
+# CELERY_BROKER_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
+# CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = TIME_ZONE
+
+# ============================================================
+# FORCE ALLOWED_HOSTS (Emergency Safety Net)
+# ============================================================
+
+# This MUST be at the bottom to override everything
 ALLOWED_HOSTS = [
     '.onrender.com',
     'sakafundi.onrender.com',
@@ -489,4 +500,4 @@ ALLOWED_HOSTS = [
     '0.0.0.0',
 ]
 
-print(f"🔒 FINAL ALLOWED_HOSTS (forced): {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"🔒 FINAL ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
