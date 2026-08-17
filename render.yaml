@@ -6,14 +6,23 @@ services:
   - type: web
     name: sakafundi
     runtime: python
-    plan: starter
+    plan: free  # Change to starter or professional for production
+    pythonVersion: 3.13.0  # Use Python 3.13 (compatible with Pillow)
     
     # Build Command
     buildCommand: |
-      cd src
-      pip install -r requirements.txt
-      python manage.py collectstatic --noinput
-      python manage.py migrate --noinput
+      # Install system dependencies for Pillow
+      apt-get update && apt-get install -y \
+        libjpeg-dev \
+        zlib1g-dev \
+        libpng-dev \
+        libfreetype6-dev \
+        libwebp-dev \
+        && cd src \
+        && pip install --upgrade pip \
+        && pip install -r requirements.txt \
+        && python manage.py collectstatic --noinput \
+        && python manage.py migrate --noinput
     
     # Start Command (using Daphne for WebSocket support)
     startCommand: cd src && daphne -b 0.0.0.0 -p $PORT config.asgi:application
