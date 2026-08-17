@@ -18,9 +18,10 @@ services:
         libpng-dev \
         libfreetype6-dev \
         libwebp-dev \
+        python3-dev \
         && cd src \
-        && pip install --upgrade pip \
-        && pip install --retries 5 --timeout 30 -r requirements.txt \
+        && python -m pip install --upgrade pip \
+        && python -m pip install --retries 10 --timeout 60 -r requirements.txt \
         && python manage.py collectstatic --noinput \
         && python manage.py migrate --noinput
     
@@ -171,11 +172,11 @@ services:
     ipAllowList: []  # Allow all IPs (Render internal only)
 
 # ============================================================
-  # POSTGRESQL DATABASE
-  # ============================================================
+# POSTGRESQL DATABASE
+# ============================================================
 databases:
   - name: sakafundi_db
-    plan: free  # Change to paid plan for production
+    plan: paid  
     databaseName: sakafundi
     user: sakafundi_user
     ipAllowList: []  # Allow all IPs (Render internal only)
