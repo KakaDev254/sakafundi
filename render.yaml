@@ -1,81 +1,169 @@
-# render.yaml
+# render.yaml - Complete configuration for SakaFundi deployment
 services:
-  # Web Service
+  # ============================================================
+  # WEB SERVICE
+  # ============================================================
   - type: web
     name: sakafundi
     runtime: python
+    plan: starter
+    
+    # Build Command
     buildCommand: |
       cd src
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
       python manage.py migrate --noinput
+    
+    # Start Command (using Daphne for WebSocket support)
     startCommand: cd src && daphne -b 0.0.0.0 -p $PORT config.asgi:application
+    
+    # Environment Variables
     envVars:
+      # Django Settings
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings
+      
+      - key: DJANGO_ENV
+        value: production
+      
+      - key: SECRET_KEY
+        generateValue: true
+      
+      - key: DEBUG
+        value: false
+      
+      - key: ALLOWED_HOSTS
+        value: .onrender.com,sakafundi.onrender.com
+      
+      # Database - From Render PostgreSQL
       - key: DATABASE_URL
         fromDatabase:
           name: sakafundi_db
           property: connectionString
+      
+      # Redis - From Render Redis
       - key: REDIS_URL
         fromService:
           name: sakafundi_redis
           type: redis
           property: connectionString
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DEBUG
-        value: false
-      - key: ALLOWED_HOSTS
-        value: .onrender.com,sakafundi.onrender.com
-      - key: DJANGO_ENV
-        value: production
-      # M-PESA Environment Variables
+      
+      # M-PESA Settings
       - key: MPESA_CONSUMER_KEY
         sync: false
+      
       - key: MPESA_CONSUMER_SECRET
         sync: false
+      
       - key: MPESA_PASSKEY
         sync: false
+      
       - key: MPESA_SHORTCODE
         value: "174379"
+      
       - key: MPESA_BASE_URL
         value: "https://api.safaricom.co.ke"
+      
+      - key: MPESA_INITIATOR_NAME
+        sync: false
+      
       - key: MPESA_TIMEOUT_URL
-        sync: false
+        value: "https://sakafundi.onrender.com/payments/mpesa/timeout/"
+      
       - key: MPESA_RESULT_URL
-        sync: false
+        value: "https://sakafundi.onrender.com/payments/mpesa/result/"
+      
       # Email Settings
       - key: EMAIL_HOST
         sync: false
+      
       - key: EMAIL_PORT
         value: "587"
+      
       - key: EMAIL_USE_TLS
         value: "True"
+      
       - key: EMAIL_HOST_USER
         sync: false
+      
       - key: EMAIL_HOST_PASSWORD
         sync: false
+      
       - key: DEFAULT_FROM_EMAIL
         sync: false
+      
       # Platform Settings
       - key: PLATFORM_FEE_PERCENTAGE
         value: "10"
+      
       - key: DEPOSIT_DEFAULT_PERCENTAGE
         value: "30"
+      
       - key: CURRENCY
         value: "KES"
+      
       - key: CURRENCY_SYMBOL
         value: "KSh"
+      
+      # Security (Production)
+      - key: SECURE_SSL_REDIRECT
+        value: "True"
+      
+      - key: SESSION_COOKIE_SECURE
+        value: "True"
+      
+      - key: CSRF_COOKIE_SECURE
+        value: "True"
+      
+      - key: SECURE_HSTS_SECONDS
+        value: "31536000"
+      
+      - key: SECURE_HSTS_INCLUDE_SUBDOMAINS
+        value: "True"
+      
+      - key: SECURE_HSTS_PRELOAD
+        value: "True"
+      
+      - key: SECURE_BROWSER_XSS_FILTER
+        value: "True"
+      
+      - key: SECURE_CONTENT_TYPE_NOSNIFF
+        value: "True"
+      
+      - key: X_FRAME_OPTIONS
+        value: "DENY"
+      
+      # Google OAuth (Optional)
+      - key: GOOGLE_OAUTH_CLIENT_ID
+        sync: false
+      
+      - key: GOOGLE_OAUTH_CLIENT_SECRET
+        sync: false
+      
+      # Facebook OAuth (Optional)
+      - key: FACEBOOK_APP_ID
+        sync: false
+      
+      - key: FACEBOOK_APP_SECRET
+        sync: false
 
-  # Redis Service
+  # ============================================================
+  # REDIS SERVICE (for WebSockets and Caching)
+  # ============================================================
   - type: redis
     name: sakafundi_redis
-    plan: free
+    plan: free  # Change to paid plan for production
     maxmemoryPolicy: noeviction
+    ipAllowList: []  # Allow all IPs (Render internal only)
 
+# ============================================================
+# POSTGRESQL DATABASE
+# ============================================================
 databases:
   - name: sakafundi_db
-    plan: free  # Upgrade to paid plan for production
+    plan: free  # Change to paid plan for production
     databaseName: sakafundi
     user: sakafundi_user
+    ipAllowList: []  # Allow all IPs (Render internal only)
+    postgresMajorVersion: 16
