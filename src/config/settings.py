@@ -98,7 +98,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django.contrib.sites',
+    'django.contrib.sites',  # Required for allauth
     
     # Third party apps
     'crispy_forms',
@@ -109,7 +109,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'import_export',
     
-    # Allauth
+    # Allauth - must be in this order
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -496,21 +496,40 @@ DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 # CELERY_TIMEZONE = TIME_ZONE
 
 # ============================================================
-# FORCE CSRF SETTINGS FOR RENDER
+# FORCE RENDER SETTINGS (OVERRIDE EVERYTHING)
 # ============================================================
 
-# Force CSRF trusted origins for Render
+import os
+
+# Check if running on Render
 if 'RENDER' in os.environ:
+    # Force ALLOWED_HOSTS
+    ALLOWED_HOSTS = [
+        '.onrender.com',
+        'sakafundi.onrender.com',
+        'localhost',
+        '127.0.0.1',
+        '0.0.0.0',
+    ]
+    
+    # Force CSRF_TRUSTED_ORIGINS
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
     
-    # Also ensure DEBUG is False on Render
+    # Force DEBUG
     DEBUG = False
     
-    print(f"✅ FORCED CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
+    # Force SECURE settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    print(f"🚨 RENDER MODE ACTIVATED", file=sys.stderr)
+    print(f"🔒 ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+    print(f"🔒 CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
+    print(f"🔒 DEBUG: {DEBUG}", file=sys.stderr)
+    
