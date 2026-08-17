@@ -9,7 +9,7 @@ services:
     plan: free  # Change to starter or professional for production
     pythonVersion: 3.13.0  # Use Python 3.13 (compatible with Pillow)
     
-    # Build Command
+    # Build Command - Updated with retry logic and pip focus
     buildCommand: |
       # Install system dependencies for Pillow
       apt-get update && apt-get install -y \
@@ -20,7 +20,7 @@ services:
         libwebp-dev \
         && cd src \
         && pip install --upgrade pip \
-        && pip install -r requirements.txt \
+        && pip install --retries 5 --timeout 30 -r requirements.txt \
         && python manage.py collectstatic --noinput \
         && python manage.py migrate --noinput
     
@@ -29,6 +29,10 @@ services:
     
     # Environment Variables
     envVars:
+      # Force pip instead of poetry - THIS IS THE KEY FIX
+      - key: POETRY_VERSION
+        value: ""  # Empty value disables Poetry
+      
       # Django Settings
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings
@@ -167,8 +171,8 @@ services:
     ipAllowList: []  # Allow all IPs (Render internal only)
 
 # ============================================================
-# POSTGRESQL DATABASE
-# ============================================================
+  # POSTGRESQL DATABASE
+  # ============================================================
 databases:
   - name: sakafundi_db
     plan: free  # Change to paid plan for production
