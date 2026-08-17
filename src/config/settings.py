@@ -46,7 +46,9 @@ print("=" * 60, file=sys.stderr)
 
 SECRET_KEY = config('SECRET_KEY')
 
-if ENVIRONMENT == 'production':
+# config/settings.py - Update the production section
+
+if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
     DEBUG = False
     ALLOWED_HOSTS = [
         '.onrender.com',
@@ -64,10 +66,16 @@ if ENVIRONMENT == 'production':
         'http://sakafundi.onrender.com',
     ]
     
-    # Security Settings
+    # Security Settings for Render's proxy
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    
+    # IMPORTANT: Tell Django to trust the proxy headers from Render
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    USE_X_FORWARDED_PORT = True
+    
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -83,8 +91,12 @@ else:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
+    SECURE_PROXY_SSL_HEADER = None
+    USE_X_FORWARDED_HOST = False
+    USE_X_FORWARDED_PORT = False
 
 print(f"🔒 CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
+print(f"🔒 ALLOWED_HOSTS FINAL: {ALLOWED_HOSTS}", file=sys.stderr)
 
 # ============================================================
 # APPLICATION DEFINITION
