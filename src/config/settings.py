@@ -3,9 +3,17 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ============================================================
+# LOAD .env FILE
+# ============================================================
+
+# Load .env from src directory
+load_dotenv(BASE_DIR / '.env')
 
 # ============================================================
 # ENVIRONMENT DETECTION
@@ -143,13 +151,13 @@ def get_database_config():
             return {
                 'default': {
                     'ENGINE': 'django.db.backends.postgresql',
-                    'NAME': config('DB_NAME'),
-                    'USER': config('DB_USER'),
-                    'PASSWORD': config('DB_PASSWORD'),
+                    'NAME': config('DB_NAME', default='sakafundi'),
+                    'USER': config('DB_USER', default='sakafundi_user'),
+                    'PASSWORD': config('DB_PASSWORD', default=''),
                     'HOST': config('DB_HOST', default='localhost'),
                     'PORT': config('DB_PORT', default='5432'),
                     'OPTIONS': {
-                        'sslmode': 'require',  # Render requires SSL
+                        'sslmode': 'require',
                     },
                 }
             }
@@ -181,15 +189,23 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 
-# Allauth settings
-ACCOUNT_EMAIL_REQUIRED = True
+# ============================================================
+# ALLAUTH SETTINGS (Updated for latest version)
+# ============================================================
+
+# Authentication method - Updated
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+
+# Email verification
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
-ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 300
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_LOGOUT_ON_GET = True
+
+# Rate limiting for login attempts - Updated
+ACCOUNT_RATE_LIMITS = {
+    'login_failed': '5/300',  # 5 attempts per 300 seconds
+}
 
 # Social account providers
 SOCIALACCOUNT_PROVIDERS = {
@@ -314,7 +330,7 @@ else:
     CSRF_COOKIE_SECURE = False
 
 # ============================================================
-# CACHE (Redis or In-Memory)
+# CACHE (Redis or Database Cache)
 # ============================================================
 
 if ENVIRONMENT == 'production':
@@ -342,10 +358,11 @@ if ENVIRONMENT == 'production':
         }
     }
 else:
+    # Use database cache for development (shared across processes)
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'django_cache_table',
         }
     }
 
@@ -428,7 +445,7 @@ LOGGING = {
 }
 
 # ============================================================
-# M-PESA SETTINGS (Production)
+# M-PESA SETTINGS
 # ============================================================
 
 MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY', default='')
