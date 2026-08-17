@@ -1,11 +1,22 @@
 # config/settings.py
 import os
+import sys
 from pathlib import Path
 from decouple import config
 import dj_database_url
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ============================================================
+# DEBUG OUTPUT - TO SEE WHAT'S HAPPENING ON RENDER
+# ============================================================
+
+print("=" * 60, file=sys.stderr)
+print(f"DJANGO_ENV: {os.environ.get('DJANGO_ENV', 'NOT SET')}", file=sys.stderr)
+print(f"DJANGO_SETTINGS_MODULE: {os.environ.get('DJANGO_SETTINGS_MODULE', 'NOT SET')}", file=sys.stderr)
+print(f"ALLOWED_HOSTS env: {os.environ.get('ALLOWED_HOSTS', 'NOT SET')}", file=sys.stderr)
+print("=" * 60, file=sys.stderr)
 
 # ============================================================
 # ENVIRONMENT DETECTION
@@ -17,12 +28,10 @@ ENVIRONMENT = os.environ.get('DJANGO_ENV', 'development')
 # LOAD .env FILE
 # ============================================================
 
-# Try to load with python-dotenv first (if installed)
 try:
     from dotenv import load_dotenv
     load_dotenv(BASE_DIR / '.env')
 except ImportError:
-    # Fallback to decouple (which will look for .env automatically)
     pass
 
 # ============================================================
@@ -33,10 +42,30 @@ SECRET_KEY = config('SECRET_KEY')
 
 if ENVIRONMENT == 'production':
     DEBUG = False
-    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='.onrender.com').split(',')
 else:
     DEBUG = True
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+
+# ============================================================
+# ALLOWED_HOSTS - EXPLICITLY SET (OVERRIDES EVERYTHING)
+# ============================================================
+
+# Method 1: Hardcode for Render (MOST RELIABLE)
+ALLOWED_HOSTS = [
+    '.onrender.com',
+    'sakafundi.onrender.com',
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+]
+
+# Method 2: Try to read from environment (fallback)
+allowed_hosts_env = os.environ.get('ALLOWED_HOSTS', '')
+if allowed_hosts_env:
+    env_hosts = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+    if env_hosts:
+        ALLOWED_HOSTS = env_hosts
+
+print(f"✅ FINAL ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
 
 # ============================================================
 # APPLICATION DEFINITION
@@ -50,7 +79,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django.contrib.sites',  # Required for allauth
+    'django.contrib.sites',
     
     # Third party apps
     'crispy_forms',
@@ -61,7 +90,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'import_export',
     
-    # Allauth - must be in this order
+    # Allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -134,24 +163,18 @@ TEMPLATES = [
 # ============================================================
 
 def get_database_config():
-    """
-    Get database configuration with proper handling of Render's DATABASE_URL
-    """
     if ENVIRONMENT == 'production':
-        # First, check if DATABASE_URL is provided (Render does this automatically)
         database_url = config('DATABASE_URL', default=None)
         
         if database_url:
-            # Use DATABASE_URL (Render's preferred method)
             return {
                 'default': dj_database_url.config(
                     default=database_url,
                     conn_max_age=600,
-                    ssl_require=True  # Render requires SSL
+                    ssl_require=True
                 )
             }
         else:
-            # Fallback to individual environment variables
             return {
                 'default': {
                     'ENGINE': 'django.db.backends.postgresql',
@@ -166,7 +189,6 @@ def get_database_config():
                 }
             }
     else:
-        # Development - use SQLite
         return {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -194,24 +216,18 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 
 # ============================================================
-# ALLAUTH SETTINGS (Updated for latest version)
+# ALLAUTH SETTINGS
 # ============================================================
 
-# Authentication method
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-
-# Email verification
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_LOGOUT_ON_GET = True
-
-# Rate limiting for login attempts
 ACCOUNT_RATE_LIMITS = {
-    'login_failed': '5/300',  # 5 attempts per 300 seconds
+    'login_failed': '5/300',
 }
 
-# Social account providers
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': ['profile', 'email'],
@@ -326,7 +342,6 @@ if ENVIRONMENT == 'production':
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
     
-    # WhiteNoise for static files
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
     SECURE_SSL_REDIRECT = False
@@ -334,7 +349,7 @@ else:
     CSRF_COOKIE_SECURE = False
 
 # ============================================================
-# CACHE (Redis for Production, LocMemCache for Development)
+# CACHE
 # ============================================================
 
 if ENVIRONMENT == 'production':
@@ -362,7 +377,6 @@ if ENVIRONMENT == 'production':
         }
     }
 else:
-    # Development: Use LocMemCache (supports atomic increment for ratelimit)
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -392,13 +406,13 @@ else:
     }
 
 # ============================================================
-# RATE LIMITING (Enabled in Production only)
+# RATE LIMITING
 # ============================================================
 
 if ENVIRONMENT == 'production':
     RATELIMIT_ENABLE = True
 else:
-    RATELIMIT_ENABLE = False  # Disable in development
+    RATELIMIT_ENABLE = False
 
 RATELIMIT_USE_CACHE = 'default'
 RATELIMIT_HEADER_ENABLED = True
@@ -407,19 +421,15 @@ RATELIMIT_HEADER_REMAINING = 'X-RateLimit-Remaining'
 RATELIMIT_HEADER_RESET = 'X-RateLimit-Reset'
 
 # ============================================================
-# LOGGING - Console Only (No File Handler)
+# LOGGING
 # ============================================================
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
         'simple': {
-            'format': '{levelname} {asctime} {message}',
+            'format': '[{levelname}] {asctime} {message}',
             'style': '{',
         },
     },
@@ -438,15 +448,6 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
-        },
-        'django_redis': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'channels': {
-            'handlers': ['console'],
-            'level': 'INFO',
         },
     },
 }
@@ -476,38 +477,16 @@ MPESA_RESULT_URL = config('MPESA_RESULT_URL', default='')
 DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 
 # ============================================================
-# SESSION CONFIGURATION (Optional)
+# FORCE ALLOWED_HOSTS AGAIN (Emergency Safety Net)
 # ============================================================
 
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
+# This ensures ALLOWED_HOSTS is always set correctly
+ALLOWED_HOSTS = [
+    '.onrender.com',
+    'sakafundi.onrender.com',
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+]
 
-# ============================================================
-# CELERY CONFIGURATION (Optional)
-# ============================================================
-
-# CELERY_BROKER_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
-# CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = TIME_ZONE
-
-# ============================================================
-# FORCE DEVELOPMENT CACHE SETTINGS (SAFETY NET)
-# ============================================================
-
-if ENVIRONMENT == 'development':
-    # Override cache to use LocMemCache
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
-        }
-    }
-    RATELIMIT_ENABLE = False
-    
-    import sys
-    print("🔧 Development Mode Active", file=sys.stderr)
-    print(f"   Cache: {CACHES['default']['BACKEND']}", file=sys.stderr)
-    print(f"   Ratelimit: {RATELIMIT_ENABLE}", file=sys.stderr)
+print(f"🔒 FINAL ALLOWED_HOSTS (forced): {ALLOWED_HOSTS}", file=sys.stderr)
