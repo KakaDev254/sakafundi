@@ -32,6 +32,7 @@ except ImportError:
 print("=" * 60, file=sys.stderr)
 print(f"DJANGO_ENV: {os.environ.get('DJANGO_ENV', 'NOT SET')}", file=sys.stderr)
 print(f"ALLOWED_HOSTS env: {os.environ.get('ALLOWED_HOSTS', 'NOT SET')}", file=sys.stderr)
+print(f"DATABASE_URL env: {os.environ.get('DATABASE_URL', 'NOT SET')[:50] if os.environ.get('DATABASE_URL') else 'NOT SET'}", file=sys.stderr)
 print("=" * 60, file=sys.stderr)
 
 # ============================================================
@@ -49,7 +50,6 @@ else:
 # ALLOWED_HOSTS - EXPLICITLY SET
 # ============================================================
 
-# This is the definitive ALLOWED_HOSTS - it overrides everything
 ALLOWED_HOSTS = [
     '.onrender.com',
     'sakafundi.onrender.com',
@@ -152,7 +152,7 @@ TEMPLATES = [
 ]
 
 # ============================================================
-# DATABASE
+# DATABASE - ORIGINAL CONFIG (will be overridden below)
 # ============================================================
 
 def get_database_config():
@@ -491,7 +491,6 @@ DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 # FORCE ALLOWED_HOSTS (Emergency Safety Net)
 # ============================================================
 
-# This MUST be at the bottom to override everything
 ALLOWED_HOSTS = [
     '.onrender.com',
     'sakafundi.onrender.com',
@@ -501,3 +500,42 @@ ALLOWED_HOSTS = [
 ]
 
 print(f"🔒 FINAL ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
+
+# ============================================================
+# FORCE POSTGRESQL FOR PRODUCTION (OVERRIDE EVERYTHING)
+# ============================================================
+
+# This MUST be at the bottom to override any previous database settings
+if ENVIRONMENT == 'production':
+    database_url = os.environ.get('DATABASE_URL')
+    
+    if database_url:
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=database_url,
+                conn_max_age=600,
+                ssl_require=True
+            )
+        }
+        print(f"✅ PRODUCTION: Using PostgreSQL with DATABASE_URL", file=sys.stderr)
+    else:
+        # Fallback to PostgreSQL with individual variables
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': config('DB_NAME', default='sakafundi'),
+                'USER': config('DB_USER', default='sakafundi_user'),
+                'PASSWORD': config('DB_PASSWORD', default=''),
+                'HOST': config('DB_HOST', default='localhost'),
+                'PORT': config('DB_PORT', default='5432'),
+                'OPTIONS': {
+                    'sslmode': 'require',
+                },
+            }
+        }
+        print(f"⚠️ PRODUCTION: Using PostgreSQL with individual variables (DATABASE_URL not found)", file=sys.stderr)
+else:
+    print(f"🔧 DEVELOPMENT: Using SQLite at {BASE_DIR / 'db.sqlite3'}", file=sys.stderr)
+
+print(f"🔍 FINAL DATABASE ENGINE: {DATABASES['default']['ENGINE']}", file=sys.stderr)
+print(f"🔍 FINAL DATABASE NAME: {DATABASES['default']['NAME']}", file=sys.stderr)
