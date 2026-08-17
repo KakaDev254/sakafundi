@@ -121,35 +121,48 @@ TEMPLATES = [
 # DATABASE
 # ============================================================
 
-if ENVIRONMENT == 'production':
-    # Use PostgreSQL in production
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME'),
-            'USER': config('DB_USER'),
-            'PASSWORD': config('DB_PASSWORD'),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
+def get_database_config():
+    """
+    Get database configuration with proper handling of Render's DATABASE_URL
+    """
+    if ENVIRONMENT == 'production':
+        # First, check if DATABASE_URL is provided (Render does this automatically)
+        database_url = config('DATABASE_URL', default=None)
+        
+        if database_url:
+            # Use DATABASE_URL (Render's preferred method)
+            return {
+                'default': dj_database_url.config(
+                    default=database_url,
+                    conn_max_age=600,
+                    ssl_require=True  # Render requires SSL
+                )
+            }
+        else:
+            # Fallback to individual environment variables
+            return {
+                'default': {
+                    'ENGINE': 'django.db.backends.postgresql',
+                    'NAME': config('DB_NAME'),
+                    'USER': config('DB_USER'),
+                    'PASSWORD': config('DB_PASSWORD'),
+                    'HOST': config('DB_HOST', default='localhost'),
+                    'PORT': config('DB_PORT', default='5432'),
+                    'OPTIONS': {
+                        'sslmode': 'require',  # Render requires SSL
+                    },
+                }
+            }
+    else:
+        # Development - use SQLite
+        return {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
         }
-    }
-    
-    # Use DATABASE_URL if provided (Render automatic)
-    if config('DATABASE_URL', default=None):
-        import dj_database_url
-        DATABASES['default'] = dj_database_url.config(
-            default=config('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=True
-        )
-else:
-    # Use SQLite for development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+
+DATABASES = get_database_config()
 
 # ============================================================
 # CUSTOM USER MODEL
