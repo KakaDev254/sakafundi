@@ -14,16 +14,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ============================================================
 
 ENVIRONMENT = os.environ.get('DJANGO_ENV', 'development')
+print(f"🔍 ENVIRONMENT: {ENVIRONMENT}", file=sys.stderr)
 
 # ============================================================
-# LOAD .env FILE
+# LOAD .env FILE (ONLY IN DEVELOPMENT, DON'T OVERRIDE)
 # ============================================================
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv(BASE_DIR / '.env')
-except ImportError:
-    pass
+# Only load .env in development to avoid overriding production variables
+if ENVIRONMENT == 'development':
+    try:
+        from dotenv import load_dotenv
+        # Load .env WITHOUT overriding existing environment variables
+        load_dotenv(BASE_DIR / '.env', override=False)
+        print("✅ Loaded .env for development (no override)", file=sys.stderr)
+    except ImportError:
+        pass
+else:
+    print("ℹ️ Production mode: Skipping .env loading", file=sys.stderr)
 
 # ============================================================
 # DEBUG OUTPUT
@@ -152,44 +159,50 @@ TEMPLATES = [
 ]
 
 # ============================================================
-# DATABASE - ORIGINAL CONFIG (will be overridden below)
+# DATABASE - FORCE POSTGRESQL FOR PRODUCTION
 # ============================================================
 
-def get_database_config():
-    if ENVIRONMENT == 'production':
-        database_url = config('DATABASE_URL', default=None)
-        
-        if database_url:
-            return {
-                'default': dj_database_url.config(
-                    default=database_url,
-                    conn_max_age=600,
-                    ssl_require=True
-                )
-            }
-        else:
-            return {
-                'default': {
-                    'ENGINE': 'django.db.backends.postgresql',
-                    'NAME': config('DB_NAME', default='sakafundi'),
-                    'USER': config('DB_USER', default='sakafundi_user'),
-                    'PASSWORD': config('DB_PASSWORD', default=''),
-                    'HOST': config('DB_HOST', default='localhost'),
-                    'PORT': config('DB_PORT', default='5432'),
-                    'OPTIONS': {
-                        'sslmode': 'require',
-                    },
-                }
-            }
-    else:
-        return {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+# Get DATABASE_URL from environment
+database_url = os.environ.get('DATABASE_URL')
 
-DATABASES = get_database_config()
+if database_url:
+    # Use PostgreSQL with DATABASE_URL from environment
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+    print(f"✅ DATABASE: Using PostgreSQL from DATABASE_URL", file=sys.stderr)
+elif ENVIRONMENT == 'production':
+    # Fallback for production
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'sakafundi'),
+            'USER': os.environ.get('DB_USER', 'sakafundi_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
+        }
+    }
+    print(f"⚠️ DATABASE: Using PostgreSQL from individual variables", file=sys.stderr)
+else:
+    # Development - use SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    print(f"🔧 DATABASE: Using SQLite for development", file=sys.stderr)
+
+print(f"🔍 FINAL DATABASE ENGINE: {DATABASES['default']['ENGINE']}", file=sys.stderr)
+print(f"🔍 FINAL DATABASE NAME: {DATABASES['default']['NAME']}", file=sys.stderr)
 
 # ============================================================
 # CUSTOM USER MODEL
