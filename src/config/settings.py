@@ -48,24 +48,47 @@ print("=" * 60, file=sys.stderr)
 
 SECRET_KEY = config('SECRET_KEY')
 
+# config/settings.py - Complete production section
+
 if ENVIRONMENT == 'production':
     DEBUG = False
+    ALLOWED_HOSTS = [
+        '.onrender.com',
+        'sakafundi.onrender.com',
+        'localhost',
+        '127.0.0.1',
+        '0.0.0.0',
+    ]
+    
+    # CSRF Trusted Origins
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.onrender.com',
+        'https://sakafundi.onrender.com',
+        'http://*.onrender.com',
+        'http://sakafundi.onrender.com',
+    ]
+    
+    # Security Settings
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
     DEBUG = True
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+    CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
-# ============================================================
-# ALLOWED_HOSTS - EXPLICITLY SET
-# ============================================================
-
-ALLOWED_HOSTS = [
-    '.onrender.com',
-    'sakafundi.onrender.com',
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-]
-
-print(f"✅ ALLOWED_HOSTS SET TO: {ALLOWED_HOSTS}", file=sys.stderr)
+print(f"🔒 CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
 
 # ============================================================
 # APPLICATION DEFINITION
