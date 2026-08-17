@@ -3,23 +3,27 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
-from dotenv import load_dotenv
 
 # Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# ============================================================
-# LOAD .env FILE
-# ============================================================
-
-# Load .env from src directory
-load_dotenv(BASE_DIR / '.env')
 
 # ============================================================
 # ENVIRONMENT DETECTION
 # ============================================================
 
 ENVIRONMENT = os.environ.get('DJANGO_ENV', 'development')
+
+# ============================================================
+# LOAD .env FILE
+# ============================================================
+
+# Try to load with python-dotenv first (if installed)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    # Fallback to decouple (which will look for .env automatically)
+    pass
 
 # ============================================================
 # BASE SECURITY SETTINGS
@@ -193,7 +197,7 @@ SITE_ID = 1
 # ALLAUTH SETTINGS (Updated for latest version)
 # ============================================================
 
-# Authentication method - Updated
+# Authentication method
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
@@ -202,7 +206,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 ACCOUNT_LOGOUT_ON_GET = True
 
-# Rate limiting for login attempts - Updated
+# Rate limiting for login attempts
 ACCOUNT_RATE_LIMITS = {
     'login_failed': '5/300',  # 5 attempts per 300 seconds
 }
@@ -330,7 +334,7 @@ else:
     CSRF_COOKIE_SECURE = False
 
 # ============================================================
-# CACHE (Redis or Database Cache)
+# CACHE (Redis for Production, LocMemCache for Development)
 # ============================================================
 
 if ENVIRONMENT == 'production':
@@ -358,11 +362,11 @@ if ENVIRONMENT == 'production':
         }
     }
 else:
-    # Use database cache for development (shared across processes)
+    # Development: Use LocMemCache (supports atomic increment for ratelimit)
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-            'LOCATION': 'django_cache_table',
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
         }
     }
 
@@ -388,10 +392,14 @@ else:
     }
 
 # ============================================================
-# RATE LIMITING
+# RATE LIMITING (Enabled in Production only)
 # ============================================================
 
-RATELIMIT_ENABLE = True
+if ENVIRONMENT == 'production':
+    RATELIMIT_ENABLE = True
+else:
+    RATELIMIT_ENABLE = False  # Disable in development
+
 RATELIMIT_USE_CACHE = 'default'
 RATELIMIT_HEADER_ENABLED = True
 RATELIMIT_HEADER_LIMIT = 'X-RateLimit-Limit'
@@ -402,48 +410,91 @@ RATELIMIT_HEADER_RESET = 'X-RateLimit-Reset'
 # LOGGING
 # ============================================================
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+if ENVIRONMENT == 'production':
+    # Production: Only use console logging
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {asctime} {message}',
+                'style': '{',
+            },
         },
-        'simple': {
-            'format': '{levelname} {asctime} {message}',
-            'style': '{',
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+            },
         },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'logs/django.log',
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'django': {
+        'root': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'WARNING',
         },
-        'django_redis': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+            'django_redis': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+            'channels': {
+                'handlers': ['console'],
+                'level': 'INFO',
+            },
         },
-        'channels': {
-            'handlers': ['console'],
-            'level': 'INFO',
+    }
+else:
+    # Development: Use console and file logging
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {asctime} {message}',
+                'style': '{',
+            },
         },
-    },
-}
-
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+            },
+            'file': {
+                'level': 'INFO',
+                'class': 'logging.FileHandler',
+                'filename': BASE_DIR / 'logs/django.log',
+                'formatter': 'verbose',
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console', 'file'],
+                'level': 'INFO',
+            },
+            'django_redis': {
+                'handlers': ['console', 'file'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+            'channels': {
+                'handlers': ['console', 'file'],
+                'level': 'INFO',
+            },
+        },
+    }
 # ============================================================
 # M-PESA SETTINGS
 # ============================================================
