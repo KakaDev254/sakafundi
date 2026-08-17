@@ -20,11 +20,9 @@ print(f"🔍 ENVIRONMENT: {ENVIRONMENT}", file=sys.stderr)
 # LOAD .env FILE (ONLY IN DEVELOPMENT, DON'T OVERRIDE)
 # ============================================================
 
-# Only load .env in development to avoid overriding production variables
 if ENVIRONMENT == 'development':
     try:
         from dotenv import load_dotenv
-        # Load .env WITHOUT overriding existing environment variables
         load_dotenv(BASE_DIR / '.env', override=False)
         print("✅ Loaded .env for development (no override)", file=sys.stderr)
     except ImportError:
@@ -47,8 +45,6 @@ print("=" * 60, file=sys.stderr)
 # ============================================================
 
 SECRET_KEY = config('SECRET_KEY')
-
-# config/settings.py - Complete production section
 
 if ENVIRONMENT == 'production':
     DEBUG = False
@@ -102,7 +98,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django.contrib.sites',  # Required for allauth
+    'django.contrib.sites',
     
     # Third party apps
     'crispy_forms',
@@ -113,7 +109,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'import_export',
     
-    # Allauth - must be in this order
+    # Allauth
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -182,14 +178,13 @@ TEMPLATES = [
 ]
 
 # ============================================================
-# DATABASE - FORCE POSTGRESQL FOR PRODUCTION
+# DATABASE
 # ============================================================
 
 # Get DATABASE_URL from environment
 database_url = os.environ.get('DATABASE_URL')
 
 if database_url:
-    # Use PostgreSQL with DATABASE_URL from environment
     DATABASES = {
         'default': dj_database_url.config(
             default=database_url,
@@ -199,7 +194,6 @@ if database_url:
     }
     print(f"✅ DATABASE: Using PostgreSQL from DATABASE_URL", file=sys.stderr)
 elif ENVIRONMENT == 'production':
-    # Fallback for production
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -215,7 +209,6 @@ elif ENVIRONMENT == 'production':
     }
     print(f"⚠️ DATABASE: Using PostgreSQL from individual variables", file=sys.stderr)
 else:
-    # Development - use SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -355,27 +348,6 @@ PLATFORM_FEE_PERCENTAGE = config('PLATFORM_FEE_PERCENTAGE', default=10, cast=int
 DEPOSIT_DEFAULT_PERCENTAGE = 30
 CURRENCY = 'KES'
 CURRENCY_SYMBOL = 'KSh'
-
-# ============================================================
-# SECURITY (Production)
-# ============================================================
-
-if ENVIRONMENT == 'production':
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
-    
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-else:
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
 
 # ============================================================
 # CACHE
@@ -524,54 +496,21 @@ DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 # CELERY_TIMEZONE = TIME_ZONE
 
 # ============================================================
-# FORCE ALLOWED_HOSTS (Emergency Safety Net)
+# FORCE CSRF SETTINGS FOR RENDER
 # ============================================================
 
-ALLOWED_HOSTS = [
-    '.onrender.com',
-    'sakafundi.onrender.com',
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
-]
-
-print(f"🔒 FINAL ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
-
-# ============================================================
-# FORCE POSTGRESQL FOR PRODUCTION (OVERRIDE EVERYTHING)
-# ============================================================
-
-# This MUST be at the bottom to override any previous database settings
-if ENVIRONMENT == 'production':
-    database_url = os.environ.get('DATABASE_URL')
+# Force CSRF trusted origins for Render
+if 'RENDER' in os.environ:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.onrender.com',
+        'https://sakafundi.onrender.com',
+        'http://*.onrender.com',
+        'http://sakafundi.onrender.com',
+    ]
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
     
-    if database_url:
-        DATABASES = {
-            'default': dj_database_url.config(
-                default=database_url,
-                conn_max_age=600,
-                ssl_require=True
-            )
-        }
-        print(f"✅ PRODUCTION: Using PostgreSQL with DATABASE_URL", file=sys.stderr)
-    else:
-        # Fallback to PostgreSQL with individual variables
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': config('DB_NAME', default='sakafundi'),
-                'USER': config('DB_USER', default='sakafundi_user'),
-                'PASSWORD': config('DB_PASSWORD', default=''),
-                'HOST': config('DB_HOST', default='localhost'),
-                'PORT': config('DB_PORT', default='5432'),
-                'OPTIONS': {
-                    'sslmode': 'require',
-                },
-            }
-        }
-        print(f"⚠️ PRODUCTION: Using PostgreSQL with individual variables (DATABASE_URL not found)", file=sys.stderr)
-else:
-    print(f"🔧 DEVELOPMENT: Using SQLite at {BASE_DIR / 'db.sqlite3'}", file=sys.stderr)
-
-print(f"🔍 FINAL DATABASE ENGINE: {DATABASES['default']['ENGINE']}", file=sys.stderr)
-print(f"🔍 FINAL DATABASE NAME: {DATABASES['default']['NAME']}", file=sys.stderr)
+    # Also ensure DEBUG is False on Render
+    DEBUG = False
+    
+    print(f"✅ FORCED CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
