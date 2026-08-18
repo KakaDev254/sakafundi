@@ -15,8 +15,9 @@ from .models import (
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    # TEMPORARY: Remove verification_status from list_display and list_filter
+    # REMOVE verification_status from list_display
     list_display = ('username', 'email', 'phone_number', 'user_type', 'balance', 'is_active')
+    # REMOVE verification_status from list_filter
     list_filter = ('user_type', 'is_active', 'is_staff')
     search_fields = ('username', 'email', 'phone_number', 'id_number', 'first_name', 'last_name')
     
@@ -37,7 +38,6 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('balance', 'total_earned', 'total_withdrawn', 'total_spent')
         }),
     )
-
 @admin.register(UserBankAccount)
 class UserBankAccountAdmin(admin.ModelAdmin):
     list_display = ('user', 'bank_name', 'account_name', 'account_number', 'is_default', 'is_verified')
