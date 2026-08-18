@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cloudinary %}
 
 {% block title %}Chat - SakaFundi{% endblock %}
 
@@ -16,9 +17,11 @@
                                 <i class="fas fa-arrow-left"></i>
                             </a>
                             {% if other_participant %}
-                                <img src="{{ other_participant.profile_image.url|default:'/static/images/default-avatar.png' }}" 
+                                <!-- Updated for Cloudinary -->
+                                <img src="{{ other_participant.profile_image.url }}" 
                                      class="rounded-circle me-3" 
-                                     style="width: 45px; height: 45px; object-fit: cover;">
+                                     style="width: 45px; height: 45px; object-fit: cover;"
+                                     alt="{{ other_participant.get_full_name|default:other_participant.username }}">
                                 <div>
                                     <h6 class="mb-0 fw-semibold">
                                         {{ other_participant.get_full_name|default:other_participant.username }}
@@ -66,6 +69,7 @@
                                         </small>
                                     </div>
                                     <div class="message-content">{{ message.content|linebreaksbr }}</div>
+                                    <!-- Updated for Cloudinary attachment -->
                                     {% if message.attachment %}
                                         <div class="mt-2">
                                             <a href="{% url 'chat:view_attachment' message.id %}" 

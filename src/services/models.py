@@ -1,6 +1,8 @@
+# services/models.py
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth import get_user_model
+from cloudinary.models import CloudinaryField
 
 User = get_user_model()
 
@@ -18,6 +20,7 @@ class ServiceCategory(models.Model):
     
     def __str__(self):
         return self.name
+
 
 class Service(models.Model):
     provider = models.ForeignKey(User, on_delete=models.CASCADE, related_name='services')
@@ -57,9 +60,17 @@ class Service(models.Model):
         """Calculate deposit amount based on percentage"""
         return (amount * self.deposit_percentage) / 100
 
+
 class ServicePortfolio(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='portfolio')
-    image = models.ImageField(upload_to='portfolio/%Y/%m/')
+    
+    # Using CloudinaryField for portfolio images
+    image = CloudinaryField(
+        'image',
+        folder='portfolio',
+        blank=True,
+        null=True
+    )
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     is_cover = models.BooleanField(default=False)

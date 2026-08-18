@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load cloudinary %}
 
 {% block title %}Edit Profile - SakaFundi{% endblock %}
 
@@ -13,6 +14,17 @@
                     <h4 class="fw-bold mb-3" style="color: #0F172A;">
                         <i class="fas fa-edit" style="color: #2563EB;"></i> Edit Profile
                     </h4>
+                    
+                    <!-- Current Profile Image Preview -->
+                    {% if user.profile_image %}
+                    <div class="text-center mb-3">
+                        <img src="{{ user.profile_image.url }}" 
+                             alt="Current Profile Image" 
+                             class="rounded-circle" 
+                             style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #E2E8F0;">
+                        <p class="text-muted small mt-1">Current Profile Image</p>
+                    </div>
+                    {% endif %}
                     
                     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                         {% csrf_token %}
@@ -81,7 +93,7 @@
                                 {% if form.profile_image.errors %}
                                     <div class="text-danger small">{{ form.profile_image.errors }}</div>
                                 {% endif %}
-                                <small class="text-muted">Upload a square image for best results</small>
+                                <small class="text-muted">Upload a square image for best results (JPG, PNG, or SVG)</small>
                             </div>
                         </div>
                         

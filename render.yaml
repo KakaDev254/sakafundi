@@ -50,7 +50,24 @@ services:
           type: redis
           property: connectionString
       
+      # ============================================================
+      # CLOUDINARY CONFIGURATION
+      # ============================================================
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false  # Set this in Render Dashboard
+      
+      - key: CLOUDINARY_API_KEY
+        sync: false  # Set this in Render Dashboard
+      
+      - key: CLOUDINARY_API_SECRET
+        sync: false  # Set this in Render Dashboard
+      
+      - key: CLOUDINARY_URL
+        sync: false  # Set this in Render Dashboard (format: cloudinary://API_KEY:API_SECRET@CLOUD_NAME)
+      
+      # ============================================================
       # M-PESA Settings (Set these in Render Dashboard)
+      # ============================================================
       - key: MPESA_CONSUMER_KEY
         sync: false
       
@@ -75,7 +92,9 @@ services:
       - key: MPESA_RESULT_URL
         value: "https://sakafundi.onrender.com/payments/mpesa/result/"
       
+      # ============================================================
       # Email Settings (Set these in Render Dashboard)
+      # ============================================================
       - key: EMAIL_HOST
         sync: false
       
@@ -94,7 +113,9 @@ services:
       - key: DEFAULT_FROM_EMAIL
         sync: false
       
+      # ============================================================
       # Platform Settings
+      # ============================================================
       - key: PLATFORM_FEE_PERCENTAGE
         value: "10"
       
@@ -107,7 +128,9 @@ services:
       - key: CURRENCY_SYMBOL
         value: "KSh"
       
+      # ============================================================
       # Security (Production)
+      # ============================================================
       - key: SECURE_SSL_REDIRECT
         value: "True"
       
@@ -135,14 +158,18 @@ services:
       - key: X_FRAME_OPTIONS
         value: "DENY"
       
+      # ============================================================
       # Google OAuth (Optional - Set in Render Dashboard)
+      # ============================================================
       - key: GOOGLE_OAUTH_CLIENT_ID
         sync: false
       
       - key: GOOGLE_OAUTH_CLIENT_SECRET
         sync: false
       
+      # ============================================================
       # Facebook OAuth (Optional - Set in Render Dashboard)
+      # ============================================================
       - key: FACEBOOK_APP_ID
         sync: false
       

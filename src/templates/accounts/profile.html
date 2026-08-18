@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% load cloudinary %}
 
 {% block title %}My Profile - SakaFundi{% endblock %}
 
@@ -11,6 +12,7 @@
         <div class="col-md-3">
             <div class="card shadow-sm border-0 rounded-3">
                 <div class="card-body text-center">
+                    <!-- Updated for Cloudinary -->
                     <img src="{{ user.profile_image.url }}" alt="{{ user.get_full_name }}"
                          class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #E2E8F0;">
                     <h5 class="fw-bold">{{ user.get_full_name|default:user.username }}</h5>

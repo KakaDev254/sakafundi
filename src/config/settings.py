@@ -3,6 +3,9 @@
 import os
 import sys
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from decouple import config
 import dj_database_url
 
@@ -41,12 +44,35 @@ print(f"DATABASE_URL env: {os.environ.get('DATABASE_URL', 'NOT SET')[:50] if os.
 print("=" * 60, file=sys.stderr)
 
 # ============================================================
+# CLOUDINARY CONFIGURATION
+# ============================================================
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME', default=''),
+    api_key=config('CLOUDINARY_API_KEY', default=''),
+    api_secret=config('CLOUDINARY_API_SECRET', default='')
+)
+
+# Cloudinary Storage Settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=''),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=''),
+    'STATIC_IMAGES_EXTENSIONS': ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'],
+    'STATIC_VIDEOS_EXTENSIONS': ['mp4', 'webm', 'avi'],
+}
+
+if config('CLOUDINARY_CLOUD_NAME', default=''):
+    print(f"✅ CLOUDINARY: Configured with cloud name: {config('CLOUDINARY_CLOUD_NAME')}", file=sys.stderr)
+else:
+    print(f"⚠️ CLOUDINARY: Not configured (missing cloud name)", file=sys.stderr)
+
+# ============================================================
 # BASE SECURITY SETTINGS
 # ============================================================
 
 SECRET_KEY = config('SECRET_KEY')
-
-# config/settings.py - Update the production section
 
 if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
     DEBUG = False
@@ -83,7 +109,6 @@ if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
     
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 else:
     DEBUG = True
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
@@ -120,6 +145,8 @@ INSTALLED_APPS = [
     'django_redis',
     'widget_tweaks',
     'import_export',
+    'cloudinary',
+    'cloudinary_storage',
     
     # Allauth - must be in this order
     'allauth',
@@ -306,15 +333,27 @@ USE_I18N = True
 USE_TZ = True
 
 # ============================================================
-# STATIC & MEDIA FILES
+# STATIC & MEDIA FILES WITH CLOUDINARY
 # ============================================================
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Media files - use Cloudinary in production, local in development
+if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
+    # Production: Use Cloudinary for media files
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Static files can also use Cloudinary (optional)
+    # STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+    MEDIA_URL = f'https://res.cloudinary.com/{config("CLOUDINARY_CLOUD_NAME", default="")}/'
+    print(f"✅ Using Cloudinary for media storage", file=sys.stderr)
+else:
+    # Development: Use local storage
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    print(f"🔧 Using local storage for media", file=sys.stderr)
 
 # ============================================================
 # DEFAULT FIELD
@@ -544,4 +583,13 @@ if 'RENDER' in os.environ:
     print(f"🔒 ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
     print(f"🔒 CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
     print(f"🔒 DEBUG: {DEBUG}", file=sys.stderr)
-    
+
+# ============================================================
+# CLOUDINARY URL FOR TEMPLATES
+# ============================================================
+
+# Make Cloudinary URL available in templates
+if config('CLOUDINARY_CLOUD_NAME', default=''):
+    CLOUDINARY_URL = f'https://res.cloudinary.com/{config("CLOUDINARY_CLOUD_NAME")}/'
+else:
+    CLOUDINARY_URL = ''

@@ -4,6 +4,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import Decimal
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 
 class User(AbstractUser):
@@ -30,26 +31,23 @@ class User(AbstractUser):
     id_number = models.CharField(max_length=20, blank=True, null=True)
     kra_pin = models.CharField(max_length=20, blank=True, null=True)
     
-    # Profile
-    profile_image = models.ImageField(
-        upload_to='profiles/%Y/%m/', 
-        default='profiles/default.jpg', 
-        blank=True, 
+    # Profile - Using CloudinaryField
+    profile_image = CloudinaryField(
+        'image',
+        folder='profiles',
+        default='profiles/default.jpg',
+        blank=True,
         null=True
     )
     bio = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
     county = models.CharField(max_length=50, blank=True, null=True)
     
-    # Verification
-    verification_status = models.CharField(
-        max_length=10, 
-        choices=VERIFICATION_STATUS, 
-        default='pending'
-    )
-    id_photo = models.ImageField(
-        upload_to='verification/%Y/%m/', 
-        blank=True, 
+    # Verification - Using CloudinaryField
+    id_photo = CloudinaryField(
+        'image',
+        folder='verification',
+        blank=True,
         null=True
     )
     verification_notes = models.TextField(blank=True, null=True)
@@ -337,7 +335,13 @@ class UserVerificationRequest(models.Model):
     request_type = models.CharField(max_length=30, choices=REQUEST_TYPES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
-    document = models.FileField(upload_to='verification_docs/%Y/%m/')
+    # Using CloudinaryField for documents
+    document = CloudinaryField(
+        'file',
+        folder='verification_docs',
+        blank=True,
+        null=True
+    )
     document_name = models.CharField(max_length=255)
     additional_info = models.TextField(blank=True, null=True)
     

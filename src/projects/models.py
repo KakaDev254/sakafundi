@@ -1,7 +1,9 @@
+# projects/models.py
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from decimal import Decimal
+from cloudinary.models import CloudinaryField
 
 User = get_user_model()
 
@@ -138,7 +140,14 @@ class ProjectUpdate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=UPDATE_TYPES, default='general')
     content = models.TextField()
-    attachment = models.FileField(upload_to='project_updates/%Y/%m/', null=True, blank=True)
+    
+    # Using CloudinaryField for attachments
+    attachment = CloudinaryField(
+        'file',
+        folder='project_updates',
+        blank=True,
+        null=True
+    )
     attachment_name = models.CharField(max_length=255, null=True, blank=True)
     
     # Metadata
@@ -184,7 +193,14 @@ class Dispute(models.Model):
     reason = models.CharField(max_length=20, choices=DISPUTE_REASONS, default='other')
     title = models.CharField(max_length=200)
     description = models.TextField()
-    attachment = models.FileField(upload_to='disputes/%Y/%m/', null=True, blank=True)
+    
+    # Using CloudinaryField for attachments
+    attachment = CloudinaryField(
+        'file',
+        folder='disputes',
+        blank=True,
+        null=True
+    )
     attachment_name = models.CharField(max_length=255, null=True, blank=True)
     
     # Admin/Resolution
@@ -265,8 +281,13 @@ class ProjectMilestone(models.Model):
     status = models.CharField(max_length=20, choices=MILESTONE_STATUS, default='pending')
     is_mandatory = models.BooleanField(default=True)
     
-    # Attachments
-    attachment = models.FileField(upload_to='milestones/%Y/%m/', null=True, blank=True)
+    # Attachments - Using CloudinaryField
+    attachment = CloudinaryField(
+        'file',
+        folder='milestones',
+        blank=True,
+        null=True
+    )
     
     # Ordering
     order = models.IntegerField(default=0)
@@ -308,7 +329,14 @@ class ProjectDocument(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     document_type = models.CharField(max_length=20, choices=DOCUMENT_TYPES, default='other')
-    file = models.FileField(upload_to='project_documents/%Y/%m/')
+    
+    # Using CloudinaryField for files
+    file = CloudinaryField(
+        'file',
+        folder='project_documents',
+        blank=True,
+        null=True
+    )
     description = models.TextField(blank=True, null=True)
     
     # Versioning

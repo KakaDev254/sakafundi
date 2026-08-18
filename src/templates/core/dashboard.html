@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% load cloudinary %}
 
-{% block title %}Dashboard - KenyaMarket{% endblock %}
+{% block title %}Dashboard - SakaFundi{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -11,8 +12,9 @@
         <div class="col-md-3 mb-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body text-center">
+                    <!-- Updated for Cloudinary -->
                     <img src="{{ user.profile_image.url }}" alt="{{ user.get_full_name }}"
-                         class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                         class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover; border: 3px solid #E2E8F0;">
                     <h5 class="fw-bold">{{ user.get_full_name }}</h5>
                     <p class="text-muted small">
                         <span class="badge bg-info text-white">
