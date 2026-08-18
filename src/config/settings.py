@@ -438,16 +438,7 @@ else:
         }
     }
 
-# ============================================================
-# RATE LIMITING
-# ============================================================
 
-if ENVIRONMENT == 'production':
-    RATELIMIT_ENABLE = True
-else:
-    RATELIMIT_ENABLE = False  # Disable in development
-
-RATELIMIT_USE_CACHE = 'default'
 
 # ============================================================
 # CHANNELS / WEBSOCKETS
