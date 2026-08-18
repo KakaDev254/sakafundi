@@ -15,8 +15,9 @@ from .models import (
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'phone_number', 'user_type', 'verification_status', 'balance', 'is_active')
-    list_filter = ('user_type', 'verification_status', 'is_active', 'is_staff')
+    # TEMPORARY: Remove verification_status from list_display and list_filter
+    list_display = ('username', 'email', 'phone_number', 'user_type', 'balance', 'is_active')
+    list_filter = ('user_type', 'is_active', 'is_staff')
     search_fields = ('username', 'email', 'phone_number', 'id_number', 'first_name', 'last_name')
     
     fieldsets = UserAdmin.fieldsets + (
