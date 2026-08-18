@@ -400,6 +400,8 @@ DEPOSIT_DEFAULT_PERCENTAGE = 30
 CURRENCY = 'KES'
 CURRENCY_SYMBOL = 'KSh'
 
+# config/settings.py - Update this section
+
 # ============================================================
 # CACHE
 # ============================================================
@@ -429,12 +431,23 @@ if ENVIRONMENT == 'production':
         }
     }
 else:
+    # Use DummyCache for development (no ratelimit issues)
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
         }
     }
+
+# ============================================================
+# RATE LIMITING
+# ============================================================
+
+if ENVIRONMENT == 'production':
+    RATELIMIT_ENABLE = True
+else:
+    RATELIMIT_ENABLE = False  # Disable in development
+
+RATELIMIT_USE_CACHE = 'default'
 
 # ============================================================
 # CHANNELS / WEBSOCKETS
@@ -457,20 +470,7 @@ else:
         },
     }
 
-# ============================================================
-# RATE LIMITING
-# ============================================================
 
-if ENVIRONMENT == 'production':
-    RATELIMIT_ENABLE = True
-else:
-    RATELIMIT_ENABLE = False
-
-RATELIMIT_USE_CACHE = 'default'
-RATELIMIT_HEADER_ENABLED = True
-RATELIMIT_HEADER_LIMIT = 'X-RateLimit-Limit'
-RATELIMIT_HEADER_REMAINING = 'X-RateLimit-Remaining'
-RATELIMIT_HEADER_RESET = 'X-RateLimit-Reset'
 
 # ============================================================
 # LOGGING
