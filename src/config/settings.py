@@ -141,7 +141,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_filters',
-    'django_ratelimit',
+    # 'django_ratelimit',
     'django_redis',
     'widget_tweaks',
     'import_export',
