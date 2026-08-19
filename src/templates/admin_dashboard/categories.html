@@ -221,6 +221,10 @@
         // Get CSRF token
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         
+        // Define URLs using Django template tags
+        const createUrl = "{% url 'admin_dashboard:category_create' %}";
+        const bulkActionUrl = "{% url 'admin_dashboard:category_bulk_action' %}";
+        
         // Select all checkbox
         document.getElementById('select-all')?.addEventListener('change', function() {
             document.querySelectorAll('.category-select').forEach(cb => cb.checked = this.checked);
@@ -232,7 +236,7 @@
             
             const formData = new FormData(this);
             
-            fetch('/admin-dashboard/categories/create/', {
+            fetch(createUrl, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken
@@ -241,7 +245,9 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
                 }
                 return response.json();
             })
@@ -262,6 +268,7 @@
         document.querySelectorAll('.edit-category').forEach(btn => {
             btn.addEventListener('click', function() {
                 const categoryId = this.dataset.id;
+                const updateUrl = "{% url 'admin_dashboard:category_update' 0 %}".replace('0', categoryId);
                 
                 document.getElementById('edit_category_id').value = categoryId;
                 document.getElementById('edit_name').value = this.dataset.name;
@@ -269,6 +276,9 @@
                 document.getElementById('edit_icon').value = this.dataset.icon || 'fas fa-tag';
                 document.getElementById('edit_description').value = this.dataset.description || '';
                 document.getElementById('edit_is_active').value = 'true';
+                
+                // Store the update URL for the form submission
+                document.getElementById('editCategoryForm').dataset.updateUrl = updateUrl;
                 
                 new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
             });
@@ -279,9 +289,9 @@
             e.preventDefault();
             
             const formData = new FormData(this);
-            const categoryId = document.getElementById('edit_category_id').value;
+            const updateUrl = this.dataset.updateUrl;
             
-            fetch(`/admin-dashboard/categories/${categoryId}/update/`, {
+            fetch(updateUrl, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken
@@ -290,7 +300,9 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
                 }
                 return response.json();
             })
@@ -311,7 +323,9 @@
         document.querySelectorAll('.delete-category').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (confirm(`Are you sure you want to delete "${this.dataset.name}"?`)) {
-                    fetch(`/admin-dashboard/categories/${this.dataset.id}/delete/`, {
+                    const deleteUrl = "{% url 'admin_dashboard:category_delete' 0 %}".replace('0', this.dataset.id);
+                    
+                    fetch(deleteUrl, {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': csrfToken
@@ -319,7 +333,9 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            return response.text().then(text => {
+                                throw new Error(text);
+                            });
                         }
                         return response.json();
                     })
@@ -364,7 +380,7 @@
             formData.append('action', action);
             ids.forEach(id => formData.append('category_ids[]', id));
             
-            fetch('/admin-dashboard/categories/bulk-action/', {
+            fetch(bulkActionUrl, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken
@@ -373,7 +389,9 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
                 }
                 return response.json();
             })
