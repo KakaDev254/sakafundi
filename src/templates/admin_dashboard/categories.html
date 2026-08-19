@@ -105,7 +105,7 @@
                     {% empty %}
                     <tr>
                         <td colspan="8" class="text-center py-4 text-muted">
-                            No categories found. 
+                            No categories found.
                             <button class="btn btn-link text-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
                                 Add your first category
                             </button>
@@ -140,7 +140,7 @@
                 <h5 class="modal-title">Add New Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="addCategoryForm">
+            <form id="addCategoryForm" action="{% url 'admin_dashboard:category_create' %}" method="POST">
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
@@ -179,7 +179,7 @@
                 <h5 class="modal-title">Edit Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="editCategoryForm">
+            <form id="editCategoryForm" action="{% url 'admin_dashboard:category_update' 0 %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="category_id" id="edit_category_id">
                 <div class="modal-body">
@@ -223,12 +223,13 @@
             document.querySelectorAll('.category-select').forEach(cb => cb.checked = this.checked);
         });
         
-        // Add Category Form
+        // Add Category Form - Submit via AJAX
         document.getElementById('addCategoryForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const url = this.action;
             
-            fetch('/services/admin/categories/create/', {
+            fetch(url, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -252,7 +253,13 @@
         // Edit Category - Open Modal
         document.querySelectorAll('.edit-category').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.getElementById('edit_category_id').value = this.dataset.id;
+                const categoryId = this.dataset.id;
+                
+                // Update form action with correct ID
+                const form = document.getElementById('editCategoryForm');
+                form.action = form.action.replace('/0/', `/${categoryId}/`);
+                
+                document.getElementById('edit_category_id').value = categoryId;
                 document.getElementById('edit_name').value = this.dataset.name;
                 document.getElementById('edit_slug').value = this.dataset.slug;
                 document.getElementById('edit_icon').value = this.dataset.icon || 'fas fa-tag';
@@ -263,13 +270,13 @@
             });
         });
         
-        // Edit Category Form
+        // Edit Category Form - Submit via AJAX
         document.getElementById('editCategoryForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            const categoryId = document.getElementById('edit_category_id').value;
+            const url = this.action;
             
-            fetch(`/services/admin/categories/${categoryId}/update/`, {
+            fetch(url, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -294,7 +301,7 @@
         document.querySelectorAll('.delete-category').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (confirm(`Are you sure you want to delete "${this.dataset.name}"?`)) {
-                    fetch(`/services/admin/categories/${this.dataset.id}/delete/`, {
+                    fetch(`/admin-dashboard/categories/${this.dataset.id}/delete/`, {
                         method: 'POST',
                         headers: {
                             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
@@ -337,7 +344,7 @@
             formData.append('action', action);
             ids.forEach(id => formData.append('category_ids[]', id));
             
-            fetch('/services/admin/categories/bulk-action/', {
+            fetch('/admin-dashboard/categories/bulk-action/', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -355,4 +362,23 @@
         });
     });
 </script>
+
+<!-- Responsive Styles -->
+<style>
+    @media (max-width: 576px) {
+        .table-responsive {
+            font-size: 0.8rem;
+        }
+        .btn-group {
+            flex-direction: column;
+            gap: 4px;
+        }
+        .btn-group .btn {
+            width: 100%;
+        }
+        .d-flex.gap-2 {
+            flex-direction: column;
+        }
+    }
+</style>
 {% endblock %}
