@@ -12,6 +12,12 @@
     --danger: #DC2626;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: var(--text);
@@ -25,19 +31,55 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text);
 }
 
-/* Navbar hover effects */
-.nav-link:hover {
-    color: var(--primary) !important;
-}
+/* ============================================================
+   BUTTON STYLES - RESPONSIVE
+   ============================================================ */
 
-/* Button hover effects */
-.btn-primary {
-    background: var(--primary);
+/* Base Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
     border: none;
     border-radius: 12px;
     padding: 12px 28px;
-    font-weight: 600;
     transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.btn i {
+    font-size: 1rem;
+}
+
+/* Button Sizes */
+.btn-lg {
+    padding: 14px 36px;
+    font-size: 1.1rem;
+    border-radius: 14px;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+}
+
+.btn-xs {
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+}
+
+/* Primary Button */
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
 }
 
 .btn-primary:hover {
@@ -46,17 +88,111 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
 }
 
-/* Card shadows */
+/* Secondary Button */
+.btn-secondary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #D97706;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+}
+
+/* Outline Button */
+.btn-outline-primary {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+/* Success Button */
+.btn-success {
+    background: var(--success);
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #15803D;
+    transform: translateY(-2px);
+}
+
+/* Danger Button */
+.btn-danger {
+    background: var(--danger);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #B91C1C;
+    transform: translateY(-2px);
+}
+
+/* Warning Button */
+.btn-warning {
+    background: var(--accent);
+    color: #fff;
+}
+
+.btn-warning:hover {
+    background: #D97706;
+    transform: translateY(-2px);
+}
+
+/* Light Button */
+.btn-light {
+    background: #F1F5F9;
+    color: var(--text);
+}
+
+.btn-light:hover {
+    background: #E2E8F0;
+    transform: translateY(-2px);
+}
+
+/* Dark Button */
+.btn-dark {
+    background: var(--text);
+    color: #fff;
+}
+
+.btn-dark:hover {
+    background: #1E293B;
+    transform: translateY(-2px);
+}
+
+/* ============================================================
+   NAVBAR HOVER EFFECTS
+   ============================================================ */
+
+.nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* ============================================================
+   CARD SHADOWS
+   ============================================================ */
+
 .shadow-hover {
     transition: all 0.3s ease;
 }
 
 .shadow-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Badge styles */
+/* ============================================================
+   BADGE STYLES
+   ============================================================ */
+
 .badge-primary {
     background: var(--primary);
     color: #fff;
@@ -67,16 +203,327 @@ h1, h2, h3, h4, h5, h6 {
     color: #fff;
 }
 
-/* Form controls */
+/* ============================================================
+   FORM CONTROLS
+   ============================================================ */
+
 .form-control:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Responsive tweaks */
-@media (max-width: 768px) {
+/* ============================================================
+   RESPONSIVE TWEAKS
+   ============================================================ */
+
+/* Mobile First - Small Screens */
+@media (max-width: 576px) {
     .container {
         padding-left: 16px;
         padding-right: 16px;
+    }
+
+    /* All buttons become smaller on mobile */
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        border-radius: 10px;
+        white-space: normal;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn i {
+        font-size: 0.9rem;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1rem;
+        border-radius: 12px;
+    }
+
+    .btn-sm {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+
+    .btn-xs {
+        padding: 3px 10px;
+        font-size: 0.7rem;
+        border-radius: 4px;
+    }
+
+    /* Button groups stack vertically */
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .btn-group .btn {
+        width: 100%;
+        border-radius: 10px !important;
+    }
+
+    /* Hero section buttons */
+    .hero-section .btn {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        width: 100%;
+    }
+
+    /* Dashboard action buttons */
+    .dashboard-actions .btn {
+        padding: 10px 18px;
+        font-size: 0.85rem;
+    }
+
+    /* Card action buttons */
+    .card .btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    /* Modal buttons */
+    .modal-footer .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        width: 100%;
+    }
+
+    /* Form buttons */
+    .form-actions .btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+        width: 100%;
+    }
+}
+
+/* Tablet Screens */
+@media (min-width: 577px) and (max-width: 768px) {
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .btn {
+        padding: 10px 22px;
+        font-size: 0.9rem;
+    }
+
+    .btn-lg {
+        padding: 12px 28px;
+        font-size: 1rem;
+    }
+
+    .btn-sm {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+    }
+
+    .btn-xs {
+        padding: 3px 10px;
+        font-size: 0.7rem;
+    }
+
+    /* Button groups on tablet */
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .btn-group .btn {
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .hero-section .btn {
+        padding: 12px 28px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Small Laptops */
+@media (min-width: 769px) and (max-width: 992px) {
+    .btn {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+    }
+
+    .btn-lg {
+        padding: 14px 32px;
+        font-size: 1.05rem;
+    }
+
+    .btn-sm {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Large Screens */
+@media (min-width: 993px) {
+    .btn {
+        padding: 12px 28px;
+        font-size: 1rem;
+    }
+
+    .btn-lg {
+        padding: 14px 36px;
+        font-size: 1.1rem;
+    }
+
+    .btn-sm {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
+
+/* ============================================================
+   SPECIAL CASES
+   ============================================================ */
+
+/* Full width buttons on mobile */
+.btn-block-mobile {
+    width: auto;
+}
+
+@media (max-width: 576px) {
+    .btn-block-mobile {
+        width: 100%;
+    }
+}
+
+/* Inline buttons on mobile */
+.btn-inline-mobile {
+    width: auto;
+}
+
+/* Floating Action Button (FAB) */
+.btn-fab {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-fab i {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 576px) {
+    .btn-fab {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .btn-fab i {
+        font-size: 1rem;
+    }
+}
+
+/* Icon-only buttons */
+.btn-icon {
+    padding: 0 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 576px) {
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* Dropdown buttons */
+.dropdown .btn {
+    width: auto;
+}
+
+@media (max-width: 576px) {
+    .dropdown .btn {
+        width: 100%;
+    }
+}
+
+/* Navbar buttons */
+.navbar .btn {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+    border-radius: 50px;
+}
+
+@media (max-width: 576px) {
+    .navbar .btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        width: 100%;
+    }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ripple::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10%);
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform 0.5s, opacity 1s;
+}
+
+.btn-ripple:active::after {
+    transform: scale(0, 0);
+    opacity: 0.3;
+    transition: 0s;
+}
+
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
 }

@@ -6,58 +6,58 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section" style="padding: 80px 0; background: #FFFFFF;">
+<section class="hero-section" style="padding: 60px 0; background: #FFFFFF;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h1 class="display-3 fw-bold mb-3" style="color: #0F172A; line-height: 1.2;">
+                <h1 class="display-4 fw-bold mb-3" style="color: #0F172A; line-height: 1.2; font-size: clamp(2rem, 4vw, 3.5rem);">
                     Find Trusted <br>
                     <span style="color: #2563EB;">Skills & Professionals in Kenya</span>
                 </h1>
-                <p class="lead mb-4" style="color: #64748B; font-size: 1.2rem; line-height: 1.8; max-width: 500px;">
+                <p class="lead mb-4" style="color: #64748B; font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.8; max-width: 500px;">
                     Pata Fundi, Pata Pro. Pata Kazi. 
                     <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
                 </p>
 
-                <!-- Search Box - Airbnb Style -->
-                <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 1px solid #E2E8F0; max-width: 550px;">
+                <!-- Search Box - Enhanced Design -->
+                <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 2px solid #E2E8F0; max-width: 550px; transition: all 0.3s ease;">
                     <form action="{% url 'services:list' %}" method="get" class="d-flex align-items-center">
                         <div class="flex-grow-1 px-3">
-                            <i class="fas fa-search text-secondary me-2"></i>
+                            <i class="fas fa-search text-secondary me-2" style="color: #94A3B8; font-size: 1.1rem;"></i>
                             <input type="text" name="q" class="border-0 bg-transparent" 
                                    placeholder="Search for a service or skill..." 
-                                   style="outline: none; width: 100%; padding: 12px 0; font-size: 1rem;">
+                                   style="outline: none; width: 100%; padding: 12px 0; font-size: clamp(0.9rem, 1.2vw, 1rem); color: #0F172A;">
                         </div>
-                        <button type="submit" class="btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 12px 32px; font-weight: 600; border: none;">
-                            Search
+                        <button type="submit" class="btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 10px 28px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1vw, 1rem); transition: all 0.3s ease;">
+                            <i class="fas fa-search d-none d-sm-inline me-2"></i> Search
                         </button>
                     </form>
                 </div>
 
                 <!-- Trust Badge -->
-                <div class="d-flex align-items-center gap-3">
-                    <div class="text-warning">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="text-warning" style="font-size: clamp(0.85rem, 1.2vw, 1rem);">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <span class="text-secondary small fw-semibold">Connecting Kenyans with trusted skilled professionals</span>
+                    <span class="text-secondary small fw-semibold" style="font-size: clamp(0.75rem, 1vw, 0.9rem);">Connecting Kenyans with trusted skilled professionals</span>
                 </div>
 
+                <!-- Action Buttons -->
                 <div class="mt-4 d-flex gap-3 flex-wrap">
-                    <a href="{% url 'services:list' %}" class="btn" style="background: #2563EB; color: #fff; border-radius: 12px; padding: 14px 36px; font-weight: 600; border: none;">
+                    <a href="{% url 'services:list' %}" class="btn btn-primary btn-lg" style="background: #2563EB; color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem);">
                         <i class="fas fa-search me-2"></i> Find a Professional
                     </a>
-                    <a href="{% url 'accounts:register' %}" class="btn" style="background: #F59E0B; color: #fff; border-radius: 12px; padding: 14px 36px; font-weight: 600; border: none;">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-secondary btn-lg" style="background: #F59E0B; color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem);">
                         <i class="fas fa-user-plus me-2"></i> List Your Skills
                     </a>
                 </div>
             </div>
             <div class="col-lg-6 mt-4 mt-lg-0 text-center">
-                <!-- Updated for Cloudinary -->
-                <img src="{% static 'images/hero-illustration.jpg' %}" alt="Hero" class="img-fluid" style="max-height: 450px;">
+                <img src="{% static 'images/hero-illustration.jpg' %}" alt="Hero" class="img-fluid" style="max-height: 400px; width: 100%; object-fit: contain;">
             </div>
         </div>
     </div>
@@ -67,28 +67,35 @@
 <section class="py-5" style="background: #F8FAFC;">
     <div class="container">
         <div class="row g-4">
-            <div class="col-md-3 col-6">
-                <div class="stat-card" style="background: #FFFFFF; border-radius: 18px; padding: 24px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #2563EB; font-size: 2.5rem;">{{ total_services }}+</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500;">Services Available</p>
+            <div class="col-6 col-md-3">
+                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
+                    <h2 class="fw-bold mb-0" style="color: #2563EB; font-size: clamp(1.8rem, 3vw, 2.5rem);">{{ total_services }}+</h2>
+                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Services Available</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-card" style="background: #FFFFFF; border-radius: 18px; padding: 24px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #16A34A; font-size: 2.5rem;">{{ total_providers }}+</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500;">Verified Providers</p>
+            <div class="col-6 col-md-3">
+                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
+                    <h2 class="fw-bold mb-0" style="color: #16A34A; font-size: clamp(1.8rem, 3vw, 2.5rem);">{{ total_providers }}+</h2>
+                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Verified Providers</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-card" style="background: #FFFFFF; border-radius: 18px; padding: 24px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #F59E0B; font-size: 2.5rem;">{{ completed_projects }}+</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500;">Projects Completed</p>
+            <div class="col-6 col-md-3">
+                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
+                    <h2 class="fw-bold mb-0" style="color: #F59E0B; font-size: clamp(1.8rem, 3vw, 2.5rem);">{{ completed_projects }}+</h2>
+                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Projects Completed</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stat-card" style="background: #FFFFFF; border-radius: 18px; padding: 24px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #8B5CF6; font-size: 2.5rem;">{{ avg_rating|default:"4.8" }}/5</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500;">Average Rating</p>
+            <div class="col-6 col-md-3">
+                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
+                    <div class="text-warning mb-1" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h2 class="fw-bold mb-0" style="color: #8B5CF6; font-size: clamp(1.5rem, 2.5vw, 2.2rem);">{{ avg_rating|default:"4.8" }}</h2>
+                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Average Rating</p>
                 </div>
             </div>
         </div>
@@ -99,33 +106,32 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: 2.2rem;">Featured Services</h2>
-            <p class="text-secondary" style="font-size: 1.1rem;">Find the most popular professionals this week</p>
+            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">Featured Services</h2>
+            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Find the most popular professionals this week</p>
         </div>
         
         <div class="row g-4">
             {% for service in featured_services %}
-            <div class="col-md-4 col-lg-3">
-                <div class="service-card" style="background: #FFFFFF; border-radius: 22px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #F1F5F9; height: 100%;">
+            <div class="col-md-4 col-lg-3 col-6">
+                <div class="service-card h-100" style="background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #F1F5F9;">
                     <div class="position-relative">
                         {% if service.portfolio.first %}
-                            <!-- Updated for Cloudinary -->
                             <img src="{{ service.portfolio.first.image.url }}" class="w-100" 
-                                 alt="{{ service.title }}" style="height: 220px; object-fit: cover;">
+                                 alt="{{ service.title }}" style="height: 180px; object-fit: cover;">
                         {% else %}
                             <div class="bg-light d-flex align-items-center justify-content-center" 
-                                 style="height: 220px; background: #F8FAFC !important;">
+                                 style="height: 180px; background: #F8FAFC !important;">
                                 <i class="fas fa-image fa-3x text-secondary" style="opacity: 0.3;"></i>
                             </div>
                         {% endif %}
                         {% if service.is_featured %}
-                            <span class="badge position-absolute top-0 end-0 m-3" style="background: #F59E0B; color: #fff; padding: 6px 14px; border-radius: 50px; font-weight: 500;">Featured</span>
+                            <span class="badge position-absolute top-0 end-0 m-2" style="background: #F59E0B; color: #fff; padding: 4px 12px; border-radius: 50px; font-weight: 500; font-size: 0.7rem;">Featured</span>
                         {% endif %}
                     </div>
-                    <div class="p-4">
-                        <h6 class="fw-semibold mb-2" style="color: #0F172A; font-size: 1rem;">{{ service.title|truncatechars:30 }}</h6>
-                        <div class="d-flex align-items-center gap-1 mb-2">
-                            <span class="text-warning small">
+                    <div class="p-3">
+                        <h6 class="fw-semibold mb-1" style="color: #0F172A; font-size: clamp(0.85rem, 1.1vw, 0.95rem);">{{ service.title|truncatechars:25 }}</h6>
+                        <div class="d-flex align-items-center gap-1 mb-1">
+                            <span class="text-warning" style="font-size: clamp(0.7rem, 0.9vw, 0.8rem);">
                                 {% for i in "12345"|make_list %}
                                     {% if forloop.counter <= service.rating|floatformat:"0"|add:"0" %}
                                         <i class="fas fa-star"></i>
@@ -134,20 +140,20 @@
                                     {% endif %}
                                 {% endfor %}
                             </span>
-                            <span class="text-secondary small">({{ service.rating|floatformat:1 }})</span>
+                            <span class="text-secondary" style="font-size: clamp(0.65rem, 0.8vw, 0.75rem);">({{ service.rating|floatformat:1 }})</span>
                         </div>
-                        <p class="text-secondary small mb-2">
-                            <i class="fas fa-user me-1"></i> {{ service.provider.get_full_name|truncatechars:15 }}
+                        <p class="text-secondary mb-1" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">
+                            <i class="fas fa-user me-1"></i> {{ service.provider.get_full_name|truncatechars:12 }}
                         </p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold" style="color: #2563EB; font-size: 1.1rem;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold" style="color: #2563EB; font-size: clamp(0.9rem, 1.1vw, 1rem);">
                                 KSh {{ service.price_min|floatformat:0 }}
                             </span>
-                            <span class="text-secondary small">- KSh {{ service.price_max|floatformat:0 }}</span>
+                            <span class="text-secondary" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">- KSh {{ service.price_max|floatformat:0 }}</span>
                         </div>
                         <a href="{% url 'services:detail' service.id %}" 
-                           class="btn w-100 mt-3" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 10px; font-weight: 600; border: 1px solid #E2E8F0; transition: all 0.3s ease;">
-                            View Service <i class="fas fa-arrow-right ms-2"></i>
+                           class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 8px; font-weight: 600; border: 1px solid #E2E8F0; font-size: clamp(0.75rem, 0.9vw, 0.85rem); transition: all 0.3s ease;">
+                            View Service <i class="fas fa-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -160,7 +166,7 @@
         </div>
         
         <div class="text-center mt-4">
-            <a href="{% url 'services:list' %}" class="btn" style="background: transparent; color: #2563EB; border: 2px solid #2563EB; border-radius: 50px; padding: 12px 40px; font-weight: 600;">
+            <a href="{% url 'services:list' %}" class="btn" style="background: transparent; color: #2563EB; border: 2px solid #2563EB; border-radius: 50px; padding: 10px 32px; font-weight: 600; font-size: clamp(0.85rem, 1vw, 0.95rem); transition: all 0.3s ease;">
                 View All Services <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>
@@ -171,24 +177,23 @@
 <section class="py-5" style="background: #F8FAFC;">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: 2.2rem;">Top Rated Providers</h2>
-            <p class="text-secondary" style="font-size: 1.1rem;">Professionals with the best reviews</p>
+            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">Top Rated Providers</h2>
+            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Professionals with the best reviews</p>
         </div>
         
         <div class="row g-4">
             {% for provider in top_providers %}
             <div class="col-md-3 col-6">
-                <div class="provider-card" style="background: #FFFFFF; border-radius: 18px; padding: 24px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid #F1F5F9;">
-                    <!-- Updated for Cloudinary -->
+                <div class="provider-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease; border: 1px solid #F1F5F9;">
                     <img src="{{ provider.profile_image.url }}" alt="{{ provider.get_full_name }}"
-                         class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #E2E8F0;">
-                    <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: 0.95rem;">{{ provider.get_full_name|truncatechars:18 }}</h6>
-                    <p class="text-secondary small mb-2">{{ provider.location|default:"Kenya"|truncatechars:15 }}</p>
-                    <div class="text-warning small mb-2">
+                         class="rounded-circle mb-2" style="width: 72px; height: 72px; object-fit: cover; border: 3px solid #E2E8F0;">
+                    <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.8rem, 0.95vw, 0.9rem);">{{ provider.get_full_name|truncatechars:16 }}</h6>
+                    <p class="text-secondary mb-1" style="font-size: clamp(0.65rem, 0.8vw, 0.75rem);">{{ provider.location|default:"Kenya"|truncatechars:12 }}</p>
+                    <div class="text-warning mb-2" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem);">
                         <i class="fas fa-star"></i> {{ provider.rating|floatformat:1 }}
                     </div>
                     <a href="{% url 'accounts:provider_profile' provider.id %}" 
-                       class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 8px; font-weight: 500; border: 1px solid #E2E8F0; font-size: 0.85rem;">
+                       class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 6px; font-weight: 500; border: 1px solid #E2E8F0; font-size: clamp(0.7rem, 0.85vw, 0.8rem); transition: all 0.3s ease;">
                         View Profile
                     </a>
                 </div>
@@ -206,38 +211,38 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: 2.2rem;">How SakaFundi Works</h2>
-            <p class="text-secondary" style="font-size: 1.1rem;">Four simple steps to get your project done</p>
+            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">How SakaFundi Works</h2>
+            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Four simple steps to get your project done</p>
         </div>
         
         <div class="row g-4">
-            <div class="col-md-3 text-center">
-                <div class="step-icon" style="width: 80px; height: 80px; margin: 0 auto 16px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <div class="col-6 col-md-3 text-center">
+                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-search fa-2x" style="color: #2563EB;"></i>
                 </div>
-                <h5 class="fw-semibold" style="color: #0F172A;">1. Find a Service</h5>
-                <p class="text-secondary small" style="line-height: 1.7;">Browse services from verified providers across Kenya</p>
+                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">1. Find a Service</h5>
+                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Browse services from verified providers across Kenya</p>
             </div>
-            <div class="col-md-3 text-center">
-                <div class="step-icon" style="width: 80px; height: 80px; margin: 0 auto 16px; background: #FEF3C7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <div class="col-6 col-md-3 text-center">
+                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #FEF3C7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-handshake fa-2x" style="color: #F59E0B;"></i>
                 </div>
-                <h5 class="fw-semibold" style="color: #0F172A;">2. Agree on Price</h5>
-                <p class="text-secondary small" style="line-height: 1.7;">Chat with the provider and agree on the project price</p>
+                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">2. Agree on Price</h5>
+                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Chat with the provider and agree on the project price</p>
             </div>
-            <div class="col-md-3 text-center">
-                <div class="step-icon" style="width: 80px; height: 80px; margin: 0 auto 16px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <div class="col-6 col-md-3 text-center">
+                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-lock fa-2x" style="color: #16A34A;"></i>
                 </div>
-                <h5 class="fw-semibold" style="color: #0F172A;">3. Secure Deposit</h5>
-                <p class="text-secondary small" style="line-height: 1.7;">Pay a deposit via M-PESA. Funds held securely in escrow</p>
+                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">3. Secure Deposit</h5>
+                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Pay a deposit via M-PESA. Funds held securely in escrow</p>
             </div>
-            <div class="col-md-3 text-center">
-                <div class="step-icon" style="width: 80px; height: 80px; margin: 0 auto 16px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <div class="col-6 col-md-3 text-center">
+                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-check-circle fa-2x" style="color: #8B5CF6;"></i>
                 </div>
-                <h5 class="fw-semibold" style="color: #0F172A;">4. Complete & Pay</h5>
-                <p class="text-secondary small" style="line-height: 1.7;">Approve the work and release the final payment</p>
+                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">4. Complete & Pay</h5>
+                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Approve the work and release the final payment</p>
             </div>
         </div>
     </div>
@@ -247,66 +252,66 @@
 <section class="py-5" style="background: #F8FAFC;">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: 2.2rem;">What Our Users Say</h2>
-            <p class="text-secondary" style="font-size: 1.1rem;">Real reviews from real Kenyans</p>
+            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">What Our Users Say</h2>
+            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Real reviews from real Kenyans</p>
         </div>
         
         <div class="row g-4">
             <div class="col-md-4">
-                <div class="testimonial-card" style="background: #FFFFFF; border-radius: 24px; padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; height: 100%;">
+                <div class="testimonial-card h-100 p-4" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; transition: all 0.3s ease;">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <img src="{% static 'images/avatar1.jpg' %}" alt="Mary" class="rounded-circle" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #E2E8F0;">
+                        <img src="{% static 'images/avatar1.jpg' %}" alt="Mary" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #E2E8F0;">
                         <div>
-                            <h6 class="fw-semibold mb-0" style="color: #0F172A;">Mary W.</h6>
-                            <p class="text-secondary small mb-0">Nairobi</p>
+                            <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.9rem, 1vw, 1rem);">Mary W.</h6>
+                            <p class="text-secondary mb-0" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Nairobi</p>
                         </div>
                     </div>
-                    <div class="text-warning mb-2">
+                    <div class="text-warning mb-2" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-secondary small mb-0" style="line-height: 1.8;">"Found an amazing graphic designer for my business. The M-PESA payment was seamless and secure."</p>
+                    <p class="text-secondary mb-0" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem); line-height: 1.7;">"Found an amazing graphic designer for my business. The M-PESA payment was seamless and secure."</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="testimonial-card" style="background: #FFFFFF; border-radius: 24px; padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; height: 100%;">
+                <div class="testimonial-card h-100 p-4" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; transition: all 0.3s ease;">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <img src="{% static 'images/avatar2.jpg' %}" alt="James" class="rounded-circle" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #E2E8F0;">
+                        <img src="{% static 'images/avatar2.jpg' %}" alt="James" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #E2E8F0;">
                         <div>
-                            <h6 class="fw-semibold mb-0" style="color: #0F172A;">James K.</h6>
-                            <p class="text-secondary small mb-0">Mombasa</p>
+                            <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.9rem, 1vw, 1rem);">James K.</h6>
+                            <p class="text-secondary mb-0" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Mombasa</p>
                         </div>
                     </div>
-                    <div class="text-warning mb-2">
+                    <div class="text-warning mb-2" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-secondary small mb-0" style="line-height: 1.8;">"As a web developer, SakaFundi has helped me find clients across Kenya. The platform is easy to use."</p>
+                    <p class="text-secondary mb-0" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem); line-height: 1.7;">"As a web developer, SakaFundi has helped me find clients across Kenya. The platform is easy to use."</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="testimonial-card" style="background: #FFFFFF; border-radius: 24px; padding: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; height: 100%;">
+                <div class="testimonial-card h-100 p-4" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; transition: all 0.3s ease;">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <img src="{% static 'images/avatar3.jpg' %}" alt="Sarah" class="rounded-circle" style="width: 56px; height: 56px; object-fit: cover; border: 2px solid #E2E8F0;">
+                        <img src="{% static 'images/avatar3.jpg' %}" alt="Sarah" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #E2E8F0;">
                         <div>
-                            <h6 class="fw-semibold mb-0" style="color: #0F172A;">Sarah A.</h6>
-                            <p class="text-secondary small mb-0">Kisumu</p>
+                            <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.9rem, 1vw, 1rem);">Sarah A.</h6>
+                            <p class="text-secondary mb-0" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Kisumu</p>
                         </div>
                     </div>
-                    <div class="text-warning mb-2">
+                    <div class="text-warning mb-2" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <p class="text-secondary small mb-0" style="line-height: 1.8;">"The 10% platform fee is fair. I've completed over 50 projects through SakaFundi with great results."</p>
+                    <p class="text-secondary mb-0" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem); line-height: 1.7;">"The 10% platform fee is fair. I've completed over 50 projects through SakaFundi with great results."</p>
                 </div>
             </div>
         </div>
@@ -316,13 +321,13 @@
 <!-- CTA Section -->
 <section class="py-5" style="background: #2563EB;">
     <div class="container text-center text-white">
-        <h2 class="fw-bold mb-3" style="font-size: 2.2rem;">Ready to Get Started?</h2>
-        <p class="lead mb-4" style="opacity: 0.9; font-weight: 400;">Join thousands of Kenyans finding skilled professionals on SakaFundi</p>
+        <h2 class="fw-bold mb-3" style="font-size: clamp(1.6rem, 2.5vw, 2.2rem);">Ready to Get Started?</h2>
+        <p class="lead mb-4" style="opacity: 0.9; font-weight: 400; font-size: clamp(1rem, 1.3vw, 1.2rem);">Join thousands of Kenyans finding skilled professionals on SakaFundi</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
-            <a href="{% url 'accounts:register' %}" class="btn" style="background: #F59E0B; color: #fff; border-radius: 12px; padding: 14px 40px; font-weight: 600; border: none;">
+            <a href="{% url 'accounts:register' %}" class="btn" style="background: #F59E0B; color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
                 <i class="fas fa-user-plus me-2"></i> Create Free Account
             </a>
-            <a href="{% url 'services:list' %}" class="btn" style="background: rgba(255,255,255,0.15); color: #fff; border-radius: 12px; padding: 14px 40px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3);">
+            <a href="{% url 'services:list' %}" class="btn" style="background: rgba(255,255,255,0.15); color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
                 <i class="fas fa-search me-2"></i> Browse Services
             </a>
         </div>
@@ -330,14 +335,14 @@
 </section>
 
 <style>
-    /* Hover effects for cards */
+    /* Card Hover Effects */
     .stat-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
     }
     
     .service-card:hover {
-        transform: translateY(-8px);
+        transform: translateY(-6px);
         box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
     }
     
@@ -345,6 +350,8 @@
         background: #2563EB !important;
         color: #fff !important;
         border-color: #2563EB !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
     
     .provider-card:hover {
@@ -357,24 +364,78 @@
         box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
     }
     
-    /* Search input focus */
+    /* Search Box Focus */
+    .search-box:hover {
+        border-color: #2563EB !important;
+        box-shadow: 0 15px 40px rgba(37, 99, 235, 0.1) !important;
+    }
+    
+    .search-box:focus-within {
+        border-color: #2563EB !important;
+        box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15) !important;
+    }
+    
     .search-box input:focus {
         outline: none;
     }
     
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
+    /* Button hover effects */
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    }
+    
+    .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+    }
+    
+    /* Responsive */
+    @media (max-width: 576px) {
         .hero-section {
             padding: 40px 0 !important;
         }
         .hero-section h1 {
-            font-size: 2.2rem !important;
+            font-size: 1.8rem !important;
         }
         .search-box {
             border-radius: 30px !important;
         }
+        .search-box button {
+            padding: 8px 16px !important;
+            font-size: 0.8rem !important;
+        }
+        .stat-card {
+            padding: 16px !important;
+        }
         .stat-card h2 {
-            font-size: 1.8rem !important;
+            font-size: 1.5rem !important;
+        }
+        .service-card .p-3 {
+            padding: 12px !important;
+        }
+        .testimonial-card {
+            padding: 20px !important;
+        }
+        .step-icon {
+            width: 48px !important;
+            height: 48px !important;
+        }
+        .step-icon i {
+            font-size: 1.2rem !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2rem !important;
+        }
+        .search-box {
+            border-radius: 40px !important;
+        }
+        .search-box button {
+            padding: 10px 20px !important;
+            font-size: 0.85rem !important;
         }
     }
 </style>
