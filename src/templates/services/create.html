@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load cloudinary %}
 
 {% block title %}Add Service - SakaFundi{% endblock %}
 
@@ -26,13 +27,32 @@
                             </div>
                         {% endif %}
                         
+                        <!-- Category Field - Option 1: Use widget tweaks -->
                         <div class="mb-3">
                             <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category *</label>
                             {% render_field form.category class="form-select rounded-3" %}
                             {% if form.category.errors %}
                                 <div class="text-danger small">{{ form.category.errors }}</div>
                             {% endif %}
+                            <small class="text-muted">Select the most relevant category for your service</small>
                         </div>
+                        
+                        <!-- Category Field - Option 2: Manual rendering (if Option 1 doesn't work) -->
+                        <!--
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category *</label>
+                            <select name="category" id="{{ form.category.id_for_label }}" class="form-select rounded-3">
+                                <option value="">Select a category</option>
+                                {% for category in form.fields.category.queryset %}
+                                    <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.category.errors %}
+                                <div class="text-danger small">{{ form.category.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">Select the most relevant category for your service</small>
+                        </div>
+                        -->
                         
                         <div class="mb-3">
                             <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Service Title *</label>
@@ -74,6 +94,7 @@
                                 {% if form.deposit_percentage.errors %}
                                     <div class="text-danger small">{{ form.deposit_percentage.errors }}</div>
                                 {% endif %}
+                                <small class="text-muted">Default: 30%</small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.delivery_time_days.id_for_label }}" class="form-label fw-semibold">Delivery Time (Days)</label>
@@ -81,16 +102,17 @@
                                 {% if form.delivery_time_days.errors %}
                                     <div class="text-danger small">{{ form.delivery_time_days.errors }}</div>
                                 {% endif %}
+                                <small class="text-muted">Default: 7 days</small>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="{{ form.portfolio_images.id_for_label }}" class="form-label fw-semibold">Portfolio Images</label>
+                            <label for="portfolio_images" class="form-label fw-semibold">Portfolio Images</label>
                             <input type="file" name="portfolio_images" multiple class="form-control rounded-3" accept="image/*">
-                            <small class="text-muted">Upload up to 5 images to showcase your work</small>
+                            <small class="text-muted">Upload up to 5 images to showcase your work (JPG, PNG, or SVG)</small>
                         </div>
                         
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary rounded-3 px-4">
                                 <i class="fas fa-check"></i> Create Service
                             </button>
@@ -104,4 +126,19 @@
         </div>
     </div>
 </div>
+
+<style>
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 16px !important;
+        }
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .d-flex.gap-2 {
+            flex-direction: column;
+        }
+    }
+</style>
 {% endblock %}
