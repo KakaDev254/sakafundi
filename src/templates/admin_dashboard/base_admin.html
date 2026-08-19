@@ -93,6 +93,13 @@
                     <span class="badge bg-primary">{{ stats.total_projects|default:0 }}</span>
                 </a>
                 
+                <!-- Content Management -->
+                <div class="nav-header mt-3">Content</div>
+                <a href="{% url 'admin_dashboard:categories' %}" class="nav-link {% if 'categories' in request.path %}active{% endif %}">
+                    <i class="fas fa-tags"></i> Categories
+                    <span class="badge bg-primary">{{ stats.total_categories|default:0 }}</span>
+                </a>
+                
                 <div class="nav-header mt-3">Financial</div>
                 <a href="{% url 'admin_dashboard:payments' %}" class="nav-link {% if 'payments' in request.path %}active{% endif %}">
                     <i class="fas fa-money-bill-wave"></i> Payments

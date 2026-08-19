@@ -50,6 +50,9 @@ def admin_dashboard(request):
     total_reviews = Review.objects.count()
     avg_rating = Review.objects.aggregate(Avg('rating'))['rating__avg'] or 0
     
+    # Categories
+    total_categories = ServiceCategory.objects.filter(is_active=True).count()
+    
     # Recent activity (last 7 days)
     week_ago = timezone.now() - timedelta(days=7)
     new_users = User.objects.filter(date_joined__gte=week_ago).count()
@@ -71,6 +74,7 @@ def admin_dashboard(request):
         'total_disputes': total_disputes,
         'total_reviews': total_reviews,
         'avg_rating': avg_rating,
+        'total_categories': total_categories,  # Add this line
         'new_users': new_users,
         'new_services': new_services,
         'new_projects': new_projects,
@@ -550,6 +554,7 @@ def admin_bulk_action(request):
     
     return redirect(request.META.get('HTTP_REFERER', '/admin-dashboard/'))
 
+
 @staff_member_required
 @require_POST
 def admin_review_action(request):
@@ -581,3 +586,145 @@ def admin_review_action(request):
         messages.success(request, 'Review deleted successfully!')
     
     return redirect('admin_dashboard:reviews')
+
+
+@staff_member_required
+def admin_categories(request):
+    """Manage categories"""
+    categories = ServiceCategory.objects.all().annotate(
+        service_count=Count('services', filter=Q(services__is_active=True))
+    ).order_by('name')
+    
+    active_categories = categories.filter(is_active=True).count()
+    
+    # Get stats for sidebar
+    total_users = User.objects.count()
+    total_services = Service.objects.filter(is_active=True).count()
+    total_projects = Project.objects.count()
+    open_disputes = Dispute.objects.filter(status='open').count()
+    
+    context = {
+        'categories': categories,
+        'active_categories': active_categories,
+        'stats': {
+            'total_users': total_users,
+            'total_services': total_services,
+            'total_projects': total_projects,
+            'open_disputes': open_disputes,
+            'total_categories': categories.count(),
+        }
+    }
+    return render(request, 'admin_dashboard/categories.html', context)
+
+
+@staff_member_required
+@require_POST
+def admin_category_create(request):
+    """Create a new category"""
+    name = request.POST.get('name')
+    slug = request.POST.get('slug')
+    icon = request.POST.get('icon', 'fas fa-tag')
+    description = request.POST.get('description', '')
+    
+    if not name or not slug:
+        return JsonResponse({'error': 'Name and slug are required'}, status=400)
+    
+    category, created = ServiceCategory.objects.get_or_create(
+        slug=slug,
+        defaults={
+            'name': name,
+            'icon': icon,
+            'description': description,
+            'is_active': True
+        }
+    )
+    
+    if created:
+        return JsonResponse({
+            'success': True,
+            'message': f'Category "{name}" created successfully',
+            'category_id': category.id
+        })
+    else:
+        return JsonResponse({'error': 'Category with this slug already exists'}, status=400)
+
+
+@staff_member_required
+@require_POST
+def admin_category_update(request, category_id):
+    """Update a category"""
+    category = get_object_or_404(ServiceCategory, id=category_id)
+    
+    name = request.POST.get('name')
+    slug = request.POST.get('slug')
+    icon = request.POST.get('icon', 'fas fa-tag')
+    description = request.POST.get('description', '')
+    is_active = request.POST.get('is_active') == 'true'
+    
+    if not name or not slug:
+        return JsonResponse({'error': 'Name and slug are required'}, status=400)
+    
+    # Check if slug is taken by another category
+    if ServiceCategory.objects.filter(slug=slug).exclude(id=category_id).exists():
+        return JsonResponse({'error': 'Slug already in use by another category'}, status=400)
+    
+    category.name = name
+    category.slug = slug
+    category.icon = icon
+    category.description = description
+    category.is_active = is_active
+    category.save()
+    
+    return JsonResponse({
+        'success': True,
+        'message': f'Category "{name}" updated successfully'
+    })
+
+
+@staff_member_required
+@require_POST
+def admin_category_delete(request, category_id):
+    """Delete a category"""
+    category = get_object_or_404(ServiceCategory, id=category_id)
+    
+    # Check if category has active services
+    if category.services.filter(is_active=True).exists():
+        return JsonResponse({
+            'error': f'Cannot delete "{category.name}" because it has active services'
+        }, status=400)
+    
+    category.delete()
+    return JsonResponse({'success': True, 'message': f'Category "{category.name}" deleted'})
+
+
+@staff_member_required
+@require_POST
+def admin_category_bulk_action(request):
+    """Bulk actions for categories"""
+    action = request.POST.get('action')
+    category_ids = request.POST.getlist('category_ids[]')
+    
+    if not category_ids:
+        return JsonResponse({'error': 'No categories selected'}, status=400)
+    
+    if action == 'activate':
+        count = ServiceCategory.objects.filter(id__in=category_ids).update(is_active=True)
+        return JsonResponse({'success': True, 'message': f'{count} categories activated'})
+    
+    elif action == 'deactivate':
+        count = ServiceCategory.objects.filter(id__in=category_ids).update(is_active=False)
+        return JsonResponse({'success': True, 'message': f'{count} categories deactivated'})
+    
+    elif action == 'delete':
+        # Check if any have active services
+        categories = ServiceCategory.objects.filter(id__in=category_ids)
+        for cat in categories:
+            if cat.services.filter(is_active=True).exists():
+                return JsonResponse({
+                    'error': f'Cannot delete "{cat.name}" because it has active services'
+                }, status=400)
+        
+        count = categories.delete()[0]
+        return JsonResponse({'success': True, 'message': f'{count} categories deleted'})
+    
+    return JsonResponse({'error': 'Invalid action'}, status=400)

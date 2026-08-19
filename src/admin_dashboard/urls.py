@@ -33,4 +33,11 @@ urlpatterns = [
     
     # Bulk actions
     path('bulk-action/', views.admin_bulk_action, name='bulk_action'),
+    
+     # Category Management
+    path('categories/', views.admin_categories, name='categories'),
+    path('categories/create/', views.admin_category_create, name='category_create'),
+    path('categories/<int:category_id>/update/', views.admin_category_update, name='category_update'),
+    path('categories/<int:category_id>/delete/', views.admin_category_delete, name='category_delete'),
+    path('categories/bulk-action/', views.admin_category_bulk_action, name='category_bulk_action'),
 ]
