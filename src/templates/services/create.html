@@ -27,80 +27,68 @@
                             </div>
                         {% endif %}
                         
-                        <!-- Category Field - Option 1: Use widget tweaks -->
+                        <!-- Category Field - Manual rendering with options -->
                         <div class="mb-3">
-                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category *</label>
-                            {% render_field form.category class="form-select rounded-3" %}
-                            {% if form.category.errors %}
-                                <div class="text-danger small">{{ form.category.errors }}</div>
-                            {% endif %}
-                            <small class="text-muted">Select the most relevant category for your service</small>
-                        </div>
-                        
-                        <!-- Category Field - Option 2: Manual rendering (if Option 1 doesn't work) -->
-                        <!--
-                        <div class="mb-3">
-                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category *</label>
-                            <select name="category" id="{{ form.category.id_for_label }}" class="form-select rounded-3">
+                            <label for="id_category" class="form-label fw-semibold">Category *</label>
+                            <select name="category" id="id_category" class="form-select rounded-3" required>
                                 <option value="">Select a category</option>
                                 {% for category in form.fields.category.queryset %}
                                     <option value="{{ category.id }}">{{ category.name }}</option>
                                 {% endfor %}
                             </select>
                             {% if form.category.errors %}
-                                <div class="text-danger small">{{ form.category.errors }}</div>
+                                <div class="text-danger small mt-1">{{ form.category.errors }}</div>
                             {% endif %}
                             <small class="text-muted">Select the most relevant category for your service</small>
                         </div>
-                        -->
                         
                         <div class="mb-3">
-                            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Service Title *</label>
-                            {% render_field form.title class="form-control rounded-3" placeholder="Enter service title" %}
+                            <label for="id_title" class="form-label fw-semibold">Service Title *</label>
+                            <input type="text" name="title" id="id_title" class="form-control rounded-3" placeholder="Enter service title" required>
                             {% if form.title.errors %}
-                                <div class="text-danger small">{{ form.title.errors }}</div>
+                                <div class="text-danger small mt-1">{{ form.title.errors }}</div>
                             {% endif %}
                         </div>
                         
                         <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">Description *</label>
-                            {% render_field form.description class="form-control rounded-3" rows="5" placeholder="Describe your service in detail" %}
+                            <label for="id_description" class="form-label fw-semibold">Description *</label>
+                            <textarea name="description" id="id_description" class="form-control rounded-3" rows="5" placeholder="Describe your service in detail" required></textarea>
                             {% if form.description.errors %}
-                                <div class="text-danger small">{{ form.description.errors }}</div>
+                                <div class="text-danger small mt-1">{{ form.description.errors }}</div>
                             {% endif %}
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.price_min.id_for_label }}" class="form-label fw-semibold">Min Price (KSh) *</label>
-                                {% render_field form.price_min class="form-control rounded-3" placeholder="Minimum price" %}
+                                <label for="id_price_min" class="form-label fw-semibold">Min Price (KSh) *</label>
+                                <input type="number" name="price_min" id="id_price_min" class="form-control rounded-3" placeholder="Minimum price" min="0" step="0.01" required>
                                 {% if form.price_min.errors %}
-                                    <div class="text-danger small">{{ form.price_min.errors }}</div>
+                                    <div class="text-danger small mt-1">{{ form.price_min.errors }}</div>
                                 {% endif %}
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.price_max.id_for_label }}" class="form-label fw-semibold">Max Price (KSh) *</label>
-                                {% render_field form.price_max class="form-control rounded-3" placeholder="Maximum price" %}
+                                <label for="id_price_max" class="form-label fw-semibold">Max Price (KSh) *</label>
+                                <input type="number" name="price_max" id="id_price_max" class="form-control rounded-3" placeholder="Maximum price" min="0" step="0.01" required>
                                 {% if form.price_max.errors %}
-                                    <div class="text-danger small">{{ form.price_max.errors }}</div>
+                                    <div class="text-danger small mt-1">{{ form.price_max.errors }}</div>
                                 {% endif %}
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.deposit_percentage.id_for_label }}" class="form-label fw-semibold">Deposit Percentage (%)</label>
-                                {% render_field form.deposit_percentage class="form-control rounded-3" %}
+                                <label for="id_deposit_percentage" class="form-label fw-semibold">Deposit Percentage (%)</label>
+                                <input type="number" name="deposit_percentage" id="id_deposit_percentage" class="form-control rounded-3" value="30" min="0" max="100">
                                 {% if form.deposit_percentage.errors %}
-                                    <div class="text-danger small">{{ form.deposit_percentage.errors }}</div>
+                                    <div class="text-danger small mt-1">{{ form.deposit_percentage.errors }}</div>
                                 {% endif %}
                                 <small class="text-muted">Default: 30%</small>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="{{ form.delivery_time_days.id_for_label }}" class="form-label fw-semibold">Delivery Time (Days)</label>
-                                {% render_field form.delivery_time_days class="form-control rounded-3" %}
+                                <label for="id_delivery_time_days" class="form-label fw-semibold">Delivery Time (Days)</label>
+                                <input type="number" name="delivery_time_days" id="id_delivery_time_days" class="form-control rounded-3" value="7">
                                 {% if form.delivery_time_days.errors %}
-                                    <div class="text-danger small">{{ form.delivery_time_days.errors }}</div>
+                                    <div class="text-danger small mt-1">{{ form.delivery_time_days.errors }}</div>
                                 {% endif %}
                                 <small class="text-muted">Default: 7 days</small>
                             </div>
@@ -108,7 +96,7 @@
                         
                         <div class="mb-3">
                             <label for="portfolio_images" class="form-label fw-semibold">Portfolio Images</label>
-                            <input type="file" name="portfolio_images" multiple class="form-control rounded-3" accept="image/*">
+                            <input type="file" name="portfolio_images" id="portfolio_images" multiple class="form-control rounded-3" accept="image/*">
                             <small class="text-muted">Upload up to 5 images to showcase your work (JPG, PNG, or SVG)</small>
                         </div>
                         
@@ -138,6 +126,12 @@
         }
         .d-flex.gap-2 {
             flex-direction: column;
+        }
+        .row {
+            flex-direction: column;
+        }
+        .col-md-6 {
+            width: 100%;
         }
     }
 </style>
