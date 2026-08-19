@@ -19,7 +19,7 @@
                     <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
                 </p>
 
-                <!-- Search Box - Optimized -->
+                <!-- Search Box -->
                 <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 4px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 2px solid #E2E8F0; max-width: 550px; transition: all 0.3s ease;">
                     <form action="{% url 'services:list' %}" method="get" class="d-flex align-items-center">
                         <div class="flex-grow-1 px-3">
@@ -27,8 +27,9 @@
                                    placeholder="Search for a service or skill..." 
                                    style="outline: none; padding: 12px 0; font-size: clamp(0.85rem, 1.2vw, 1rem); color: #0F172A;">
                         </div>
-                        <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 8px 20px; font-weight: 600; border: none; font-size: 0.9rem; transition: all 0.3s ease; white-space: nowrap; min-width: 70px;">
+                        <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 10px 24px; font-weight: 600; border: none; font-size: 0.95rem; transition: all 0.3s ease; white-space: nowrap; min-width: 80px;">
                             <span class="search-text">Search</span>
+                            <i class="fas fa-search search-icon"></i>
                         </button>
                     </form>
                 </div>
@@ -378,7 +379,7 @@
         outline: none;
     }
     
-    /* Search Button */
+    /* Search Button - Desktop Default */
     .search-btn {
         transition: all 0.3s ease;
     }
@@ -386,6 +387,11 @@
     .search-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    }
+    
+    /* Hide search icon on desktop, show text */
+    .search-icon {
+        display: none !important;
     }
     
     /* Button hover effects */
@@ -399,7 +405,7 @@
         box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
     }
     
-    /* Responsive - Mobile First */
+    /* Responsive - Mobile */
     @media (max-width: 576px) {
         .hero-section {
             padding: 30px 0 !important;
@@ -407,6 +413,8 @@
         .hero-section h1 {
             font-size: 1.6rem !important;
         }
+        
+        /* Search Box - Mobile */
         .search-box {
             border-radius: 30px !important;
             padding: 3px !important;
@@ -419,15 +427,28 @@
             font-size: 0.8rem !important;
             padding: 6px 0 !important;
         }
+        
+        /* Search Button - Mobile: Show only icon */
         .search-btn {
-            padding: 6px 12px !important;
-            font-size: 0.7rem !important;
-            border-radius: 30px !important;
-            min-width: 50px;
+            padding: 6px 10px !important;
+            font-size: 0.85rem !important;
+            border-radius: 50% !important;
+            min-width: 36px !important;
+            width: 36px !important;
+            height: 36px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         .search-text {
-            font-size: 0.7rem;
+            display: none !important;
         }
+        .search-icon {
+            display: inline-block !important;
+            font-size: 0.85rem !important;
+            margin: 0 !important;
+        }
+        
         .stat-card {
             padding: 10px !important;
         }
@@ -511,13 +532,6 @@
         }
         .search-box {
             border-radius: 40px !important;
-        }
-        .search-btn {
-            padding: 8px 16px !important;
-            font-size: 0.8rem !important;
-        }
-        .search-box input {
-            font-size: 0.85rem !important;
         }
     }
 </style>
