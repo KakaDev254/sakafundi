@@ -524,4 +524,17 @@
 
 {% block extra_js %}
 <script>
-   
+    // Add hover effect to stat cards
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
