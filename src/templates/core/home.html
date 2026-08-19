@@ -19,17 +19,16 @@
                     <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
                 </p>
 
-                <!-- Search Box - Without Icon -->
-                <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 2px solid #E2E8F0; max-width: 550px; transition: all 0.3s ease;">
+                <!-- Search Box - Optimized -->
+                <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 4px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 2px solid #E2E8F0; max-width: 550px; transition: all 0.3s ease;">
                     <form action="{% url 'services:list' %}" method="get" class="d-flex align-items-center">
                         <div class="flex-grow-1 px-3">
                             <input type="text" name="q" class="border-0 bg-transparent w-100" 
                                    placeholder="Search for a service or skill..." 
-                                   style="outline: none; padding: 12px 0; font-size: clamp(0.9rem, 1.2vw, 1rem); color: #0F172A;">
+                                   style="outline: none; padding: 12px 0; font-size: clamp(0.85rem, 1.2vw, 1rem); color: #0F172A;">
                         </div>
-                        <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 10px 28px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1vw, 1rem); transition: all 0.3s ease; white-space: nowrap;">
+                        <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 8px 20px; font-weight: 600; border: none; font-size: 0.9rem; transition: all 0.3s ease; white-space: nowrap; min-width: 70px;">
                             <span class="search-text">Search</span>
-                            <i class="fas fa-search search-icon d-none"></i>
                         </button>
                     </form>
                 </div>
@@ -379,7 +378,7 @@
         outline: none;
     }
     
-    /* Search Button - Mobile Optimized */
+    /* Search Button */
     .search-btn {
         transition: all 0.3s ease;
     }
@@ -400,103 +399,129 @@
         box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
     }
     
-    /* Responsive */
+    /* Responsive - Mobile First */
     @media (max-width: 576px) {
         .hero-section {
-            padding: 40px 0 !important;
+            padding: 30px 0 !important;
         }
         .hero-section h1 {
-            font-size: 1.8rem !important;
+            font-size: 1.6rem !important;
         }
         .search-box {
             border-radius: 30px !important;
-            padding: 4px !important;
+            padding: 3px !important;
         }
         .search-box .px-3 {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
+            padding-left: 10px !important;
+            padding-right: 10px !important;
         }
         .search-box input {
-            font-size: 0.85rem !important;
-            padding: 8px 0 !important;
+            font-size: 0.8rem !important;
+            padding: 6px 0 !important;
         }
         .search-btn {
-            padding: 8px 16px !important;
-            font-size: 0.8rem !important;
-            border-radius: 40px !important;
-            min-width: 60px;
+            padding: 6px 12px !important;
+            font-size: 0.7rem !important;
+            border-radius: 30px !important;
+            min-width: 50px;
         }
         .search-text {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
         .stat-card {
-            padding: 12px !important;
-        }
-        .stat-card h2 {
-            font-size: 1.3rem !important;
-        }
-        .service-card .p-3 {
             padding: 10px !important;
         }
+        .stat-card h2 {
+            font-size: 1.2rem !important;
+        }
+        .stat-card p {
+            font-size: 0.65rem !important;
+        }
+        .service-card .p-3 {
+            padding: 8px !important;
+        }
         .service-card img {
-            height: 140px !important;
+            height: 120px !important;
+        }
+        .service-card h6 {
+            font-size: 0.8rem !important;
+        }
+        .service-card .btn {
+            padding: 6px !important;
+            font-size: 0.7rem !important;
         }
         .testimonial-card {
-            padding: 16px !important;
+            padding: 14px !important;
+        }
+        .testimonial-card img {
+            width: 36px !important;
+            height: 36px !important;
+        }
+        .testimonial-card h6 {
+            font-size: 0.85rem !important;
+        }
+        .testimonial-card p {
+            font-size: 0.75rem !important;
         }
         .step-icon {
+            width: 40px !important;
+            height: 40px !important;
+        }
+        .step-icon i {
+            font-size: 1rem !important;
+        }
+        .step-icon + h5 {
+            font-size: 0.8rem !important;
+        }
+        .step-icon + h5 + p {
+            font-size: 0.7rem !important;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 8px 16px !important;
+            font-size: 0.8rem !important;
+        }
+        .provider-card {
+            padding: 10px !important;
+        }
+        .provider-card img {
             width: 48px !important;
             height: 48px !important;
         }
-        .step-icon i {
-            font-size: 1.2rem !important;
+        .provider-card h6 {
+            font-size: 0.75rem !important;
         }
-        .btn-primary, .btn-secondary {
-            padding: 10px 20px !important;
-            font-size: 0.85rem !important;
+        .provider-card .btn {
+            padding: 4px !important;
+            font-size: 0.65rem !important;
         }
-        .provider-card {
-            padding: 12px !important;
+        .provider-card .text-warning {
+            font-size: 0.7rem !important;
         }
-        .provider-card img {
-            width: 56px !important;
-            height: 56px !important;
+        .trust-badge {
+            font-size: 0.7rem !important;
+        }
+        .hero-section .lead {
+            font-size: 0.9rem !important;
         }
     }
     
     @media (max-width: 768px) {
         .hero-section h1 {
-            font-size: 2rem !important;
+            font-size: 1.8rem !important;
         }
         .search-box {
             border-radius: 40px !important;
         }
         .search-btn {
-            padding: 10px 20px !important;
-            font-size: 0.85rem !important;
+            padding: 8px 16px !important;
+            font-size: 0.8rem !important;
         }
-    }
-    
-    @media (min-width: 577px) {
-        .search-icon {
-            display: none !important;
+        .search-box input {
+            font-size: 0.85rem !important;
         }
     }
 </style>
 
 {% block extra_js %}
 <script>
-    // Add hover effect to stat cards
-    document.querySelectorAll('.stat-card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-4px)';
-            this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
-        });
-    });
-</script>
-{% endblock %}
-{% endblock %}
+   
