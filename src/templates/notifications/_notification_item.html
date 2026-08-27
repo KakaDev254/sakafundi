@@ -1,0 +1,59 @@
+{% load static %}
+
+<div class="list-group-item list-group-item-action {% if not notification.is_read %}bg-light{% endif %}" 
+     data-id="{{ notification.id }}">
+    <div class="d-flex align-items-start">
+        <!-- Icon -->
+        <div class="flex-shrink-0 me-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                 style="width: 45px; height: 45px; background-color: #F8F9FA;">
+                <i class="fas {{ notification.get_icon }} fa-lg {{ notification.get_color }}"></i>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="mb-1 fw-semibold">
+                        {{ notification.title }}
+                        {% if notification.priority == 'high' or notification.priority == 'urgent' %}
+                            <span class="badge bg-danger ms-1">Priority</span>
+                        {% endif %}
+                    </h6>
+                    <p class="mb-1 text-muted small">{{ notification.message|truncatechars:150 }}</p>
+                </div>
+                <div class="text-end ms-3">
+                    <span class="badge {{ notification.get_badge_color }} mb-1">
+                        {{ notification.get_type_display }}
+                    </span>
+                    <br>
+                    <small class="text-muted">{{ notification.get_time_ago }}</small>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="mt-2 d-flex gap-2 flex-wrap">
+                {% if notification.link %}
+                    <a href="{{ notification.link }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-arrow-right"></i> View
+                    </a>
+                {% endif %}
+                {% if notification.action_label and notification.action_url %}
+                    <a href="{{ notification.action_url }}" class="btn btn-sm btn-success">
+                        {{ notification.action_label }}
+                    </a>
+                {% endif %}
+                <button class="btn btn-sm btn-outline-secondary mark-read-btn" 
+                        data-id="{{ notification.id }}">
+                    <i class="fas fa-check"></i>
+                    {% if notification.is_read %}Mark Unread{% else %}Mark Read{% endif %}
+                </button>
+                <button class="btn btn-sm btn-outline-danger delete-btn" 
+                        data-id="{{ notification.id }}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

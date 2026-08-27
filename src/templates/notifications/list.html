@@ -66,113 +66,9 @@
             </div>
             
             <!-- Notification List -->
-            {% if notifications %}
-                <div class="list-group shadow-sm" id="notification-list">
-                    {% for notification in notifications %}
-                        <div class="list-group-item list-group-item-action {% if not notification.is_read %}bg-light{% endif %}" 
-                             data-id="{{ notification.id }}">
-                            <div class="d-flex align-items-start">
-                                <!-- Icon -->
-                                <div class="flex-shrink-0 me-3">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
-                                         style="width: 45px; height: 45px; background-color: #F8F9FA;">
-                                        <i class="fas {{ notification.get_icon }} fa-lg {{ notification.get_color }}"></i>
-                                    </div>
-                                </div>
-                                
-                                <!-- Content -->
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1 fw-semibold">
-                                                {{ notification.title }}
-                                                {% if notification.priority == 'high' or notification.priority == 'urgent' %}
-                                                    <span class="badge bg-danger ms-1">Priority</span>
-                                                {% endif %}
-                                            </h6>
-                                            <p class="mb-1 text-muted small">{{ notification.message|truncatechars:150 }}</p>
-                                        </div>
-                                        <div class="text-end ms-3">
-                                            <span class="badge {{ notification.get_badge_color }} mb-1">
-                                                {{ notification.get_type_display }}
-                                            </span>
-                                            <br>
-                                            <small class="text-muted">{{ notification.get_time_ago }}</small>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Actions -->
-                                    <div class="mt-2">
-                                        {% if notification.link %}
-                                            <a href="{{ notification.link }}" class="btn btn-sm btn-primary">
-                                                <i class="fas fa-arrow-right"></i> View
-                                            </a>
-                                        {% endif %}
-                                        {% if notification.action_label and notification.action_url %}
-                                            <a href="{{ notification.action_url }}" class="btn btn-sm btn-success">
-                                                {{ notification.action_label }}
-                                            </a>
-                                        {% endif %}
-                                        <button class="btn btn-sm btn-outline-secondary mark-read-btn" 
-                                                data-id="{{ notification.id }}">
-                                            <i class="fas fa-check"></i>
-                                            {% if notification.is_read %}Mark Unread{% else %}Mark Read{% endif %}
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger delete-btn" 
-                                                data-id="{{ notification.id }}">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                
-                <!-- Pagination -->
-                {% if notifications.has_other_pages %}
-                    <nav class="mt-4">
-                        <ul class="pagination justify-content-center">
-                            {% if notifications.has_previous %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ notifications.previous_page_number }}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_read %}&read={{ current_read }}{% endif %}">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            
-                            {% for i in notifications.paginator.page_range %}
-                                {% if notifications.number == i %}
-                                    <li class="page-item active">
-                                        <span class="page-link">{{ i }}</span>
-                                    </li>
-                                {% else %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page={{ i }}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_read %}&read={{ current_read }}{% endif %}">
-                                            {{ i }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                            
-                            {% if notifications.has_next %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ notifications.next_page_number }}{% if current_type %}&type={{ current_type }}{% endif %}{% if current_read %}&read={{ current_read }}{% endif %}">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            {% endif %}
-                        </ul>
-                    </nav>
-                {% endif %}
-                
-            {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-bell-slash fa-4x text-muted mb-3"></i>
-                    <h5 class="text-muted">No notifications</h5>
-                    <p class="text-muted">You're all caught up!</p>
-                </div>
-            {% endif %}
+            <div id="notification-container">
+                {% include 'notifications/partials/notification_list.html' %}
+            </div>
         </div>
     </div>
 </div>
@@ -180,14 +76,17 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
         
-        // Mark all as read
+        // ===== MARK ALL AS READ =====
         document.getElementById('mark-all-read')?.addEventListener('click', function() {
+            if (!confirm('Mark all notifications as read?')) return;
+            
             fetch("{% url 'notifications:mark_all_read' %}", {
                 method: 'POST',
                 headers: {
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
                 }
             })
             .then(response => response.json())
@@ -195,110 +94,157 @@
                 if (data.success) {
                     location.reload();
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to mark all as read. Please try again.');
             });
         });
         
-        // Delete all
+        // ===== DELETE ALL =====
         document.getElementById('delete-all')?.addEventListener('click', function() {
-            if (confirm('Are you sure you want to delete all notifications?')) {
-                fetch("{% url 'notifications:delete_all' %}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    }
-                });
+            if (!confirm('Are you sure you want to delete ALL notifications? This action cannot be undone.')) {
+                return;
             }
-        });
-        
-        // Mark read/unread individual
-        document.querySelectorAll('.mark-read-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = this.dataset.id;
-                const isRead = this.textContent.trim().includes('Unread');
-                const url = isRead ? 
-                    "{% url 'notifications:mark_unread' 0 %}".replace('0', id) :
-                    "{% url 'notifications:mark_read' 0 %}".replace('0', id);
-                
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    }
-                });
-            });
-        });
-        
-        // Delete individual
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to delete this notification?')) {
-                    const id = this.dataset.id;
-                    fetch("{% url 'notifications:delete' 0 %}".replace('0', id), {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': csrfToken
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            location.reload();
-                        }
-                    });
+            
+            fetch("{% url 'notifications:delete_all' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
                 }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete notifications. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete notifications. Please try again.');
             });
         });
         
-        // Filter by type
-        document.getElementById('type-filter')?.addEventListener('change', function() {
-            const value = this.value;
+        // ===== MARK READ/UNREAD (Event Delegation) =====
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.mark-read-btn');
+            if (!btn) return;
+            
+            const id = btn.dataset.id;
+            const isRead = btn.textContent.trim().includes('Unread');
+            const url = isRead ? 
+                "{% url 'notifications:mark_unread' 0 %}".replace('0', id) :
+                "{% url 'notifications:mark_read' 0 %}".replace('0', id);
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to update notification. Please try again.');
+            });
+        });
+        
+        // ===== DELETE INDIVIDUAL (Event Delegation) =====
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.delete-btn');
+            if (!btn) return;
+            
+            const id = btn.dataset.id;
+            if (!confirm('Are you sure you want to delete this notification?')) {
+                return;
+            }
+            
+            fetch("{% url 'notifications:delete' 0 %}".replace('0', id), {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete notification. Please try again.');
+            });
+        });
+        
+        // ===== FILTERS =====
+        function applyFilters() {
+            const type = document.getElementById('type-filter').value;
+            const read = document.getElementById('read-filter').value;
+            const query = document.getElementById('search-input').value;
+            
             const url = new URL(window.location.href);
-            if (value) {
-                url.searchParams.set('type', value);
+            
+            if (type) {
+                url.searchParams.set('type', type);
             } else {
                 url.searchParams.delete('type');
             }
-            window.location.href = url.toString();
-        });
-        
-        // Filter by read status
-        document.getElementById('read-filter')?.addEventListener('change', function() {
-            const value = this.value;
-            const url = new URL(window.location.href);
-            if (value) {
-                url.searchParams.set('read', value);
+            
+            if (read) {
+                url.searchParams.set('read', read);
             } else {
                 url.searchParams.delete('read');
             }
-            window.location.href = url.toString();
-        });
-        
-        // Search
-        document.getElementById('search-btn')?.addEventListener('click', function() {
-            const query = document.getElementById('search-input').value;
-            const url = new URL(window.location.href);
+            
             if (query) {
                 url.searchParams.set('q', query);
             } else {
                 url.searchParams.delete('q');
             }
+            
+            url.searchParams.delete('page');
             window.location.href = url.toString();
-        });
+        }
         
+        document.getElementById('type-filter')?.addEventListener('change', applyFilters);
+        document.getElementById('read-filter')?.addEventListener('change', applyFilters);
+        document.getElementById('search-btn')?.addEventListener('click', applyFilters);
         document.getElementById('search-input')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                document.getElementById('search-btn').click();
+                e.preventDefault();
+                applyFilters();
+            }
+        });
+        
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+Shift+M = Mark all as read
+            if (e.ctrlKey && e.shiftKey && e.key === 'M') {
+                e.preventDefault();
+                document.getElementById('mark-all-read')?.click();
+            }
+            
+            // Ctrl+Shift+D = Delete all
+            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                e.preventDefault();
+                document.getElementById('delete-all')?.click();
+            }
+            
+            // Ctrl+/ = Focus search
+            if (e.ctrlKey && e.key === '/') {
+                e.preventDefault();
+                document.getElementById('search-input')?.focus();
             }
         });
     });

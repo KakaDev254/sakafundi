@@ -1,0 +1,51 @@
+{% load static %}
+
+<span id="notification-badge" class="position-relative" style="cursor: pointer;" onclick="window.location.href='{% url 'notifications:list' %}'">
+    <i class="fas fa-bell" style="font-size: 1.2rem; color: {% if unread_count > 0 %}#005EB8{% else %}#6c757d{% endif %};"></i>
+    {% if unread_count > 0 %}
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+              style="font-size: 0.65rem; padding: 0.25rem 0.4rem; transform: translate(-50%, -50%);">
+            {{ unread_count }}
+            <span class="visually-hidden">unread notifications</span>
+        </span>
+    {% endif %}
+</span>
+
+<script>
+    // Optional: Auto-update badge every 30 seconds
+    function updateNotificationBadge() {
+        fetch('{% url "notifications:unread_count" %}')
+            .then(response => response.json())
+            .then(data => {
+                const badgeContainer = document.getElementById('notification-badge');
+                if (!badgeContainer) return;
+                
+                const existingBadge = badgeContainer.querySelector('.badge');
+                
+                if (data.count > 0) {
+                    if (existingBadge) {
+                        existingBadge.textContent = data.count;
+                    } else {
+                        const newBadge = document.createElement('span');
+                        newBadge.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger';
+                        newBadge.style.cssText = 'font-size: 0.65rem; padding: 0.25rem 0.4rem; transform: translate(-50%, -50%);';
+                        newBadge.textContent = data.count;
+                        badgeContainer.appendChild(newBadge);
+                    }
+                    badgeContainer.querySelector('i').style.color = '#005EB8';
+                } else {
+                    if (existingBadge) existingBadge.remove();
+                    badgeContainer.querySelector('i').style.color = '#6c757d';
+                }
+            })
+            .catch(error => console.error('Error updating badge:', error));
+    }
+    
+    // Update when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNotificationBadge();
+    });
+    
+    // Poll every 30 seconds for updates
+    setInterval(updateNotificationBadge, 30000);
+</script>
