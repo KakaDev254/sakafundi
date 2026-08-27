@@ -7,6 +7,7 @@ from django.utils import timezone
 import base64
 from django.core.files.base import ContentFile
 import os
+from datetime import datetime
 
 # Don't import models at the top level - import inside methods
 # from .models import Conversation, Message, ChatUserStatus, BlockedUser
@@ -315,12 +316,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
     
     @database_sync_to_async
-    def send_recent_messages(self):
-        """Send recent messages to user"""
+    def get_recent_messages_data(self):
+        """Get recent messages data from database"""
         from .models import Conversation
         
         conversation = Conversation.objects.get(id=self.conversation_id)
-        messages = conversation.messages.order_by('-created_at')[:50]
+        messages = conversation.messages.select_related('sender').order_by('-created_at')[:50]
         
         message_list = []
         for msg in reversed(messages):
@@ -329,28 +330,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'content': msg.content,
                 'sender_id': msg.sender.id,
                 'sender_name': msg.sender.get_full_name() or msg.sender.username,
-                'sender_avatar': self.get_user_avatar(msg.sender),
-                'created_at': msg.created_at.isoformat(),
+                'sender_avatar': self.get_user_avatar_sync(msg.sender),
+                'created_at': msg.created_at.isoformat(),  # ✅ Convert to string
                 'attachment_url': msg.attachment.url if msg.attachment else None,
                 'attachment_name': msg.attachment_name,
                 'is_own': msg.sender.id == self.user.id,
-                'is_read': msg.is_read
+                'is_read': bool(msg.is_read)  # ✅ Ensure boolean
             })
+        return message_list
+    
+    def get_user_avatar_sync(self, user):
+        """Synchronous version of get_user_avatar for use in sync methods"""
+        if user.profile_image:
+            return user.profile_image.url
+        return '/static/images/default-avatar.png'
+    
+    async def send_recent_messages(self):
+        """Send recent messages to user - FIXED"""
+        # Get messages data from database
+        message_list = await self.get_recent_messages_data()
         
         # Send each message to the client
         for msg_data in message_list:
-            self.send(text_data=json.dumps({
+            # ✅ All data is now JSON serializable
+            await self.send(text_data=json.dumps({
                 'type': 'message',
                 'message_id': msg_data['id'],
                 'content': msg_data['content'],
                 'sender_id': msg_data['sender_id'],
                 'sender_name': msg_data['sender_name'],
                 'sender_avatar': msg_data['sender_avatar'],
-                'created_at': msg_data['created_at'],
+                'created_at': msg_data['created_at'],  # ✅ Already string
                 'attachment_url': msg_data['attachment_url'],
                 'attachment_name': msg_data['attachment_name'],
                 'is_own': msg_data['is_own'],
-                'is_read': msg_data['is_read']
+                'is_read': msg_data['is_read']  # ✅ Already boolean
             }))
 
 
