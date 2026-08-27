@@ -78,6 +78,29 @@
         gap: 2px;
     }
     
+    /* ===== DATE DIVIDER ===== */
+    .date-divider {
+        text-align: center;
+        margin: 16px 0 12px;
+        position: relative;
+    }
+    
+    .date-divider:first-child {
+        margin-top: 0;
+    }
+    
+    .date-divider span {
+        background: #e9ecef;
+        padding: 4px 16px;
+        border-radius: 12px;
+        font-size: 12px;
+        color: #6c757d;
+        font-weight: 500;
+        display: inline-block;
+        letter-spacing: 0.3px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    
     /* ===== MESSAGE BUBBLES ===== */
     .message-wrapper {
         display: flex;
@@ -230,20 +253,6 @@
     
     .message-footer .read-receipt.read {
         color: #4fc3f7;
-    }
-    
-    /* ===== DATE DIVIDER ===== */
-    .date-divider {
-        text-align: center;
-        margin: 12px 0 8px;
-    }
-    
-    .date-divider span {
-        background: #e9ecef;
-        padding: 4px 16px;
-        border-radius: 12px;
-        font-size: 12px;
-        color: #6c757d;
     }
     
     /* ===== TYPING INDICATOR ===== */
@@ -495,6 +504,11 @@
         .message-content {
             font-size: 14px;
         }
+        
+        .date-divider span {
+            font-size: 11px;
+            padding: 3px 12px;
+        }
     }
     
     @media (max-width: 576px) {
@@ -653,6 +667,48 @@
     let isTyping = false;
     let selectedFile = null;
     
+    // ===== DATE HELPER FUNCTIONS =====
+    function getDateLabel(dateStr) {
+        const date = new Date(dateStr);
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        // Reset time for comparison
+        today.setHours(0, 0, 0, 0);
+        yesterday.setHours(0, 0, 0, 0);
+        const msgDate = new Date(date);
+        msgDate.setHours(0, 0, 0, 0);
+        
+        if (msgDate.getTime() === today.getTime()) {
+            return 'Today';
+        } else if (msgDate.getTime() === yesterday.getTime()) {
+            return 'Yesterday';
+        } else {
+            // Check if it's within the last 7 days
+            const diffDays = Math.floor((today - msgDate) / (1000 * 60 * 60 * 24));
+            if (diffDays < 7 && diffDays > 1) {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return days[date.getDay()];
+            }
+            // Return full date for older messages
+            return date.toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric',
+                year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+            });
+        }
+    }
+    
+    function isNewDay(dateStr1, dateStr2) {
+        if (!dateStr1 || !dateStr2) return true;
+        const d1 = new Date(dateStr1);
+        const d2 = new Date(dateStr2);
+        d1.setHours(0, 0, 0, 0);
+        d2.setHours(0, 0, 0, 0);
+        return d1.getTime() !== d2.getTime();
+    }
+    
     // ===== INITIAL MESSAGES =====
     const initialMessages = [
         {% for message in messages %}
@@ -672,23 +728,8 @@
     ];
     
     // ===== RENDER MESSAGES =====
-    function getDateLabel(date) {
-        const today = new Date();
-        const msgDate = new Date(date);
-        today.setHours(0,0,0,0);
-        msgDate.setHours(0,0,0,0);
-        
-        const diffDays = (today - msgDate) / (1000 * 60 * 60 * 24);
-        
-        if (diffDays === 0) return 'Today';
-        if (diffDays === 1) return 'Yesterday';
-        if (diffDays < 7) return ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][msgDate.getDay()];
-        return msgDate.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
-    }
-    
     function renderMessages(messages) {
         chatMessages.innerHTML = '';
-        let lastDate = null;
         
         if (messages.length === 0) {
             const empty = document.createElement('div');
@@ -701,20 +742,24 @@
             return;
         }
         
-        messages.forEach(msg => {
-            const msgDate = new Date(msg.created_at);
-            const dateLabel = getDateLabel(msgDate);
+        let lastDate = null;
+        
+        messages.forEach((msg, index) => {
+            const currentDate = msg.created_at;
             
-            if (dateLabel !== lastDate) {
-                lastDate = dateLabel;
+            // Check if we need to add a date divider
+            if (index === 0 || isNewDay(lastDate, currentDate)) {
+                const dateLabel = getDateLabel(currentDate);
                 const divider = document.createElement('div');
                 divider.className = 'date-divider';
                 divider.innerHTML = `<span>${dateLabel}</span>`;
                 chatMessages.appendChild(divider);
+                lastDate = currentDate;
             }
             
             addMessageToChat(msg);
         });
+        
         scrollToBottom();
     }
     
@@ -723,6 +768,7 @@
         const wrapper = document.createElement('div');
         wrapper.className = `message-wrapper ${isOwn ? 'sent' : 'received'}`;
         wrapper.dataset.messageId = data.id;
+        wrapper.dataset.timestamp = data.created_at;
         
         // Avatar (only for received messages)
         if (!isOwn) {
@@ -930,7 +976,24 @@
         console.log('Received:', data);
         
         if (data.type === 'message') {
+            // Check if message already exists
             if (!document.querySelector(`.message-wrapper[data-message-id="${data.message_id}"]`)) {
+                // Check if we need to add a date divider
+                const lastMessage = chatMessages.querySelector('.message-wrapper:last-child');
+                let lastDate = null;
+                if (lastMessage) {
+                    lastDate = lastMessage.dataset.timestamp;
+                }
+                
+                // If no messages or new day, add divider
+                if (!lastDate || isNewDay(lastDate, data.created_at)) {
+                    const dateLabel = getDateLabel(data.created_at);
+                    const divider = document.createElement('div');
+                    divider.className = 'date-divider';
+                    divider.innerHTML = `<span>${dateLabel}</span>`;
+                    chatMessages.appendChild(divider);
+                }
+                
                 addMessageToChat(data);
                 scrollToBottom();
             }
