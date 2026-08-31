@@ -79,15 +79,19 @@ if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
     ALLOWED_HOSTS = [
         '.onrender.com',
         'sakafundi.onrender.com',
+        '.sakafundi.com',      # Added: matches sakafundi.com and subdomains
+        'sakafundi.com',       # Added: explicit root domain
         'localhost',
         '127.0.0.1',
         '0.0.0.0',
     ]
     
-    # CSRF Trusted Origins
+    # CSRF Trusted Origins - Updated with sakafundi.com
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
+        'https://*.sakafundi.com',   # Added: matches all subdomains
+        'https://sakafundi.com',     # Added: explicit root domain
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
@@ -438,8 +442,6 @@ else:
         }
     }
 
-
-
 # ============================================================
 # CHANNELS / WEBSOCKETS
 # ============================================================
@@ -460,8 +462,6 @@ else:
             'BACKEND': 'channels.layers.InMemoryChannelLayer',
         },
     }
-
-
 
 # ============================================================
 # LOGGING
@@ -545,19 +545,23 @@ import os
 
 # Check if running on Render
 if 'RENDER' in os.environ:
-    # Force ALLOWED_HOSTS
+    # Force ALLOWED_HOSTS - Updated with sakafundi.com
     ALLOWED_HOSTS = [
         '.onrender.com',
         'sakafundi.onrender.com',
+        '.sakafundi.com',      # Added: matches sakafundi.com and subdomains
+        'sakafundi.com',       # Added: explicit root domain
         'localhost',
         '127.0.0.1',
         '0.0.0.0',
     ]
     
-    # Force CSRF_TRUSTED_ORIGINS
+    # Force CSRF_TRUSTED_ORIGINS - Updated with sakafundi.com
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
+        'https://*.sakafundi.com',   # Added: matches all subdomains
+        'https://sakafundi.com',     # Added: explicit root domain
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
