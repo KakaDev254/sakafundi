@@ -8,13 +8,14 @@
 {% block content %}
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-md-8 col-lg-7">
             <div class="card border-0 shadow-lg rounded-4">
-                <div class="card-body p-5">
+                <div class="card-body p-4 p-md-5">
                     <div class="text-center mb-4">
-                        <h2 class="fw-bold" style="color: #0F172A;">
-                            <i class="fas fa-handshake" style="color: #F59E0B;"></i> Create Account
-                        </h2>
+                        <div class="mb-3">
+                            <i class="fas fa-handshake" style="font-size: 3rem; color: #F59E0B;"></i>
+                        </div>
+                        <h2 class="fw-bold" style="color: #0F172A;">Create Account</h2>
                         <p class="text-secondary">Join SakaFundi and start your journey</p>
                     </div>
                     
@@ -23,17 +24,20 @@
                         {% csrf_token %}
                         
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
                                 {% for error in form.non_field_errors %}
                                     {{ error }}
                                 {% endfor %}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         {% endif %}
                         
+                        <!-- Name Fields -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                    First Name *
+                                    <i class="fas fa-user me-1" style="color: #F59E0B;"></i> First Name <span class="text-danger">*</span>
                                 </label>
                                 {% render_field form.first_name class="form-control form-control-lg" placeholder="John" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
                                 {% if form.first_name.errors %}
@@ -42,7 +46,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                    Last Name *
+                                    <i class="fas fa-user me-1" style="color: #F59E0B;"></i> Last Name <span class="text-danger">*</span>
                                 </label>
                                 {% render_field form.last_name class="form-control form-control-lg" placeholder="Doe" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
                                 {% if form.last_name.errors %}
@@ -51,87 +55,157 @@
                             </div>
                         </div>
                         
+                        <!-- Email Field -->
                         <div class="mb-3">
                             <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                Email Address *
+                                <i class="fas fa-envelope me-1" style="color: #F59E0B;"></i> Email Address <span class="text-danger">*</span>
                             </label>
-                            {% render_field form.email class="form-control form-control-lg" placeholder="you@email.com" type="email" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
+                            <div class="input-group">
+                                <span class="input-group-text" style="border-radius: 12px 0 0 12px; border: 2px solid #E2E8F0; background: #F8FAFC;">
+                                    <i class="fas fa-at" style="color: #94A3B8;"></i>
+                                </span>
+                                {% render_field form.email class="form-control form-control-lg" placeholder="you@email.com" type="email" style="border-radius: 0 12px 12px 0; border: 2px solid #E2E8F0;" %}
+                            </div>
                             {% if form.email.errors %}
                                 <div class="text-danger small mt-1">{{ form.email.errors }}</div>
                             {% endif %}
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i> We'll send a verification link to this email
+                            </small>
                         </div>
                         
+                        <!-- Phone Number Field -->
                         <div class="mb-3">
                             <label for="{{ form.phone_number.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                Phone Number *
+                                <i class="fas fa-phone me-1" style="color: #F59E0B;"></i> Phone Number <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text" style="border-radius: 12px 0 0 12px; border: 2px solid #E2E8F0; background: #F8FAFC;">+254</span>
+                                <span class="input-group-text" style="border-radius: 12px 0 0 12px; border: 2px solid #E2E8F0; background: #F8FAFC; font-weight: 600;">
+                                    +254
+                                </span>
                                 {% render_field form.phone_number class="form-control form-control-lg" placeholder="712345678" style="border-radius: 0 12px 12px 0; border: 2px solid #E2E8F0;" %}
                             </div>
                             {% if form.phone_number.errors %}
                                 <div class="text-danger small mt-1">{{ form.phone_number.errors }}</div>
                             {% endif %}
-                            <small class="text-muted">Enter your Safaricom/Airtel number</small>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i> Enter your Safaricom/Airtel number (e.g., 712345678)
+                            </small>
                         </div>
                         
+                        <!-- M-PESA Phone Field (NEW) -->
                         <div class="mb-3">
-                            <label for="{{ form.user_type.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                I want to...
+                            <label for="{{ form.mpesa_phone.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
+                                <i class="fas fa-mobile-alt me-1" style="color: #F59E0B;"></i> M-PESA Phone Number
                             </label>
-                            {% render_field form.user_type class="form-select form-select-lg" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
+                            <div class="input-group">
+                                <span class="input-group-text" style="border-radius: 12px 0 0 12px; border: 2px solid #E2E8F0; background: #F8FAFC; font-weight: 600;">
+                                    +254
+                                </span>
+                                {% render_field form.mpesa_phone class="form-control form-control-lg" placeholder="712345678" style="border-radius: 0 12px 12px 0; border: 2px solid #E2E8F0;" %}
+                            </div>
+                            {% if form.mpesa_phone.errors %}
+                                <div class="text-danger small mt-1">{{ form.mpesa_phone.errors }}</div>
+                            {% endif %}
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i> Optional - For receiving payments via M-PESA
+                            </small>
+                        </div>
+                        
+                        <!-- User Type Field -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" style="color: #0F172A;">
+                                <i class="fas fa-user-tag me-1" style="color: #F59E0B;"></i> I want to... <span class="text-danger">*</span>
+                            </label>
+                            <div class="d-flex gap-3 flex-wrap">
+                                {% for radio in form.user_type %}
+                                    <div class="form-check">
+                                        {{ radio.tag }}
+                                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                            {% if radio.choice_value == 'customer' %}
+                                                <i class="fas fa-shopping-bag me-1" style="color: #2563EB;"></i> Hire a Professional
+                                            {% elif radio.choice_value == 'provider' %}
+                                                <i class="fas fa-tools me-1" style="color: #F59E0B;"></i> Offer Services
+                                            {% elif radio.choice_value == 'both' %}
+                                                <i class="fas fa-exchange-alt me-1" style="color: #10B981;"></i> Both
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
                             {% if form.user_type.errors %}
                                 <div class="text-danger small mt-1">{{ form.user_type.errors }}</div>
                             {% endif %}
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                Password *
-                            </label>
-                            {% render_field form.password1 class="form-control form-control-lg" placeholder="Create a strong password" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
-                            {% if form.password1.errors %}
-                                <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
-                            {% endif %}
-                            <small class="text-muted">At least 8 characters with a mix of letters and numbers</small>
+                        <!-- Password Fields -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
+                                    <i class="fas fa-lock me-1" style="color: #F59E0B;"></i> Password <span class="text-danger">*</span>
+                                </label>
+                                {% render_field form.password1 class="form-control form-control-lg" placeholder="Create a strong password" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
+                                {% if form.password1.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+                                {% endif %}
+                                <small class="text-muted">At least 8 characters</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
+                                    <i class="fas fa-check-circle me-1" style="color: #F59E0B;"></i> Confirm Password <span class="text-danger">*</span>
+                                </label>
+                                {% render_field form.password2 class="form-control form-control-lg" placeholder="Confirm your password" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
+                                {% if form.password2.errors %}
+                                    <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+                                {% endif %}
+                            </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold" style="color: #0F172A;">
-                                Confirm Password *
-                            </label>
-                            {% render_field form.password2 class="form-control form-control-lg" placeholder="Confirm your password" style="border-radius: 12px; border: 2px solid #E2E8F0;" %}
-                            {% if form.password2.errors %}
-                                <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
-                            {% endif %}
-                        </div>
-                        
+                        <!-- Terms Checkbox -->
                         <div class="mb-3 form-check">
-                            {% render_field form.agree_terms class="form-check-input" style="border-radius: 4px; border: 2px solid #E2E8F0;" %}
+                            {% render_field form.agree_terms class="form-check-input" style="border-radius: 4px; border: 2px solid #E2E8F0; width: 18px; height: 18px; margin-top: 0.25rem;" %}
                             <label class="form-check-label text-secondary" for="{{ form.agree_terms.id_for_label }}">
-                                I agree to the <a href="#" class="text-primary text-decoration-none">Terms of Service</a> and 
-                                <a href="#" class="text-primary text-decoration-none">Privacy Policy</a>
+                                I agree to the <a href="{% url 'core:terms' %}" class="text-decoration-none" style="color: #F59E0B;">Terms of Service</a> and 
+                                <a href="{% url 'core:privacy' %}" class="text-decoration-none" style="color: #F59E0B;">Privacy Policy</a>
                             </label>
                             {% if form.agree_terms.errors %}
                                 <div class="text-danger small mt-1">{{ form.agree_terms.errors }}</div>
                             {% endif %}
                         </div>
                         
+                        <!-- Submit Button -->
                         <button type="submit" class="btn w-100 py-3 fw-semibold" 
-                                style="background: #2563EB; color: #fff; border-radius: 12px; border: none; font-size: 1rem; transition: all 0.3s ease;"
-                                onmouseover="this.style.background='#1D4ED8'"
-                                onmouseout="this.style.background='#2563EB'">
+                                style="background: #F59E0B; color: #fff; border-radius: 12px; border: none; font-size: 1rem; transition: all 0.3s ease;"
+                                onmouseover="this.style.background='#D97706'"
+                                onmouseout="this.style.background='#F59E0B'">
                             <i class="fas fa-user-plus me-2"></i> Create Account
                         </button>
                     </form>
                     
+                    <!-- Divider -->
                     <div class="text-center mt-4">
+                        <div class="d-flex align-items-center justify-content-center gap-3">
+                            <hr class="flex-grow-1" style="border-color: #E2E8F0;">
+                            <span class="text-muted small">or</span>
+                            <hr class="flex-grow-1" style="border-color: #E2E8F0;">
+                        </div>
+                    </div>
+                    
+                    <!-- Login Link -->
+                    <div class="text-center mt-3">
                         <p class="text-secondary">
                             Already have an account? 
-                            <a href="{% url 'accounts:login' %}" class="fw-semibold text-decoration-none" style="color: #2563EB;">
-                                Sign In
+                            <a href="{% url 'accounts:login' %}" class="fw-semibold text-decoration-none" style="color: #F59E0B;">
+                                <i class="fas fa-sign-in-alt me-1"></i> Sign In
                             </a>
                         </p>
+                    </div>
+                    
+                    <!-- Verification Notice -->
+                    <div class="alert alert-info small mt-3" style="border-radius: 12px; background: #EFF6FF; border-color: #BFDBFE;">
+                        <i class="fas fa-shield-alt me-2" style="color: #2563EB;"></i>
+                        <strong>Verify your email:</strong> After registration, you'll receive a verification link. 
+                        Please verify your email before logging in.
                     </div>
                 </div>
             </div>
@@ -141,8 +215,55 @@
 
 <style>
     .form-control:focus, .form-select:focus {
-        border-color: #2563EB !important;
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+        border-color: #F59E0B !important;
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #F59E0B;
+        border-color: #F59E0B;
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        border-color: #F59E0B;
+    }
+    
+    .form-check {
+        padding-left: 2.5rem;
+    }
+    
+    .form-check .form-check-input {
+        margin-left: -2.5rem;
+        margin-top: 0.35rem;
+    }
+    
+    .form-check-label {
+        margin-left: 0.25rem;
+    }
+    
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+    
+    .input-group-text {
+        background: #F8FAFC;
+        border-color: #E2E8F0;
+        font-weight: 500;
+        color: #475569;
+    }
+    
+    .alert-info {
+        background: #EFF6FF;
+        border-color: #BFDBFE;
+        color: #1E40AF;
+    }
+    
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 1.5rem !important;
+        }
     }
 </style>
 {% endblock %}

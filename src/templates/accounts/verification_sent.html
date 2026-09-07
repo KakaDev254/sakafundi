@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Verification Sent - SakaFundi{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: #FEF3C7; border-radius: 50%;">
+                            <i class="fas fa-paper-plane" style="font-size: 2.5rem; color: #F59E0B;"></i>
+                        </div>
+                    </div>
+                    
+                    <h3 class="fw-bold" style="color: #0F172A;">Check Your Email</h3>
+                    
+                    <p class="text-secondary mt-3">
+                        We've sent a verification link to your email address. 
+                        Please check your inbox and click the link to verify your account.
+                    </p>
+                    
+                    <div class="alert alert-warning mt-4" style="border-radius: 12px; background: #FFFBEB; border-color: #FDE68A;">
+                        <i class="fas fa-clock me-2" style="color: #D97706;"></i>
+                        <strong>Link expires in 24 hours</strong>
+                        <p class="mb-0 small mt-1">The verification link will expire after 24 hours.</p>
+                    </div>
+                    
+                    <hr class="my-4" style="border-color: #E2E8F0;">
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'accounts:resend_verification' %}" class="btn btn-outline-warning py-2 fw-semibold" style="border-radius: 12px; border-color: #F59E0B; color: #F59E0B;">
+                            <i class="fas fa-redo me-2"></i> Resend Email
+                        </a>
+                        <a href="{% url 'core:home' %}" class="btn btn-outline-secondary py-2 fw-semibold" style="border-radius: 12px; border-color: #E2E8F0; color: #64748B;">
+                            <i class="fas fa-home me-2"></i> Return Home
+                        </a>
+                    </div>
+                    
+                    <p class="text-secondary small mt-3">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Didn't receive the email? Check your spam folder.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-outline-warning:hover {
+        background: #F59E0B;
+        color: #fff;
+        border-color: #F59E0B;
+    }
+</style>
+{% endblock %}

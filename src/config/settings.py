@@ -79,29 +79,26 @@ if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
     ALLOWED_HOSTS = [
         '.onrender.com',
         'sakafundi.onrender.com',
-        '.sakafundi.com',      # Added: matches sakafundi.com and subdomains
-        'sakafundi.com',       # Added: explicit root domain
+        '.sakafundi.com',
+        'sakafundi.com',
         'localhost',
         '127.0.0.1',
         '0.0.0.0',
     ]
     
-    # CSRF Trusted Origins - Updated with sakafundi.com
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
-        'https://*.sakafundi.com',   # Added: matches all subdomains
-        'https://sakafundi.com',     # Added: explicit root domain
+        'https://*.sakafundi.com',
+        'https://sakafundi.com',
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
     
-    # Security Settings for Render's proxy
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     
-    # IMPORTANT: Tell Django to trust the proxy headers from Render
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     USE_X_FORWARDED_HOST = True
     USE_X_FORWARDED_PORT = True
@@ -139,25 +136,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'django.contrib.sites',  # Required for allauth
+    'django.contrib.sites',
     
     # Third party apps
     'crispy_forms',
     'crispy_bootstrap5',
     'django_filters',
-    # 'django_ratelimit',
     'django_redis',
     'widget_tweaks',
     'import_export',
     'cloudinary',
     'cloudinary_storage',
     
-    # Allauth - must be in this order
+    # Allauth - REMOVED SOCIAL LOGIN
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount',  # REMOVED - No social login
+    # 'allauth.socialaccount.providers.google',  # REMOVED
+    # 'allauth.socialaccount.providers.facebook',  # REMOVED
     
     # Channels
     'channels',
@@ -176,7 +172,7 @@ INSTALLED_APPS = [
 ]
 
 # ============================================================
-# MIDDLEWARE
+# MIDDLEWARE - ADDED AUTO-LOGOUT MIDDLEWARE
 # ============================================================
 
 MIDDLEWARE = [
@@ -189,6 +185,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    # Auto-logout middleware
+    'accounts.middleware.AutoLogoutMiddleware',
+    'accounts.middleware.UserActivityMiddleware',
+    'accounts.middleware.SessionExpiryMiddleware',
 ]
 
 # ============================================================
@@ -215,6 +215,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.site_settings',
+                'accounts.context_processors.user_settings',  # ADDED
             ],
         },
     },
@@ -224,7 +225,6 @@ TEMPLATES = [
 # DATABASE
 # ============================================================
 
-# Get DATABASE_URL from environment
 database_url = os.environ.get('DATABASE_URL')
 
 if database_url:
@@ -281,29 +281,33 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 
 # ============================================================
-# ALLAUTH SETTINGS
+# ALLAUTH SETTINGS - UPDATED FOR EMAIL VERIFICATION
 # ============================================================
 
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # CHANGED: Force email verification
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1  # 24 hours
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'accounts:login'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'accounts:profile'
 ACCOUNT_LOGOUT_ON_GET = True
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
 ACCOUNT_RATE_LIMITS = {
-    'login_failed': '5/300',
+    'login_failed': '5/300',  # 5 attempts per 5 minutes
+    'signup': '5/3600',  # 5 signups per hour
+    'password_reset': '3/3600',  # 3 reset attempts per hour
+    'email_confirmation': '3/3600',  # 3 verification attempts per hour
 }
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-    },
-    'facebook': {
-        'METHOD': 'oauth2',
-        'SCOPE': ['email', 'public_profile'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-    }
-}
+# ============================================================
+# SESSION SETTINGS - FOR AUTO-LOGOUT
+# ============================================================
+
+SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
+SESSION_SAVE_EVERY_REQUEST = True  # Refresh session on activity
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Logout when browser closes
 
 # ============================================================
 # PASSWORD VALIDATION
@@ -344,16 +348,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Media files - use Cloudinary in production, local in development
 if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
-    # Production: Use Cloudinary for media files
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    # Static files can also use Cloudinary (optional)
-    # STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
     MEDIA_URL = f'https://res.cloudinary.com/{config("CLOUDINARY_CLOUD_NAME", default="")}/'
     print(f"✅ Using Cloudinary for media storage", file=sys.stderr)
 else:
-    # Development: Use local storage
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
@@ -381,19 +380,26 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # ============================================================
-# EMAIL
+# EMAIL - UPDATED FOR ZOHO MAIL
 # ============================================================
 
-if ENVIRONMENT == 'production':
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
-    EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
+    EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.zoho.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=465, cast=int)
+    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='info@sakafundi.com')
     EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='noreply@sakafundi.co.ke')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@sakafundi.com')
+    EMAIL_TIMEOUT = 30
+    
+    print(f"📧 EMAIL: Configured with Zoho Mail ({EMAIL_HOST}) for production", file=sys.stderr)
+    print(f"📧 EMAIL: Sending from {DEFAULT_FROM_EMAIL}", file=sys.stderr)
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'noreply@sakafundi.com'
+    print(f"📧 EMAIL: Using console backend for development", file=sys.stderr)
 
 # ============================================================
 # PLATFORM SETTINGS
@@ -404,7 +410,14 @@ DEPOSIT_DEFAULT_PERCENTAGE = 30
 CURRENCY = 'KES'
 CURRENCY_SYMBOL = 'KSh'
 
-# config/settings.py - Update this section
+# ============================================================
+# SITE SETTINGS - ADDED
+# ============================================================
+
+SITE_NAME = 'SakaFundi'
+SITE_EMAIL = 'info@sakafundi.com'
+SITE_PHONE = '+254 700 123456'
+SITE_ADDRESS = 'Nairobi, Kenya'
 
 # ============================================================
 # CACHE
@@ -435,7 +448,6 @@ if ENVIRONMENT == 'production':
         }
     }
 else:
-    # Use DummyCache for development (no ratelimit issues)
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -492,6 +504,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'accounts': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
 
@@ -520,70 +537,61 @@ MPESA_RESULT_URL = config('MPESA_RESULT_URL', default='')
 DJANGO_REDIS_LOGGER = 'django_redis.loggers.CacheLogger'
 
 # ============================================================
-# SESSION CONFIGURATION (Optional)
-# ============================================================
-
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
-
-# ============================================================
-# CELERY CONFIGURATION (Optional)
-# ============================================================
-
-# CELERY_BROKER_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
-# CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = TIME_ZONE
-
-# ============================================================
 # FORCE RENDER SETTINGS (OVERRIDE EVERYTHING)
 # ============================================================
 
-import os
-
-# Check if running on Render
 if 'RENDER' in os.environ:
-    # Force ALLOWED_HOSTS - Updated with sakafundi.com
     ALLOWED_HOSTS = [
         '.onrender.com',
         'sakafundi.onrender.com',
-        '.sakafundi.com',      # Added: matches sakafundi.com and subdomains
-        'sakafundi.com',       # Added: explicit root domain
+        '.sakafundi.com',
+        'sakafundi.com',
         'localhost',
         '127.0.0.1',
         '0.0.0.0',
     ]
     
-    # Force CSRF_TRUSTED_ORIGINS - Updated with sakafundi.com
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
-        'https://*.sakafundi.com',   # Added: matches all subdomains
-        'https://sakafundi.com',     # Added: explicit root domain
+        'https://*.sakafundi.com',
+        'https://sakafundi.com',
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
     
-    # Force DEBUG
     DEBUG = False
-    
-    # Force SECURE settings
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+    
+    # Force email settings
+    EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+    EMAIL_HOST = config('EMAIL_HOST', default='smtp.zoho.com')
+    EMAIL_PORT = config('EMAIL_PORT', default=465, cast=int)
+    EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=True, cast=bool)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='info@sakafundi.com')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+    DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@sakafundi.com')
+    EMAIL_TIMEOUT = 30
+    
+    # Force session settings
+    SESSION_COOKIE_AGE = 3600
+    SESSION_SAVE_EVERY_REQUEST = True
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     
     print(f"🚨 RENDER MODE ACTIVATED", file=sys.stderr)
     print(f"🔒 ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
     print(f"🔒 CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
     print(f"🔒 DEBUG: {DEBUG}", file=sys.stderr)
+    print(f"📧 EMAIL: Using {EMAIL_HOST} from {DEFAULT_FROM_EMAIL}", file=sys.stderr)
+    print(f"⏰ SESSION_TIMEOUT: {SESSION_COOKIE_AGE} seconds", file=sys.stderr)
 
 # ============================================================
 # CLOUDINARY URL FOR TEMPLATES
 # ============================================================
 
-# Make Cloudinary URL available in templates
 if config('CLOUDINARY_CLOUD_NAME', default=''):
     CLOUDINARY_URL = f'https://res.cloudinary.com/{config("CLOUDINARY_CLOUD_NAME")}/'
 else:

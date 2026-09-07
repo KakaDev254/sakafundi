@@ -1,0 +1,71 @@
+<!-- templates/accounts/email/verification_email.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - SakaFundi</title>
+</head>
+<body style="font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #0F172A; margin: 0; font-size: 28px;">
+                <span style="color: #F59E0B;">Saka</span>Fundi
+            </h1>
+            <p style="color: #64748b; margin: 5px 0 0; font-size: 14px;">Tafuta Ujuzi</p>
+        </div>
+        
+        <!-- Body -->
+        <div style="background: white; padding: 30px; border-radius: 8px;">
+            <h2 style="color: #0F172A; margin-top: 0; font-size: 22px;">Verify Your Email Address</h2>
+            
+            <p style="color: #475569; font-size: 16px;">Hello <strong>{{ user.full_name|default:user.email }}</strong>,</p>
+            
+            <p style="color: #475569; font-size: 16px;">
+                Thank you for creating an account with <strong>{{ site_name }}</strong>. 
+                To get started, please verify your email address by clicking the button below:
+            </p>
+            
+            <div style="text-align: center; margin: 35px 0;">
+                <a href="{{ verification_link }}" 
+                   style="background: #F59E0B; color: white; padding: 14px 35px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block; font-size: 16px;">
+                    Verify Email Address
+                </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #64748b;">
+                If the button doesn't work, copy and paste this link into your browser:
+                <br>
+                <a href="{{ verification_link }}" style="color: #F59E0B; word-break: break-all; font-size: 13px;">
+                    {{ verification_link }}
+                </a>
+            </p>
+            
+            <hr style="border: 1px solid #e2e8f0; margin: 30px 0;">
+            
+            <p style="font-size: 14px; color: #64748b;">
+                <strong>Note:</strong> This link will expire in 24 hours.
+            </p>
+            
+            <p style="font-size: 14px; color: #64748b;">
+                If you didn't create an account with {{ site_name }}, please ignore this email.
+            </p>
+            
+            <p style="font-size: 14px; color: #64748b;">
+                For any questions, contact us at 
+                <a href="mailto:{{ site_email }}" style="color: #F59E0B; text-decoration: none;">{{ site_email }}</a>
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 30px; font-size: 13px; color: #94a3b8;">
+            <p style="margin: 0;">&copy; 2024 {{ site_name }}. All rights reserved.</p>
+            <p style="margin: 5px 0 0;">
+                <a href="https://{{ site_url }}/terms" style="color: #94a3b8; text-decoration: none;">Terms</a> |
+                <a href="https://{{ site_url }}/privacy" style="color: #94a3b8; text-decoration: none;">Privacy</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

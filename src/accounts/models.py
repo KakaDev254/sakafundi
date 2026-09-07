@@ -66,6 +66,43 @@ class User(AbstractUser):
     total_withdrawn = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_spent = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     
+    # ============================================================
+    # EMAIL VERIFICATION (ADDED)
+    # ============================================================
+    email_verified = models.BooleanField(
+        default=False,
+        help_text="Indicates if the user's email has been verified"
+    )
+    email_verification_sent_at = models.DateTimeField(
+        null=True, 
+        blank=True,
+        help_text="Timestamp when the verification email was last sent"
+    )
+    email_verification_token = models.CharField(
+        max_length=255, 
+        blank=True, 
+        null=True,
+        help_text="Token for email verification"
+    )
+    
+    # ============================================================
+    # AUTO-LOGOUT (ADDED)
+    # ============================================================
+    last_activity = models.DateTimeField(
+        null=True, 
+        blank=True,
+        help_text="Last recorded user activity timestamp"
+    )
+    session_expiry = models.DateTimeField(
+        null=True, 
+        blank=True,
+        help_text="When the current session should expire"
+    )
+    is_online = models.BooleanField(
+        default=False,
+        help_text="Indicates if the user is currently online"
+    )
+    
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -112,6 +149,68 @@ class User(AbstractUser):
     @property
     def full_name(self):
         return self.get_full_name() or self.username
+    
+    # ============================================================
+    # EMAIL VERIFICATION METHODS (ADDED)
+    # ============================================================
+    def is_email_verified(self):
+        """Check if email is verified"""
+        return self.email_verified
+    
+    def mark_email_verified(self):
+        """Mark email as verified"""
+        self.email_verified = True
+        self.email_verification_sent_at = None
+        self.email_verification_token = None
+        self.save()
+    
+    def generate_verification_token(self):
+        """Generate a new verification token"""
+        import secrets
+        token = secrets.token_urlsafe(32)
+        self.email_verification_token = token
+        self.email_verification_sent_at = timezone.now()
+        self.save()
+        return token
+    
+    def verify_email_with_token(self, token):
+        """Verify email with token"""
+        if self.email_verification_token == token:
+            # Check if token is not expired (24 hours)
+            if self.email_verification_sent_at:
+                time_diff = timezone.now() - self.email_verification_sent_at
+                if time_diff.total_seconds() <= 86400:  # 24 hours
+                    self.mark_email_verified()
+                    return True
+        return False
+    
+    # ============================================================
+    # AUTO-LOGOUT METHODS (ADDED)
+    # ============================================================
+    def update_activity(self):
+        """Update user's last activity timestamp"""
+        from django.utils import timezone
+        self.last_activity = timezone.now()
+        self.is_online = True
+        self.save()
+    
+    def set_session_expiry(self, seconds=3600):
+        """Set session expiry time"""
+        from django.utils import timezone
+        self.session_expiry = timezone.now() + timezone.timedelta(seconds=seconds)
+        self.save()
+    
+    def is_session_expired(self):
+        """Check if current session has expired"""
+        if self.session_expiry:
+            return timezone.now() > self.session_expiry
+        return True
+    
+    def mark_offline(self):
+        """Mark user as offline"""
+        self.is_online = False
+        self.session_expiry = None
+        self.save()
 
 
 class UserBankAccount(models.Model):

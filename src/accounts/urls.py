@@ -11,6 +11,11 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
     
+    # Email Verification
+    path('verify-email/<uidb64>/<token>/', views.verify_email_view, name='verify_email'),
+    path('resend-verification/', views.resend_verification, name='resend_verification'),
+    path('verification-sent/', views.verification_sent_view, name='verification_sent'),
+    
     # Profile
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
