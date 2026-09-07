@@ -35,7 +35,7 @@ services:
         value: false
       
       - key: ALLOWED_HOSTS
-        value: .onrender.com,sakafundi.onrender.com,localhost,127.0.0.1
+        value: .sakafundi.com,sakafundi.onrender.com,localhost,127.0.0.1
       
       # Database - From Render PostgreSQL
       - key: DATABASE_URL
@@ -87,31 +87,40 @@ services:
         sync: false
       
       - key: MPESA_TIMEOUT_URL
-        value: "https://sakafundi.onrender.com/payments/mpesa/timeout/"
+        value: "https://sakafundi.com/payments/mpesa/timeout/"
       
       - key: MPESA_RESULT_URL
-        value: "https://sakafundi.onrender.com/payments/mpesa/result/"
+        value: "https://sakafundi.com/payments/mpesa/result/"
       
       # ============================================================
-      # Email Settings (Set these in Render Dashboard)
+      # Email Settings - Zoho Mail (Set these in Render Dashboard)
       # ============================================================
+      - key: EMAIL_BACKEND
+        value: "django.core.mail.backends.smtp.EmailBackend"
+      
       - key: EMAIL_HOST
-        sync: false
+        value: "smtp.zoho.com"
       
       - key: EMAIL_PORT
-        value: "587"
+        value: "465"
       
-      - key: EMAIL_USE_TLS
+      - key: EMAIL_USE_SSL
         value: "True"
       
+      - key: EMAIL_USE_TLS
+        value: "False"
+      
       - key: EMAIL_HOST_USER
-        sync: false
+        value: "info@sakafundi.com"
       
       - key: EMAIL_HOST_PASSWORD
-        sync: false
+        sync: false  # Set this in Render Dashboard (your Zoho App Password)
       
       - key: DEFAULT_FROM_EMAIL
-        sync: false
+        value: "info@sakafundi.com"
+      
+      - key: EMAIL_TIMEOUT
+        value: "30"
       
       # ============================================================
       # Platform Settings
