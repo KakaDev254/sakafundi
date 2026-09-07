@@ -148,12 +148,11 @@ INSTALLED_APPS = [
     'cloudinary',
     'cloudinary_storage',
     
-    # Allauth - REMOVED SOCIAL LOGIN
+    # Allauth - Google only
     'allauth',
     'allauth.account',
-    # 'allauth.socialaccount',  # REMOVED - No social login
-    # 'allauth.socialaccount.providers.google',  # REMOVED
-    # 'allauth.socialaccount.providers.facebook',  # REMOVED
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     
     # Channels
     'channels',
@@ -215,7 +214,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.site_settings',
-                'accounts.context_processors.user_settings',  # ADDED
+                'accounts.context_processors.user_settings',
             ],
         },
     },
@@ -286,8 +285,8 @@ SITE_ID = 1
 
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # CHANGED: Force email verification
-ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1  # 24 hours
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'accounts:login'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'accounts:profile'
 ACCOUNT_LOGOUT_ON_GET = True
@@ -295,19 +294,35 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 ACCOUNT_RATE_LIMITS = {
-    'login_failed': '5/300',  # 5 attempts per 5 minutes
-    'signup': '5/3600',  # 5 signups per hour
-    'password_reset': '3/3600',  # 3 reset attempts per hour
-    'email_confirmation': '3/3600',  # 3 verification attempts per hour
+    'login_failed': '5/300',
+    'signup': '5/3600',
+    'password_reset': '3/3600',
+    'email_confirmation': '3/3600',
 }
+
+# ============================================================
+# SOCIAL ACCOUNT SETTINGS - GOOGLE ONLY (ADD THIS SECTION)
+# ============================================================
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    }
+}
+
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'optional'
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # ============================================================
 # SESSION SETTINGS - FOR AUTO-LOGOUT
 # ============================================================
 
-SESSION_COOKIE_AGE = 3600  # 1 hour in seconds
-SESSION_SAVE_EVERY_REQUEST = True  # Refresh session on activity
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Logout when browser closes
+SESSION_COOKIE_AGE = 3600
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # ============================================================
 # PASSWORD VALIDATION
@@ -411,7 +426,7 @@ CURRENCY = 'KES'
 CURRENCY_SYMBOL = 'KSh'
 
 # ============================================================
-# SITE SETTINGS - ADDED
+# SITE SETTINGS
 # ============================================================
 
 SITE_NAME = 'SakaFundi'
