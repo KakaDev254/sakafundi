@@ -6,9 +6,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),
+    
+    # Your custom app URLs should come BEFORE allauth
     path('', include('core.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('accounts.urls')),  # ← Moved BEFORE allauth
     path('services/', include('services.urls')),
     path('projects/', include('projects.urls')),
     path('payments/', include('payments.urls')),
@@ -17,6 +18,9 @@ urlpatterns = [
     path('reviews/', include('reviews.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('admin-dashboard/', include('admin_dashboard.urls')),
+    
+    # Allauth should come LAST
+    path('accounts/', include('allauth.urls')),  # ← Moved to the end
 ]
 
 if settings.DEBUG:
