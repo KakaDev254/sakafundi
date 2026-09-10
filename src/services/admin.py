@@ -12,7 +12,8 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
     search_fields = ('name', 'slug', 'description')
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('name',)
-    
+    readonly_fields = ('created_at', 'updated_at')  # ✅ Added
+
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'slug', 'icon', 'description')
@@ -21,7 +22,7 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
             'fields': ('is_active',)
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
+            'fields': ('created_at', 'updated_at'),  # ✅ Now readonly
             'classes': ('collapse',)
         }),
     )
@@ -58,7 +59,7 @@ class ServiceAdmin(admin.ModelAdmin):
     """Admin configuration for Services"""
     list_display = ('title', 'provider', 'category', 'price_range', 'is_active', 'is_featured', 'rating', 'orders_completed')
     list_filter = ('category', 'is_active', 'is_featured', 'created_at')
-    search_fields = ('title', 'description', 'provider__username', 'provider__email')
+    search_fields = ('title', 'description', 'provider__email', 'provider__first_name', 'provider__last_name')
     readonly_fields = ('views', 'rating', 'orders_completed', 'created_at', 'updated_at')
     
     fieldsets = (
@@ -106,7 +107,8 @@ class ServicePortfolioAdmin(admin.ModelAdmin):
     list_display = ('service', 'title', 'is_cover', 'image_preview', 'created_at')
     list_filter = ('is_cover', 'created_at')
     search_fields = ('service__title', 'title', 'description')
-    
+    readonly_fields = ('created_at',)  # ✅ Added
+
     def image_preview(self, obj):
         """Display image preview in admin"""
         if obj.image:
