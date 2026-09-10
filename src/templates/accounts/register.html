@@ -253,12 +253,17 @@
 </div>
 
 <style>
+    /* Bluish background for the page */
     body {
-        background: #f8fafc;
+        background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #EFF6FF 100%) !important;
+        min-height: 100vh;
+        background-attachment: fixed;
     }
     
     .card {
         background: #ffffff !important;
+        box-shadow: 0 20px 60px rgba(37, 99, 235, 0.12) !important;
+        border-radius: 16px !important;
     }
     
     .card-body {
@@ -300,11 +305,6 @@
     .btn:hover {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    }
-    
-    .btn-google:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
     .alert-info {
