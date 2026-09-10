@@ -10,24 +10,24 @@
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
-            <div class="card border-0 shadow-sm rounded-3" style="background: #ffffff;">
-                <div class="card-body p-5" style="background: #ffffff;">
+            <div class="card border-0 shadow-sm rounded-3" style="background: #2563EB; border-radius: 16px !important;">
+                <div class="card-body p-5" style="background: #2563EB;">
                     <div class="text-center mb-4">
                         <div class="mb-3">
-                            <span class="display-6 fw-bold" style="color: #0A1628;">
-                                <span style="color: #2563EB;">Saka</span>Fundi
+                            <span class="display-6 fw-bold" style="color: #ffffff;">
+                                <span style="color: #EAB308;">Saka</span>Fundi
                             </span>
                         </div>
-                        <h4 class="fw-bold" style="color: #0A1628;">Welcome Back</h4>
-                        <p class="text-muted small" style="color: #64748B;">Sign in to continue to your account</p>
+                        <h4 class="fw-bold" style="color: #ffffff;">Welcome Back</h4>
+                        <p class="small" style="color: rgba(255,255,255,0.8);">Sign in to continue to your account</p>
                     </div>
-                    
+
                     <!-- Google Login Button -->
                     <div class="mb-3">
                         <a href="{% provider_login_url 'google' %}" class="btn w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" 
-                           style="background: #ffffff; color: #0A1628; border-radius: 8px; border: 2px solid #E2E8F0; transition: all 0.2s ease; font-size: 0.95rem;"
-                           onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#2563EB';"
-                           onmouseout="this.style.background='#ffffff'; this.style.borderColor='#E2E8F0';">
+                           style="background: #ffffff; color: #0A1628; border-radius: 8px; border: 2px solid #ffffff; transition: all 0.2s ease; font-size: 0.95rem;"
+                           onmouseover="this.style.background='#f8fafc'; this.style.borderColor='#EAB308';"
+                           onmouseout="this.style.background='#ffffff'; this.style.borderColor='#ffffff';">
                             <svg width="20" height="20" viewBox="0 0 48 48">
                                 <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
                                 <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
@@ -37,20 +37,20 @@
                             Continue with Google
                         </a>
                     </div>
-                    
+
                     <!-- Divider -->
                     <div class="text-center my-4">
                         <div class="d-flex align-items-center justify-content-center gap-3">
-                            <hr class="flex-grow-1" style="border-color: #E2E8F0;">
-                            <span class="text-muted small text-uppercase" style="color: #94A3B8; font-size: 0.7rem;">or continue with email</span>
-                            <hr class="flex-grow-1" style="border-color: #E2E8F0;">
+                            <hr class="flex-grow-1" style="border-color: rgba(255,255,255,0.3);">
+                            <span class="small text-uppercase" style="color: rgba(255,255,255,0.7); font-size: 0.7rem;">or continue with email</span>
+                            <hr class="flex-grow-1" style="border-color: rgba(255,255,255,0.3);">
                         </div>
                     </div>
-                    
+
                     <!-- Email Login Form -->
                     <form method="post" action="{% url 'account_login' %}" class="needs-validation" novalidate>
                         {% csrf_token %}
-                        
+
                         {% if form.non_field_errors %}
                             <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 8px;">
                                 <i class="fas fa-exclamation-circle me-2"></i>
@@ -60,14 +60,14 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         {% endif %}
-                        
+
                         <!-- Email Field -->
                         <div class="mb-3">
-                            <label for="id_login" class="form-label fw-semibold small" style="color: #0A1628;">
+                            <label for="id_login" class="form-label fw-semibold small" style="color: #ffffff;">
                                 Email Address
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0" style="border-radius: 8px 0 0 8px; border-color: #E2E8F0;">
+                                <span class="input-group-text border-end-0" style="border-radius: 8px 0 0 8px; border-color: #E2E8F0; background: #ffffff;">
                                     <i class="fas fa-envelope" style="color: #94A3B8;"></i>
                                 </span>
                                 <input type="email" name="login" id="id_login" class="form-control border-start-0" 
@@ -76,17 +76,17 @@
                                        value="{{ form.login.value|default:'' }}" required autofocus>
                             </div>
                             {% if form.login.errors %}
-                                <div class="text-danger small mt-1">{{ form.login.errors }}</div>
+                                <div class="small mt-1" style="color: #FCA5A5;">{{ form.login.errors }}</div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Password Field -->
                         <div class="mb-3">
-                            <label for="id_password" class="form-label fw-semibold small" style="color: #0A1628;">
+                            <label for="id_password" class="form-label fw-semibold small" style="color: #ffffff;">
                                 Password
                             </label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0" style="border-radius: 8px 0 0 8px; border-color: #E2E8F0;">
+                                <span class="input-group-text border-end-0" style="border-radius: 8px 0 0 8px; border-color: #E2E8F0; background: #ffffff;">
                                     <i class="fas fa-lock" style="color: #94A3B8;"></i>
                                 </span>
                                 <input type="password" name="password" id="id_password" class="form-control border-start-0" 
@@ -95,23 +95,23 @@
                                        required>
                             </div>
                             {% if form.password.errors %}
-                                <div class="text-danger small mt-1">{{ form.password.errors }}</div>
+                                <div class="small mt-1" style="color: #FCA5A5;">{{ form.password.errors }}</div>
                             {% endif %}
                         </div>
-                        
+
                         <!-- Remember Me & Forgot Password -->
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
-                                <input type="checkbox" name="remember" id="id_remember" class="form-check-input" style="border-radius: 4px; border: 2px solid #E2E8F0;">
-                                <label class="form-check-label small" for="id_remember" style="color: #64748B;">
+                                <input type="checkbox" name="remember" id="id_remember" class="form-check-input" style="border-radius: 4px; border: 2px solid #ffffff; background: transparent;">
+                                <label class="form-check-label small" for="id_remember" style="color: rgba(255,255,255,0.9);">
                                     Remember me
                                 </label>
                             </div>
-                            <a href="{% url 'account_reset_password' %}" class="text-decoration-none small fw-medium" style="color: #2563EB;">
+                            <a href="{% url 'account_reset_password' %}" class="text-decoration-none small fw-medium" style="color: #EAB308;">
                                 Forgot password?
                             </a>
                         </div>
-                        
+
                         <!-- Unverified Email Warning -->
                         {% if form.non_field_errors and "email verified" in form.non_field_errors|join:"" %}
                             <div class="alert alert-warning alert-dismissible fade show" role="alert" style="border-radius: 8px; background: #FFFBEB; border-color: #FDE68A;">
@@ -126,21 +126,21 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         {% endif %}
-                        
+
                         <!-- Submit Button -->
                         <button type="submit" class="btn w-100 py-2 fw-semibold" 
-                                style="background: #2563EB; color: #ffffff; border-radius: 8px; border: none; font-size: 0.95rem; transition: all 0.2s ease;"
-                                onmouseover="this.style.background='#1D4ED8'"
-                                onmouseout="this.style.background='#2563EB'">
+                                style="background: #EAB308; color: #0A1628; border-radius: 8px; border: none; font-size: 0.95rem; transition: all 0.2s ease;"
+                                onmouseover="this.style.background='#CA8A04';"
+                                onmouseout="this.style.background='#EAB308';">
                             <i class="fas fa-sign-in-alt me-2"></i> Sign In
                         </button>
                     </form>
-                    
+
                     <!-- Register Link -->
                     <div class="text-center mt-4">
-                        <p class="small" style="color: #64748B;">
+                        <p class="small" style="color: rgba(255,255,255,0.9);">
                             Don't have an account? 
-                            <a href="{% url 'account_signup' %}" class="fw-semibold text-decoration-none" style="color: #2563EB;">
+                            <a href="{% url 'account_signup' %}" class="fw-semibold text-decoration-none" style="color: #EAB308;">
                                 Create Account
                             </a>
                         </p>
@@ -152,72 +152,72 @@
 </div>
 
 <style>
+    /* Bluish background for the page */
     body {
-        background: #f8fafc;
+        background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #EFF6FF 100%) !important;
+        min-height: 100vh;
+        background-attachment: fixed;
     }
-    
+
     .card {
-        background: #ffffff !important;
+        background: #2563EB !important;
+        box-shadow: 0 20px 60px rgba(37, 99, 235, 0.25) !important;
+        border-radius: 16px !important;
     }
-    
+
     .card-body {
-        background: #ffffff !important;
+        background: #2563EB !important;
     }
-    
+
     .form-control {
         background: #ffffff !important;
     }
-    
+
     .input-group-text {
         background: #ffffff !important;
     }
-    
+
     .form-control:focus {
-        border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        border-color: #EAB308 !important;
+        box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2) !important;
         background: #ffffff !important;
     }
-    
+
     .form-control:focus + .input-group-text {
-        border-color: #2563EB !important;
+        border-color: #EAB308 !important;
     }
-    
+
     .input-group:focus-within .input-group-text {
-        border-color: #2563EB !important;
+        border-color: #EAB308 !important;
     }
-    
+
     .form-check-input:checked {
-        background-color: #2563EB;
-        border-color: #2563EB;
+        background-color: #EAB308;
+        border-color: #EAB308;
     }
-    
+
     .form-check-input:focus {
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        border-color: #2563EB;
+        box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.3);
+        border-color: #EAB308;
     }
-    
+
     .btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
     }
-    
-    .btn-google:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
+
     .alert-warning {
         background: #FFFBEB;
         border-color: #FDE68A;
         color: #92400E;
     }
-    
+
     .alert-danger {
         background: #FEF2F2;
         border-color: #FCA5A5;
         color: #991B1B;
     }
-    
+
     @media (max-width: 576px) {
         .card-body {
             padding: 1.5rem !important;
