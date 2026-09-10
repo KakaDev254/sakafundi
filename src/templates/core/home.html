@@ -5,59 +5,114 @@
 {% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section" style="padding: 60px 0; background: #FFFFFF;">
+<!-- Hero + Sidebar Layout -->
+<section class="hero-sidebar-section" style="padding: 40px 0; background: #FFFFFF;">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-3" style="color: #0F172A; line-height: 1.2; font-size: clamp(2rem, 4vw, 3.5rem);">
-                    Find Trusted <br>
-                    <span style="color: #2563EB;">Skills & Professionals in Kenya</span>
-                </h1>
-                <p class="lead mb-4" style="color: #64748B; font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.8; max-width: 500px;">
-                    Pata Fundi, Pata Pro. Pata Kazi. 
-                    <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
-                </p>
-
-                <!-- Search Box -->
-                <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 4px; box-shadow: 0 15px 40px rgba(0,0,0,0.08); border: 2px solid #E2E8F0; max-width: 550px; transition: all 0.3s ease;">
-                    <form action="{% url 'services:list' %}" method="get" class="d-flex align-items-center">
-                        <div class="flex-grow-1 px-3">
-                            <input type="text" name="q" class="border-0 bg-transparent w-100" 
-                                   placeholder="Search for a service or skill..." 
-                                   style="outline: none; padding: 12px 0; font-size: clamp(0.85rem, 1.2vw, 1rem); color: #0F172A;">
-                        </div>
-                        <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 10px 24px; font-weight: 600; border: none; font-size: 0.95rem; transition: all 0.3s ease; white-space: nowrap; min-width: 80px;">
-                            <span class="search-text">Search</span>
-                            <i class="fas fa-search search-icon"></i>
+        <div class="row g-4 hero-row">
+            
+            <!-- LEFT SIDEBAR - Categories -->
+            <div class="col-lg-3 col-md-4">
+                <div class="category-sidebar" style="background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0; padding: 20px; position: sticky; top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+                    <div class="sidebar-header d-flex align-items-center justify-content-between mb-3 pb-3" style="border-bottom: 1px solid #E2E8F0;">
+                        <h6 class="fw-bold mb-0" style="color: #0F172A; font-size: 0.95rem;">
+                            <i class="fas fa-th-large me-2" style="color: #2563EB;"></i> Categories
+                        </h6>
+                        <button class="btn btn-sm sidebar-toggle d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#categorySidebarContent" aria-expanded="false" aria-controls="categorySidebarContent" style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 4px 8px; background: #FFFFFF;">
+                            <i class="fas fa-bars" style="color: #2563EB; font-size: 1rem;"></i>
                         </button>
-                    </form>
-                </div>
-
-                <!-- Trust Badge -->
-                <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <div class="text-warning" style="font-size: clamp(0.85rem, 1.2vw, 1rem);">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
                     </div>
-                    <span class="text-secondary small fw-semibold" style="font-size: clamp(0.75rem, 1vw, 0.9rem);">Connecting Kenyans with trusted skilled professionals</span>
-                </div>
 
-                <!-- Action Buttons -->
-                <div class="mt-4 d-flex gap-3 flex-wrap">
-                    <a href="{% url 'services:list' %}" class="btn btn-primary btn-lg" style="background: #2563EB; color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
-                         Find a Professional
-                    </a>
-                    <a href="{% url 'accounts:register' %}" class="btn btn-secondary btn-lg" style="background: #F59E0B; color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
-                         List Your Skills
-                    </a>
+                    <div class="collapse d-md-block" id="categorySidebarContent">
+                        <ul class="list-unstyled mb-0 category-sidebar-list">
+                            <li class="mb-1">
+                                <a href="{% url 'services:list' %}" class="sidebar-link d-flex align-items-center justify-content-between py-2 px-3 text-decoration-none" style="border-radius: 8px; color: #0F172A; font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease;">
+                                    <span><i class="fas fa-briefcase me-2" style="color: #2563EB; width: 16px;"></i> All Services</span>
+                                    <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #94A3B8;"></i>
+                                </a>
+                            </li>
+                            {% for category in categories %}
+                            <li class="mb-1">
+                                <a href="{% url 'services:category_detail' category.slug %}" class="sidebar-link d-flex align-items-center justify-content-between py-2 px-3 text-decoration-none" style="border-radius: 8px; color: #0F172A; font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease;">
+                                    <span>
+                                        {% if category.icon %}
+                                            <i class="{{ category.icon }} me-2" style="color: #2563EB; width: 16px;"></i>
+                                        {% else %}
+                                            <i class="fas fa-tag me-2" style="color: #2563EB; width: 16px;"></i>
+                                        {% endif %}
+                                        {{ category.name }}
+                                    </span>
+                                    <span class="badge" style="background: #F1F5F9; color: #64748B; font-size: 0.65rem; font-weight: 500;">
+                                        {{ category.services.count }}
+                                    </span>
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="mt-3 pt-3" style="border-top: 1px solid #E2E8F0;">
+                            <a href="{% url 'services:categories' %}" class="btn w-100" style="background: #EFF6FF; color: #2563EB; border-radius: 8px; padding: 8px; font-weight: 600; font-size: 0.8rem; border: none; transition: all 0.2s ease;">
+                                View All Categories <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-6 mt-4 mt-lg-0 text-center">
-                <img src="{% static 'images/sakafundi-hero.jpg' %}" alt="Hero" class="img-fluid" style="max-height: 400px; width: 100%; object-fit: contain;">
+
+            <!-- RIGHT - Hero Content with Background Image -->
+            <div class="col-lg-9 col-md-8">
+                <div class="hero-bg-wrapper" style="position: relative; border-radius: 24px; overflow: hidden; min-height: 520px; background-image: url('{% static "images/sakafundi-hero.jpg" %}'); background-size: cover; background-position: center right; background-repeat: no-repeat;">
+                    <!-- Soft overlay for readability -->
+                    <div class="hero-overlay" style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 45%, rgba(239,246,255,0.65) 70%, rgba(239,246,255,0.1) 100%); z-index: 1;"></div>
+
+                    <!-- Content -->
+                    <div class="hero-content" style="position: relative; z-index: 2; padding: 48px 40px; max-width: 620px;">
+                        <h1 class="fw-bold mb-3" style="color: #0F172A; line-height: 1.15; font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: -0.5px;">
+                            Find Trusted<br>
+                            <span style="color: #2563EB;">Skills & Professionals</span>
+                        </h1>
+                        
+                        <p class="mb-4" style="color: #64748B; font-size: clamp(0.9rem, 1.1vw, 1.05rem); line-height: 1.8; max-width: 480px;">
+                            Pata Fundi, Pata Pro. Pata Kazi. <strong style="color: #0F172A;">Jua kazi, lipa salama</strong> with secure M-PESA payments.
+                        </p>
+
+                        <!-- Search Box -->
+                        <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 6px; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1); border: 2px solid #FFFFFF; max-width: 480px; transition: all 0.3s ease;">
+                            <form action="{% url 'services:list' %}" method="get" class="d-flex align-items-center">
+                                <div class="flex-grow-1 px-3">
+                                    <input type="text" name="q" class="border-0 bg-transparent w-100" 
+                                           placeholder="Search for a service or skill..." 
+                                           style="outline: none; padding: 10px 0; font-size: clamp(0.85rem, 1vw, 0.95rem); color: #0F172A;">
+                                </div>
+                                <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 10px 24px; font-weight: 600; border: none; font-size: 0.9rem; transition: all 0.3s ease; white-space: nowrap;">
+                                    <span class="search-text">Search</span>
+                                    <i class="fas fa-search search-icon"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Trust Badge -->
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-4">
+                            <div class="d-flex" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
+                                <i class="fas fa-star" style="color: #F59E0B;"></i>
+                                <i class="fas fa-star" style="color: #F59E0B;"></i>
+                                <i class="fas fa-star" style="color: #F59E0B;"></i>
+                                <i class="fas fa-star" style="color: #F59E0B;"></i>
+                                <i class="fas fa-star" style="color: #F59E0B;"></i>
+                            </div>
+                            <span class="fw-semibold" style="color: #64748B; font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Trusted by Kenyans nationwide</span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="{% url 'services:list' %}" class="btn btn-primary" style="background: #2563EB; color: #fff; border-radius: 12px; padding: 12px 28px; font-weight: 600; border: none; font-size: clamp(0.8rem, 0.95vw, 0.9rem); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                                <i class="fas fa-search me-2"></i> Find a Professional
+                            </a>
+                            <a href="{% url 'accounts:register' %}" class="btn btn-secondary" style="background: #FFFFFF; color: #0F172A; border-radius: 12px; padding: 12px 28px; font-weight: 600; border: 2px solid #E2E8F0; font-size: clamp(0.8rem, 0.95vw, 0.9rem); transition: all 0.3s ease;">
+                                <i class="fas fa-briefcase me-2" style="color: #F59E0B;"></i> List Your Skills
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -85,19 +140,7 @@
                     <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Projects Completed</p>
                 </div>
             </div>
-            <div class="col-6 col-md-3">
-                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
-                    <div class="text-warning mb-1" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h2 class="fw-bold mb-0" style="color: #8B5CF6; font-size: clamp(1.5rem, 2.5vw, 2.2rem);">{{ avg_rating|default:"4.8" }}</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Average Rating</p>
-                </div>
-            </div>
+           
         </div>
     </div>
 </section>
@@ -234,14 +277,14 @@
                 <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-lock fa-2x" style="color: #16A34A;"></i>
                 </div>
-                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">3. Secure Deposit</h5>
+                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1.1rem);">3. Secure Deposit</h5>
                 <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Pay a deposit via M-PESA. Funds held securely in escrow</p>
             </div>
             <div class="col-6 col-md-3 text-center">
                 <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-check-circle fa-2x" style="color: #8B5CF6;"></i>
                 </div>
-                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">4. Complete & Pay</h5>
+                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1.1rem);">4. Complete & Pay</h5>
                 <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Approve the work and release the final payment</p>
             </div>
         </div>
@@ -335,6 +378,41 @@
 </section>
 
 <style>
+    /* Sidebar Links */
+    .sidebar-link {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sidebar-link:hover {
+        background: #EFF6FF !important;
+        color: #2563EB !important;
+        transform: translateX(4px);
+    }
+
+    .sidebar-link:hover span {
+        color: #2563EB !important;
+    }
+
+    .sidebar-link:hover i {
+        color: #2563EB !important;
+    }
+
+    .sidebar-link:hover .badge {
+        background: #2563EB !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+        transition: all 0.2s ease;
+    }
+
+    .sidebar-toggle:hover {
+        background: #EFF6FF !important;
+        border-color: #2563EB !important;
+    }
+
     /* Card Hover Effects */
     .stat-card:hover {
         transform: translateY(-4px);
@@ -363,13 +441,9 @@
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
     }
-    
+
     /* Search Box */
-    .search-box:hover {
-        border-color: #2563EB !important;
-        box-shadow: 0 15px 40px rgba(37, 99, 235, 0.1) !important;
-    }
-    
+    .search-box:hover,
     .search-box:focus-within {
         border-color: #2563EB !important;
         box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15) !important;
@@ -379,7 +453,7 @@
         outline: none;
     }
     
-    /* Search Button - Desktop Default */
+    /* Search Button */
     .search-btn {
         transition: all 0.3s ease;
     }
@@ -389,7 +463,6 @@
         box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
     }
     
-    /* Hide search icon on desktop, show text */
     .search-icon {
         display: none !important;
     }
@@ -397,21 +470,95 @@
     /* Button hover effects */
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4) !important;
     }
     
     .btn-secondary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+        border-color: #2563EB !important;
+        color: #2563EB !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     }
-    
+
+    /* Hero Background Wrapper */
+    .hero-bg-wrapper {
+        transition: all 0.3s ease;
+    }
+
+    /* Responsive - Tablet */
+    @media (max-width: 991px) {
+        .category-sidebar {
+            position: relative !important;
+            top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        .hero-bg-wrapper {
+            min-height: 480px !important;
+        }
+
+        .hero-bg-wrapper .hero-overlay {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.9) 60%, rgba(255,255,255,0.6) 100%) !important;
+        }
+
+        .hero-content {
+            padding: 32px 24px !important;
+        }
+    }
+
     /* Responsive - Mobile */
     @media (max-width: 576px) {
-        .hero-section {
-            padding: 30px 0 !important;
+        .hero-sidebar-section {
+            padding: 20px 0 !important;
         }
-        .hero-section h1 {
-            font-size: 1.6rem !important;
+
+        /* REDUCE GAP between sidebar and hero */
+        .hero-row {
+            --bs-gutter-y: 0.75rem;
+        }
+
+        .hero-sidebar-section .container {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
+        }
+
+        .category-sidebar {
+            padding: 14px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .hero-bg-wrapper {
+            min-height: 440px !important;
+            background-position: center bottom !important;
+            background-size: 160% !important;
+        }
+
+        .hero-bg-wrapper .hero-overlay {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 50%, rgba(255,255,255,0.55) 100%) !important;
+        }
+
+        .hero-content {
+            padding: 24px 18px !important;
+        }
+
+        .hero-content h1 {
+            font-size: 1.4rem !important;
+        }
+
+        .hero-content p {
+            font-size: 0.85rem !important;
+        }
+        
+        /* Sidebar - Mobile */
+        .category-sidebar h6 {
+            font-size: 0.9rem !important;
+        }
+        .sidebar-link {
+            padding: 8px 10px !important;
+            font-size: 0.8rem !important;
+        }
+        .sidebar-link i {
+            font-size: 0.8rem !important;
         }
         
         /* Search Box - Mobile */
@@ -518,21 +665,6 @@
         .provider-card .text-warning {
             font-size: 0.7rem !important;
         }
-        .trust-badge {
-            font-size: 0.7rem !important;
-        }
-        .hero-section .lead {
-            font-size: 0.9rem !important;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .hero-section h1 {
-            font-size: 1.8rem !important;
-        }
-        .search-box {
-            border-radius: 40px !important;
-        }
     }
 </style>
 
@@ -549,6 +681,20 @@
             this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
         });
     });
+
+    // Change hamburger icon when collapsed/expanded
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
+    const sidebarContent = document.getElementById('categorySidebarContent');
+    
+    if (sidebarToggle && sidebarContent) {
+        sidebarContent.addEventListener('show.bs.collapse', function() {
+            sidebarToggle.querySelector('i').className = 'fas fa-times';
+        });
+        
+        sidebarContent.addEventListener('hide.bs.collapse', function() {
+            sidebarToggle.querySelector('i').className = 'fas fa-bars';
+        });
+    }
 </script>
 {% endblock %}
 {% endblock %}
