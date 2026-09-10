@@ -38,6 +38,50 @@
                             Browse Services
                         </a>
                     </li>
+
+                    <!-- Categories Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #334155; font-weight: 500;">
+                             Categories
+                        </a>
+                        <ul class="dropdown-menu shadow-lg border-0 rounded-3 py-2" aria-labelledby="categoriesDropdown" style="min-width: 260px; max-height: 400px; overflow-y: auto;">
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center justify-content-between" href="{% url 'services:list' %}">
+                                    <span><i class="fas fa-th-large me-2" style="color: #2563EB;"></i> All Services</span>
+                                    <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #94A3B8;"></i>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% for category in navbar_categories %}
+                            <li>
+                                <a class="dropdown-item py-2 d-flex align-items-center justify-content-between" href="{% url 'services:category_detail' category.slug %}">
+                                    <span>
+                                        {% if category.icon %}
+                                            <i class="{{ category.icon }} me-2" style="color: #2563EB; width: 16px;"></i>
+                                        {% else %}
+                                            <i class="fas fa-tag me-2" style="color: #2563EB; width: 16px;"></i>
+                                        {% endif %}
+                                        {{ category.name }}
+                                    </span>
+                                    <span class="badge" style="background: #F1F5F9; color: #64748B; font-size: 0.65rem; font-weight: 500;">
+                                        {{ category.services.count }}
+                                    </span>
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li>
+                                <span class="dropdown-item text-muted small py-2">No categories available</span>
+                            </li>
+                            {% endfor %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item py-2 text-center" href="{% url 'services:categories' %}" style="color: #2563EB; font-weight: 600;">
+                                    View All Categories <i class="fas fa-arrow-right ms-1"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'projects:list' %}" style="color: #334155; font-weight: 500;">
@@ -86,7 +130,6 @@
                     <!-- User Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown" style="color: #334155;">
-                            <!-- Updated for Cloudinary -->
                             <img src="{{ user.profile_image.url }}" class="rounded-circle me-1" 
                                  style="width: 32px; height: 32px; object-fit: cover; border: 2px solid #E2E8F0;"
                                  alt="{{ user.get_full_name|default:user.username }}">
@@ -317,6 +360,37 @@
             .navbar-nav .nav-item {
                 padding: 4px 0;
             }
+
+            /* Categories dropdown on mobile */
+            .dropdown-menu {
+                border: none !important;
+                box-shadow: none !important;
+                padding-left: 16px !important;
+                background: #F8FAFC !important;
+            }
+
+            .dropdown-menu .dropdown-item {
+                border-radius: 8px;
+            }
+        }
+
+        /* Dropdown item hover */
+        .dropdown-menu .dropdown-item:hover {
+            background: #EFF6FF !important;
+            color: #2563EB !important;
+        }
+
+        .dropdown-menu .dropdown-item:hover span {
+            color: #2563EB !important;
+        }
+
+        .dropdown-menu .dropdown-item:hover i {
+            color: #2563EB !important;
+        }
+
+        .dropdown-menu .dropdown-item:hover .badge {
+            background: #2563EB !important;
+            color: #FFFFFF !important;
         }
     </style>
     
@@ -328,7 +402,6 @@
 
         // ===== UPDATE BADGES =====
         function updateBadges() {
-            // Update notification badge
             fetch('/notifications/unread-count/')
                 .then(response => response.json())
                 .then(data => {
@@ -338,7 +411,6 @@
                             badge.textContent = data.unread_count > 99 ? '99+' : data.unread_count;
                             badge.style.display = 'inline';
                             badge.style.animation = 'none';
-                            // Trigger reflow for animation
                             badge.offsetHeight;
                             badge.style.animation = 'badgePulse 0.3s ease';
                         } else {
@@ -348,7 +420,6 @@
                 })
                 .catch(error => console.error('Error fetching notification count:', error));
             
-            // Update chat badge
             fetch('/chat/unread-count/')
                 .then(response => response.json())
                 .then(data => {
@@ -390,10 +461,7 @@
             socket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 if (data.type === 'notification_update') {
-                    // Update badge when new notification arrives
                     updateBadges();
-                    
-                    // Show toast notification
                     if (data.title && data.message) {
                         showToast(data.title, data.message, data.notification_type);
                     }
@@ -402,7 +470,6 @@
             
             socket.onclose = function(e) {
                 console.log('Notification WebSocket disconnected');
-                // Reconnect after 5 seconds
                 setTimeout(connectWebSocket, 5000);
             };
             
@@ -415,7 +482,6 @@
 
         // ===== TOAST NOTIFICATIONS =====
         function showToast(title, message, type) {
-            // Create toast container if it doesn't exist
             let container = document.getElementById('toast-container');
             if (!container) {
                 container = document.createElement('div');
@@ -466,7 +532,6 @@
             
             container.appendChild(toast);
             
-            // Auto-remove after 5 seconds
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.style.animation = 'slideOut 0.3s ease';
@@ -491,16 +556,10 @@
 
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function() {
-            // Update badges immediately
             updateBadges();
-            
-            // Update every 30 seconds
             setInterval(updateBadges, 30000);
-            
-            // Connect WebSocket for real-time updates
             connectWebSocket();
             
-            // Auto-close alerts after 5 seconds
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
                 alerts.forEach(function(alert) {
@@ -512,13 +571,10 @@
 
         // ===== KEYBOARD SHORTCUTS =====
         document.addEventListener('keydown', function(e) {
-            // Ctrl+Shift+N = Go to notifications
             if (e.ctrlKey && e.shiftKey && e.key === 'N') {
                 e.preventDefault();
                 window.location.href = "{% url 'notifications:list' %}";
             }
-            
-            // Ctrl+Shift+C = Go to chat
             if (e.ctrlKey && e.shiftKey && e.key === 'C') {
                 e.preventDefault();
                 window.location.href = "{% url 'chat:list' %}";
