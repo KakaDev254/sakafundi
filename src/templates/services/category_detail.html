@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load cloudinary %}
+
+{% block title %}{{ category.name }} - SakaFundi{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-4" style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb mb-0" style="font-size: 0.85rem;">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-decoration-none" style="color: #2563EB;">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'services:list' %}" class="text-decoration-none" style="color: #2563EB;">Services</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'services:categories' %}" class="text-decoration-none" style="color: #2563EB;">Categories</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #64748B;">{{ category.name }}</li>
+            </ol>
+        </nav>
+
+        <!-- Category Header -->
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <div style="width: 60px; height: 60px; background: #EFF6FF; border-radius: 16px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                {% if category.icon %}
+                    <i class="{{ category.icon }} fa-2x" style="color: #2563EB;"></i>
+                {% else %}
+                    <i class="fas fa-tag fa-2x" style="color: #2563EB;"></i>
+                {% endif %}
+            </div>
+            <div>
+                <h1 class="fw-bold mb-0" style="color: #0F172A; font-size: clamp(1.4rem, 2.5vw, 2rem);">{{ category.name }}</h1>
+                <p class="text-secondary mb-0 small">
+                    {{ total_count }} service{{ total_count|pluralize }} available
+                </p>
+            </div>
+        </div>
+
+        {% if category.description %}
+        <p class="text-secondary mb-0" style="font-size: 0.9rem; max-width: 700px;">
+            {{ category.description }}
+        </p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Services Grid -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for service in services %}
+            <div class="col-md-4 col-lg-3 col-6">
+                <div class="service-card h-100" style="background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #F1F5F9;">
+                    <div class="position-relative">
+                        {% if service.portfolio.first %}
+                            <img src="{{ service.portfolio.first.image.url }}" class="w-100" 
+                                 alt="{{ service.title }}" style="height: 180px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center" 
+                                 style="height: 180px; background: #F8FAFC !important;">
+                                <i class="fas fa-image fa-3x text-secondary" style="opacity: 0.3;"></i>
+                            </div>
+                        {% endif %}
+                        {% if service.is_featured %}
+                            <span class="badge position-absolute top-0 end-0 m-2" style="background: #F59E0B; color: #fff; padding: 4px 12px; border-radius: 50px; font-weight: 500; font-size: 0.7rem;">Featured</span>
+                        {% endif %}
+                    </div>
+                    <div class="p-3">
+                        <h6 class="fw-semibold mb-1" style="color: #0F172A; font-size: clamp(0.85rem, 1.1vw, 0.95rem);">{{ service.title|truncatechars:25 }}</h6>
+                        <div class="d-flex align-items-center gap-1 mb-1">
+                            <span class="text-warning" style="font-size: clamp(0.7rem, 0.9vw, 0.8rem);">
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= service.rating|floatformat:"0"|add:"0" %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                            <span class="text-secondary" style="font-size: clamp(0.65rem, 0.8vw, 0.75rem);">({{ service.rating|floatformat:1 }})</span>
+                        </div>
+                        <p class="text-secondary mb-1" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">
+                            <i class="fas fa-user me-1"></i> {{ service.provider.get_full_name|truncatechars:12 }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold" style="color: #2563EB; font-size: clamp(0.9rem, 1.1vw, 1rem);">
+                                KSh {{ service.price_min|floatformat:0 }}
+                            </span>
+                            <span class="text-secondary" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">- KSh {{ service.price_max|floatformat:0 }}</span>
+                        </div>
+                        <a href="{% url 'services:detail' service.id %}" 
+                           class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 8px; font-weight: 600; border: 1px solid #E2E8F0; font-size: clamp(0.75rem, 0.9vw, 0.85rem); transition: all 0.3s ease;">
+                            View Service <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="mb-3">
+                    <i class="fas fa-inbox" style="font-size: 3rem; color: #CBD5E1;"></i>
+                </div>
+                <h5 class="fw-bold" style="color: #0F172A;">No Services Yet</h5>
+                <p class="text-secondary">There are no services in this category yet. Check back soon!</p>
+                <a href="{% url 'services:list' %}" class="btn" style="background: #2563EB; color: #fff; border-radius: 8px; padding: 10px 24px; font-weight: 600; border: none;">
+                    Browse All Services
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if services.has_other_pages %}
+        <nav aria-label="Page navigation" class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if services.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ services.previous_page_number }}" style="border-radius: 8px; margin: 0 4px; border-color: #E2E8F0; color: #2563EB;">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in services.paginator.page_range %}
+                    {% if services.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link" style="border-radius: 8px; margin: 0 4px; background: #2563EB; border-color: #2563EB;">{{ num }}</span>
+                        </li>
+                    {% elif num > services.number|add:'-3' and num < services.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}" style="border-radius: 8px; margin: 0 4px; border-color: #E2E8F0; color: #2563EB;">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if services.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ services.next_page_number }}" style="border-radius: 8px; margin: 0 4px; border-color: #E2E8F0; color: #2563EB;">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Other Categories -->
+<section class="py-5" style="background: #F8FAFC;">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold" style="color: #0F172A;">Browse Other Categories</h3>
+            <p class="text-secondary small">Explore more services across Kenya</p>
+        </div>
+
+        <div class="row g-3 justify-content-center">
+            {% for cat in navbar_categories %}
+                {% if cat.id != category.id %}
+                <div class="col-6 col-md-3 col-lg-2">
+                    <a href="{% url 'services:category_detail' cat.slug %}" class="text-decoration-none">
+                        <div class="text-center p-3 h-100" style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E2E8F0; transition: all 0.3s ease;">
+                            <div style="width: 40px; height: 40px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">
+                                {% if cat.icon %}
+                                    <i class="{{ cat.icon }}" style="color: #2563EB; font-size: 1rem;"></i>
+                                {% else %}
+                                    <i class="fas fa-tag" style="color: #2563EB; font-size: 1rem;"></i>
+                                {% endif %}
+                            </div>
+                            <p class="mb-0 fw-semibold small" style="color: #0F172A; font-size: 0.8rem;">{{ cat.name|truncatechars:18 }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    .service-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+    }
+
+    .service-card .btn:hover {
+        background: #2563EB !important;
+        color: #fff !important;
+        border-color: #2563EB !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .page-link:hover {
+        background: #EFF6FF;
+        color: #2563EB !important;
+        border-color: #2563EB !important;
+    }
+
+    @media (max-width: 576px) {
+        .service-card .p-3 { padding: 8px !important; }
+        .service-card img { height: 120px !important; }
+        .service-card h6 { font-size: 0.8rem !important; }
+        .service-card .btn {
+            padding: 6px !important;
+            font-size: 0.7rem !important;
+        }
+    }
+</style>
+{% endblock %}
