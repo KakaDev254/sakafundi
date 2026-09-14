@@ -8,7 +8,11 @@ from channels.security.websocket import AllowedHostsOriginValidator
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
 # Import routing after Django is ready
-from chat.routing import websocket_urlpatterns
+from chat.routing import websocket_urlpatterns as chat_ws
+from notifications.routing import websocket_urlpatterns as notif_ws
+
+# Combine both routing patterns
+websocket_urlpatterns = chat_ws + notif_ws
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
