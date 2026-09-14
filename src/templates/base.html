@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}</title>
-    
+
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     {% load static %}
     {% load cloudinary %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -25,61 +25,18 @@
                  SakaFundi
                 <span class="small fw-normal text-secondary" style="font-size: 0.65rem;">Tafuta Ujuzi</span>
             </a>
-            
+
             <!-- Custom Hamburger Menu -->
             <button class="navbar-toggler custom-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
+
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'services:list' %}" style="color: #334155; font-weight: 500;">
                             Browse Services
                         </a>
-                    </li>
-
-                    <!-- Categories Dropdown -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #334155; font-weight: 500;">
-                             Categories
-                        </a>
-                        <ul class="dropdown-menu shadow-lg border-0 rounded-3 py-2" aria-labelledby="categoriesDropdown" style="min-width: 260px; max-height: 400px; overflow-y: auto;">
-                            <li>
-                                <a class="dropdown-item py-2 d-flex align-items-center justify-content-between" href="{% url 'services:list' %}">
-                                    <span><i class="fas fa-th-large me-2" style="color: #2563EB;"></i> All Services</span>
-                                    <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #94A3B8;"></i>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            {% for category in navbar_categories %}
-                            <li>
-                                <a class="dropdown-item py-2 d-flex align-items-center justify-content-between" href="{% url 'services:category_detail' category.slug %}">
-                                    <span>
-                                        {% if category.icon %}
-                                            <i class="{{ category.icon }} me-2" style="color: #2563EB; width: 16px;"></i>
-                                        {% else %}
-                                            <i class="fas fa-tag me-2" style="color: #2563EB; width: 16px;"></i>
-                                        {% endif %}
-                                        {{ category.name }}
-                                    </span>
-                                    <span class="badge" style="background: #F1F5F9; color: #64748B; font-size: 0.65rem; font-weight: 500;">
-                                        {{ category.services.count }}
-                                    </span>
-                                </a>
-                            </li>
-                            {% empty %}
-                            <li>
-                                <span class="dropdown-item text-muted small py-2">No categories available</span>
-                            </li>
-                            {% endfor %}
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item py-2 text-center" href="{% url 'services:categories' %}" style="color: #2563EB; font-weight: 600;">
-                                    View All Categories <i class="fas fa-arrow-right ms-1"></i>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
 
                     {% if user.is_authenticated %}
@@ -95,7 +52,7 @@
                     </li>
                     {% endif %}
                 </ul>
-                
+
                 <!-- Search Bar -->
                 <form action="{% url 'services:list' %}" method="get" class="d-none d-lg-flex me-3" style="max-width: 280px;">
                     <div class="input-group" style="border-radius: 50px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
@@ -106,7 +63,7 @@
                         </button>
                     </div>
                 </form>
-                
+
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                     <!-- Notifications -->
@@ -117,7 +74,7 @@
                                   id="notification-badge" style="font-size: 0.6rem; padding: 3px 6px; display: none;">0</span>
                         </a>
                     </li>
-                    
+
                     <!-- Messages -->
                     <li class="nav-item me-2 position-relative">
                         <a class="nav-link" href="{% url 'chat:list' %}" style="color: #334155;" title="Messages">
@@ -126,7 +83,7 @@
                                   id="chat-badge" style="font-size: 0.6rem; padding: 3px 6px; display: none;">0</span>
                         </a>
                     </li>
-                    
+
                     <!-- User Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown" style="color: #334155;">
@@ -146,7 +103,7 @@
                             <li><hr class="dropdown-divider"></li>
                             {% if user.is_provider %}
                             <li><a class="dropdown-item py-2" href="{% url 'services:create' %}">
-                                <i class="fas fa-plus-circle me-2" style="color: #F59E0B;"></i> Add Service
+                                <i class="fas fa-plus-circle me-2" style="color: #EAB308;"></i> Add Service
                             </a></li>
                             <li><a class="dropdown-item py-2" href="{% url 'services:my_services' %}">
                                 <i class="fas fa-list me-2" style="color: #64748B;"></i> My Services
@@ -167,7 +124,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="btn" href="{% url 'accounts:register' %}" 
-                           style="background: #F59E0B; color: #fff; font-weight: 600; border-radius: 50px; padding: 8px 24px; border: none;">
+                           style="background: #EAB308; color: #0F172A; font-weight: 600; border-radius: 50px; padding: 8px 24px; border: none;">
                             <i class="fas fa-user-plus"></i> Sign Up
                         </a>
                     </li>
@@ -176,12 +133,71 @@
             </div>
         </div>
     </nav>
-    
+
+    <!-- Categories Strip (SHEIN-style) -->
+    {% if navbar_categories %}
+    <div class="categories-strip" style="background: #FFFFFF; border-bottom: 1px solid #E2E8F0; position: sticky; top: 72px; z-index: 1028;">
+        <div class="container-fluid px-0">
+            <div class="categories-strip-scroll" style="display: flex; overflow-x: auto; padding: 12px 16px; gap: 28px; white-space: nowrap;">
+
+                <!-- "All" Tab -->
+                <a href="{% url 'services:list' %}" 
+                   class="category-tab text-decoration-none {% if request.resolver_match.view_name == 'services:list' %}active{% endif %}" 
+                   style="flex-shrink: 0; color: #0F172A; font-weight: 600; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
+                    All
+                </a>
+
+                <!-- Dynamic Parent Categories -->
+                {% for category in navbar_categories %}
+                    {% if category.has_subcategories %}
+                        <!-- Category with subcategory dropdown -->
+                        <div class="dropdown" style="flex-shrink: 0;">
+                            <a href="{% url 'services:category_detail' category.slug %}" 
+                               class="category-tab text-decoration-none dropdown-toggle d-inline-flex align-items-center" 
+                               role="button" 
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false"
+                               style="color: #0F172A; font-weight: 500; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
+                                {{ category.name }}
+                            </a>
+                            <ul class="dropdown-menu shadow-sm border-0 rounded-3 py-2" style="min-width: 220px;">
+                                <li>
+                                    <a class="dropdown-item py-2 small fw-semibold" href="{% url 'services:category_detail' category.slug %}">
+                                        <i class="fas fa-th-list me-2" style="color: #2563EB;"></i> All {{ category.name }}
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% for sub in category.subcategories.all %}
+                                    {% if sub.is_active %}
+                                    <li>
+                                        <a class="dropdown-item py-2 small" href="{% url 'services:category_detail' sub.slug %}">
+                                            {{ sub.name }}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <!-- Simple category link -->
+                        <a href="{% url 'services:category_detail' category.slug %}" 
+                           class="category-tab text-decoration-none" 
+                           style="flex-shrink: 0; color: #0F172A; font-weight: 500; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
+                            {{ category.name }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Messages -->
     {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert" style="border-left: 4px solid {% if message.tags == 'success' %}#16A34A{% elif message.tags == 'error' %}#DC2626{% elif message.tags == 'warning' %}#F59E0B{% else %}#2563EB{% endif %};">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0 rounded-3" role="alert" style="border-left: 4px solid {% if message.tags == 'success' %}#16A34A{% elif message.tags == 'error' %}#DC2626{% elif message.tags == 'warning' %}#EAB308{% else %}#2563EB{% endif %};">
             <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -189,19 +205,19 @@
         {% endfor %}
     </div>
     {% endif %}
-    
+
     <!-- Main Content -->
     <main>
         {% block content %}{% endblock %}
     </main>
-    
+
 <!-- Footer -->
 <footer class="bg-white py-5 mt-5" style="border-top: 1px solid #E2E8F0;">
     <div class="container">
         <div class="row g-4">
             <div class="col-md-4">
                 <h5 class="fw-bold" style="color: #0F172A;">
-                    <i class="fas fa-handshake" style="color: #F59E0B;"></i> SakaFundi
+                    <i class="fas fa-handshake" style="color: #EAB308;"></i> SakaFundi
                     <span class="small fw-normal text-secondary" style="font-size: 0.65rem;">Tafuta Ujuzi</span>
                 </h5>
                 <p class="text-secondary small" style="line-height: 1.8; max-width: 300px;">
@@ -236,19 +252,19 @@
                 <h6 class="fw-bold" style="color: #0F172A; font-size: 0.9rem;">Contact</h6>
                 <ul class="list-unstyled text-secondary small" style="line-height: 2.2;">
                     <li>
-                        <i class="fas fa-phone me-2" style="color: #F59E0B; width: 18px;"></i> 
+                        <i class="fas fa-phone me-2" style="color: #EAB308; width: 18px;"></i> 
                         <a href="tel:{{ site_phone }}" class="text-secondary text-decoration-none">{{ site_phone }}</a>
                     </li>
                     <li>
-                        <i class="fas fa-envelope me-2" style="color: #F59E0B; width: 18px;"></i> 
+                        <i class="fas fa-envelope me-2" style="color: #EAB308; width: 18px;"></i> 
                         <a href="mailto:{{ site_email }}" class="text-secondary text-decoration-none">{{ site_email }}</a>
                     </li>
                     <li>
-                        <i class="fas fa-map-marker-alt me-2" style="color: #F59E0B; width: 18px;"></i> 
+                        <i class="fas fa-map-marker-alt me-2" style="color: #EAB308; width: 18px;"></i> 
                         {{ site_address }}
                     </li>
                     <li>
-                        <i class="fas fa-clock me-2" style="color: #F59E0B; width: 18px;"></i> 
+                        <i class="fas fa-clock me-2" style="color: #EAB308; width: 18px;"></i> 
                         Mon-Fri: 8AM - 6PM
                     </li>
                 </ul>
@@ -269,12 +285,12 @@
         </div>
     </div>
 </footer>
-    
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>
-    
+
     <style>
         /* Custom Hamburger Menu Styles */
         .custom-toggler {
@@ -290,7 +306,7 @@
             outline: none !important;
             border: none !important;
         }
-        
+
         .custom-toggler:focus,
         .custom-toggler:active,
         .custom-toggler:focus-visible {
@@ -298,7 +314,7 @@
             box-shadow: none !important;
             border: none !important;
         }
-        
+
         .custom-toggler .navbar-toggler-icon {
             background-image: none !important;
             position: relative;
@@ -309,7 +325,7 @@
             transition: all 0.3s ease-in-out;
             display: block;
         }
-        
+
         .custom-toggler .navbar-toggler-icon::before,
         .custom-toggler .navbar-toggler-icon::after {
             content: '';
@@ -321,37 +337,77 @@
             border-radius: 2px;
             transition: all 0.3s ease-in-out;
         }
-        
+
         .custom-toggler .navbar-toggler-icon::before {
             top: -8px;
         }
-        
+
         .custom-toggler .navbar-toggler-icon::after {
             bottom: -8px;
         }
-        
+
         /* When menu is open (collapsed state) - turns into X */
         .custom-toggler[aria-expanded="true"] .navbar-toggler-icon {
             background-color: transparent !important;
         }
-        
+
         .custom-toggler[aria-expanded="true"] .navbar-toggler-icon::before {
             transform: rotate(45deg);
             top: 0;
         }
-        
+
         .custom-toggler[aria-expanded="true"] .navbar-toggler-icon::after {
             transform: rotate(-45deg);
             bottom: 0;
         }
-        
+
         /* Hover effect */
         .custom-toggler:hover .navbar-toggler-icon,
         .custom-toggler:hover .navbar-toggler-icon::before,
         .custom-toggler:hover .navbar-toggler-icon::after {
             background-color: #2563EB;
         }
-        
+
+        /* Categories Strip */
+        .categories-strip-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .categories-strip-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .category-tab {
+            position: relative;
+            color: #0F172A;
+            transition: color 0.2s ease;
+        }
+
+        .category-tab:hover {
+            color: #2563EB !important;
+        }
+
+        .category-tab:hover::after,
+        .category-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #2563EB;
+            border-radius: 2px;
+        }
+
+        .category-tab.dropdown-toggle::after {
+            margin-left: 6px;
+            vertical-align: middle;
+            font-size: 0.65rem;
+            color: #94A3B8;
+            border-top-color: #94A3B8;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 991.98px) {
             .navbar-nav {
@@ -361,16 +417,23 @@
                 padding: 4px 0;
             }
 
-            /* Categories dropdown on mobile */
-            .dropdown-menu {
-                border: none !important;
-                box-shadow: none !important;
-                padding-left: 16px !important;
-                background: #F8FAFC !important;
+            /* Sticky offsets for smaller screens */
+            .categories-strip {
+                top: 60px !important;
             }
+        }
 
-            .dropdown-menu .dropdown-item {
-                border-radius: 8px;
+        /* Mobile */
+        @media (max-width: 767px) {
+            .categories-strip {
+                top: 60px !important;
+            }
+            .categories-strip-scroll {
+                padding: 10px 12px !important;
+                gap: 22px !important;
+            }
+            .category-tab {
+                font-size: 0.85rem !important;
             }
         }
 
@@ -380,20 +443,17 @@
             color: #2563EB !important;
         }
 
-        .dropdown-menu .dropdown-item:hover span {
-            color: #2563EB !important;
-        }
-
         .dropdown-menu .dropdown-item:hover i {
             color: #2563EB !important;
         }
 
-        .dropdown-menu .dropdown-item:hover .badge {
-            background: #2563EB !important;
-            color: #FFFFFF !important;
+        /* Dropdown subcategory link */
+        .dropdown-menu .dropdown-item {
+            border-radius: 8px;
+            transition: all 0.2s ease;
         }
     </style>
-    
+
     <script>
         // ===== CSRF TOKEN =====
         function getCSRFToken() {
@@ -419,7 +479,7 @@
                     }
                 })
                 .catch(error => console.error('Error fetching notification count:', error));
-            
+
             fetch('/chat/unread-count/')
                 .then(response => response.json())
                 .then(data => {
@@ -453,11 +513,11 @@
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${wsProtocol}//${window.location.host}/ws/notifications/`;
             const socket = new WebSocket(wsUrl);
-            
+
             socket.onopen = function(e) {
                 console.log('Notification WebSocket connected');
             };
-            
+
             socket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 if (data.type === 'notification_update') {
@@ -467,12 +527,12 @@
                     }
                 }
             };
-            
+
             socket.onclose = function(e) {
                 console.log('Notification WebSocket disconnected');
                 setTimeout(connectWebSocket, 5000);
             };
-            
+
             socket.onerror = function(e) {
                 console.error('Notification WebSocket error:', e);
                 socket.close();
@@ -489,7 +549,7 @@
                 container.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;';
                 document.body.appendChild(container);
             }
-            
+
             const toast = document.createElement('div');
             toast.className = 'toast show';
             toast.style.cssText = `
@@ -499,22 +559,22 @@
                 min-width: 300px;
                 max-width: 400px;
                 box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-                border-left: 4px solid ${type === 'message' ? '#2563EB' : '#F59E0B'};
+                border-left: 4px solid ${type === 'message' ? '#2563EB' : '#EAB308'};
                 animation: slideIn 0.3s ease;
             `;
-            
+
             const iconMap = {
                 'message': 'fa-envelope',
                 'notification': 'fa-bell',
                 'alert': 'fa-exclamation-circle'
             };
-            
+
             const colorMap = {
                 'message': '#2563EB',
-                'notification': '#F59E0B',
+                'notification': '#EAB308',
                 'alert': '#DC2626'
             };
-            
+
             toast.innerHTML = `
                 <div style="display: flex; align-items: start; gap: 12px;">
                     <div style="width: 40px; height: 40px; border-radius: 50%; background: ${colorMap[type] || '#2563EB'}20; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -529,9 +589,9 @@
                     </button>
                 </div>
             `;
-            
+
             container.appendChild(toast);
-            
+
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.style.animation = 'slideOut 0.3s ease';
@@ -559,7 +619,7 @@
             updateBadges();
             setInterval(updateBadges, 30000);
             connectWebSocket();
-            
+
             setTimeout(function() {
                 const alerts = document.querySelectorAll('.alert');
                 alerts.forEach(function(alert) {
@@ -581,7 +641,7 @@
             }
         });
     </script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

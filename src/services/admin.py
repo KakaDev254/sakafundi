@@ -7,48 +7,52 @@ from .models import Service, ServiceCategory, ServicePortfolio
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):
     """Admin configuration for Service Category"""
-    list_display = ('name', 'slug', 'icon_preview', 'service_count', 'is_active', 'created_at')
-    list_filter = ('is_active', 'created_at')
+    list_display = ('name', 'parent', 'slug', 'service_count', 'subcategory_count', 'order', 'is_active', 'created_at')
+    list_filter = ('is_active', 'parent', 'created_at')
     search_fields = ('name', 'slug', 'description')
     prepopulated_fields = {'slug': ('name',)}
-    ordering = ('name',)
-    readonly_fields = ('created_at', 'updated_at')  # ✅ Added
+    ordering = ('order', 'name')
+    readonly_fields = ('created_at', 'updated_at')
+    list_editable = ('order', 'is_active')  # ✅ Quick edit in list view
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'slug', 'icon', 'description')
+            'fields': ('name', 'slug', 'parent', 'order', 'icon', 'description')
         }),
         ('Status', {
             'fields': ('is_active',)
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),  # ✅ Now readonly
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
-    
+
     def icon_preview(self, obj):
         """Display icon preview in admin list"""
         if obj.icon:
             return format_html('<i class="{}" style="font-size: 20px;"></i>', obj.icon)
         return '-'
     icon_preview.short_description = 'Icon'
-    
+
     def service_count(self, obj):
         """Count services in this category"""
         return obj.services.filter(is_active=True).count()
     service_count.short_description = 'Services'
-    
+
+    def subcategory_count(self, obj):
+        """Count subcategories"""
+        return obj.subcategories.filter(is_active=True).count()
+    subcategory_count.short_description = 'Subcategories'
+
     actions = ['activate_categories', 'deactivate_categories']
-    
+
     def activate_categories(self, request, queryset):
-        """Activate selected categories"""
         updated = queryset.update(is_active=True)
         self.message_user(request, f'{updated} categories activated successfully.')
     activate_categories.short_description = "Activate selected categories"
-    
+
     def deactivate_categories(self, request, queryset):
-        """Deactivate selected categories"""
         updated = queryset.update(is_active=False)
         self.message_user(request, f'{updated} categories deactivated successfully.')
     deactivate_categories.short_description = "Deactivate selected categories"
@@ -61,7 +65,7 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = ('category', 'is_active', 'is_featured', 'created_at')
     search_fields = ('title', 'description', 'provider__email', 'provider__first_name', 'provider__last_name')
     readonly_fields = ('views', 'rating', 'orders_completed', 'created_at', 'updated_at')
-    
+
     fieldsets = (
         ('Service Information', {
             'fields': ('provider', 'category', 'title', 'description')
@@ -77,24 +81,24 @@ class ServiceAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
-    
+
     def price_range(self, obj):
         """Display price range"""
         return f"KSh {obj.price_min} - KSh {obj.price_max}"
     price_range.short_description = 'Price Range'
-    
+
     actions = ['activate_services', 'deactivate_services', 'feature_services']
-    
+
     def activate_services(self, request, queryset):
         updated = queryset.update(is_active=True)
         self.message_user(request, f'{updated} services activated successfully.')
     activate_services.short_description = "Activate selected services"
-    
+
     def deactivate_services(self, request, queryset):
         updated = queryset.update(is_active=False)
         self.message_user(request, f'{updated} services deactivated successfully.')
     deactivate_services.short_description = "Deactivate selected services"
-    
+
     def feature_services(self, request, queryset):
         updated = queryset.update(is_featured=True)
         self.message_user(request, f'{updated} services featured successfully.')
@@ -107,7 +111,7 @@ class ServicePortfolioAdmin(admin.ModelAdmin):
     list_display = ('service', 'title', 'is_cover', 'image_preview', 'created_at')
     list_filter = ('is_cover', 'created_at')
     search_fields = ('service__title', 'title', 'description')
-    readonly_fields = ('created_at',)  # ✅ Added
+    readonly_fields = ('created_at',)
 
     def image_preview(self, obj):
         """Display image preview in admin"""

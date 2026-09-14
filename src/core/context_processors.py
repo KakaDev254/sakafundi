@@ -15,6 +15,10 @@ def site_settings(request):
         'currency': settings.CURRENCY,
         'currency_symbol': settings.CURRENCY_SYMBOL,
         'DEBUG': settings.DEBUG,
-        
-        'navbar_categories': ServiceCategory.objects.filter(is_active=True).order_by('name'),
+
+        # ✅ Only parent categories in navbar (subcategories excluded)
+        'navbar_categories': ServiceCategory.objects.filter(
+            is_active=True,
+            parent__isnull=True
+        ).prefetch_related('subcategories').order_by('order', 'name'),
     }
