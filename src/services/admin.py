@@ -7,7 +7,7 @@ from .models import Service, ServiceCategory, ServicePortfolio
 @admin.register(ServiceCategory)
 class ServiceCategoryAdmin(admin.ModelAdmin):
     """Admin configuration for Service Category"""
-    list_display = ('name', 'parent', 'slug', 'service_count', 'subcategory_count', 'order', 'is_active', 'created_at')
+    list_display = ('name', 'image_preview', 'parent', 'slug', 'service_count', 'subcategory_count', 'order', 'is_active', 'created_at')
     list_filter = ('is_active', 'parent', 'created_at')
     search_fields = ('name', 'slug', 'description')
     prepopulated_fields = {'slug': ('name',)}
@@ -17,7 +17,7 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'slug', 'parent', 'order', 'icon', 'description')
+            'fields': ('name', 'slug', 'parent', 'order', 'icon', 'image', 'description')
         }),
         ('Status', {
             'fields': ('is_active',)
@@ -27,6 +27,16 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+    def image_preview(self, obj):
+        """Display image preview in admin list"""
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #E2E8F0;" />',
+                obj.image.url
+            )
+        return format_html('<span style="color: #94A3B8; font-size: 12px;">No image</span>')
+    image_preview.short_description = 'Image'
 
     def icon_preview(self, obj):
         """Display icon preview in admin list"""

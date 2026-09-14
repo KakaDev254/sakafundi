@@ -12,10 +12,19 @@ class ServiceCategory(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     icon = models.CharField(max_length=50, blank=True, null=True)  # Keep for future use
+
+    # ✅ NEW: Category image for circular display
+    image = CloudinaryField(
+        'image',
+        folder='categories',
+        blank=True,
+        null=True
+    )
+
     description = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
-    # ✅ NEW: Parent category for subcategories
+    # Parent category for subcategories
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -23,7 +32,7 @@ class ServiceCategory(models.Model):
         blank=True,
         related_name='subcategories'
     )
-    # ✅ NEW: Order for display
+    # Order for display
     order = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
