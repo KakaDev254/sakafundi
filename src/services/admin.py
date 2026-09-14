@@ -1,6 +1,7 @@
 # services/admin.py
 from django.contrib import admin
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from .models import Service, ServiceCategory, ServicePortfolio
 
 
@@ -35,7 +36,7 @@ class ServiceCategoryAdmin(admin.ModelAdmin):
                 '<img src="{}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #E2E8F0;" />',
                 obj.image.url
             )
-        return format_html('<span style="color: #94A3B8; font-size: 12px;">No image</span>')
+        return mark_safe('<span style="color: #94A3B8; font-size: 12px;">No image</span>')
     image_preview.short_description = 'Image'
 
     def icon_preview(self, obj):
