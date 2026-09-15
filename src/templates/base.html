@@ -141,41 +141,36 @@
 
         <!-- Categories Strip -->
         {% if navbar_categories %}
-        <div class="categories-strip" style="background: #FFFFFF; border-bottom: 1px solid #E2E8F0; position: relative; z-index: 1029;">
+        <div class="categories-strip">
             <div class="container-fluid px-0">
-                <div class="categories-strip-scroll" style="display: flex; overflow-x: auto; padding: 12px 16px; gap: 28px; white-space: nowrap;">
+                <div class="categories-strip-scroll">
 
                     <!-- "All" Tab -->
                     <a href="{% url 'services:list' %}" 
-                       class="category-tab text-decoration-none {% if request.resolver_match.view_name == 'services:list' %}active{% endif %}" 
-                       style="flex-shrink: 0; color: #0F172A; font-weight: 600; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
+                       class="category-tab text-decoration-none {% if request.resolver_match.view_name == 'services:list' %}active{% endif %}">
                         All
                     </a>
 
                     <!-- Dynamic Parent Categories -->
                     {% for category in navbar_categories %}
                         {% if category.has_subcategories %}
-                            <!-- Category with subcategories: text link + chevron toggle -->
-                            <div class="category-with-sub" style="flex-shrink: 0; position: relative; display: inline-flex; align-items: center; gap: 2px;">
-                                <!-- Parent link (navigates) -->
+                            <!-- Category with subcategories: parent link + chevron dropdown -->
+                            <div class="category-with-sub">
                                 <a href="{% url 'services:category_detail' category.slug %}" 
-                                   class="category-tab text-decoration-none"
-                                   style="color: #0F172A; font-weight: 500; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
+                                   class="category-tab text-decoration-none">
                                     {{ category.name }}
                                 </a>
 
-                                <!-- Chevron button (opens dropdown) -->
                                 <button type="button" 
                                         class="category-toggle-btn"
                                         data-bs-toggle="dropdown" 
+                                        data-bs-display="static"
                                         data-bs-auto-close="true"
-                                        aria-expanded="false"
-                                        style="background: transparent; border: none; padding: 0 4px; color: #94A3B8; cursor: pointer; line-height: 1;">
-                                    <i class="fas fa-chevron-down" style="font-size: 0.6rem;"></i>
+                                        aria-expanded="false">
+                                    <i class="fas fa-chevron-down"></i>
                                 </button>
 
-                                <!-- Dropdown menu -->
-                                <ul class="dropdown-menu shadow-sm border-0 rounded-3 py-2" style="min-width: 220px; z-index: 1100; margin-top: 8px;">
+                                <ul class="dropdown-menu shadow-sm border-0 rounded-3 py-2">
                                     <li>
                                         <a class="dropdown-item py-2 small fw-semibold" href="{% url 'services:category_detail' category.slug %}">
                                             <i class="fas fa-th-list me-2" style="color: #2563EB;"></i> All {{ category.name }}
@@ -194,10 +189,9 @@
                                 </ul>
                             </div>
                         {% else %}
-                            <!-- Simple category link (no subcategories) -->
+                            <!-- Simple category link -->
                             <a href="{% url 'services:category_detail' category.slug %}" 
-                               class="category-tab text-decoration-none" 
-                               style="flex-shrink: 0; color: #0F172A; font-weight: 500; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
+                               class="category-tab text-decoration-none">
                                 {{ category.name }}
                             </a>
                         {% endif %}
@@ -316,6 +310,7 @@
             top: 0;
             z-index: 1030;
             background: #FFFFFF;
+            overflow: visible !important;
         }
 
         /* ============================================================
@@ -397,18 +392,36 @@
         /* ============================================================
            Categories Strip
            ============================================================ */
-        .categories-strip-scroll::-webkit-scrollbar {
-            display: none;
+        .categories-strip {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E2E8F0;
+            position: relative;
+            z-index: 1029;
+            overflow: visible !important;
         }
 
         .categories-strip-scroll {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: visible !important;
+            padding: 12px 16px;
+            gap: 28px;
+            white-space: nowrap;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
 
+        .categories-strip-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
         .category-tab {
-            position: relative;
+            flex-shrink: 0;
             color: #0F172A;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding-bottom: 4px;
+            position: relative;
             transition: color 0.2s ease;
         }
 
@@ -429,17 +442,29 @@
         }
 
         /* ============================================================
-           Category with Subcategories (chevron toggle)
+           Category with Subcategories
            ============================================================ */
         .category-with-sub {
+            flex-shrink: 0;
             display: inline-flex;
             align-items: center;
             gap: 2px;
+            position: relative;
         }
 
         .category-toggle-btn {
+            background: transparent;
+            border: none;
+            padding: 0 4px;
+            color: #94A3B8;
+            cursor: pointer;
             line-height: 1;
             transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .category-toggle-btn i {
+            font-size: 0.6rem;
+            transition: transform 0.2s ease;
         }
 
         .category-toggle-btn:hover {
@@ -455,8 +480,22 @@
         }
 
         /* ============================================================
-           Dropdown item styling
+           Dropdown (Static Position to escape overflow clipping)
            ============================================================ */
+        .category-with-sub .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            right: auto !important;
+            transform: none !important;
+            margin-top: 6px !important;
+            min-width: 220px;
+            z-index: 1200 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+            border: 1px solid #E2E8F0 !important;
+            background: #FFFFFF !important;
+        }
+
         .dropdown-menu .dropdown-item:hover {
             background: #EFF6FF !important;
             color: #2563EB !important;
