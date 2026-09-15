@@ -153,7 +153,6 @@
                     <!-- Dynamic Parent Categories -->
                     {% for category in navbar_categories %}
                         {% if category.has_subcategories %}
-                            <!-- Category with subcategories: parent link + chevron dropdown -->
                             <div class="category-with-sub">
                                 <a href="{% url 'services:category_detail' category.slug %}" 
                                    class="category-tab text-decoration-none">
@@ -162,32 +161,29 @@
 
                                 <button type="button" 
                                         class="category-toggle-btn"
-                                        data-bs-toggle="dropdown" 
-                                        data-bs-auto-close="true"
+                                        data-category-id="{{ category.id }}"
                                         aria-expanded="false">
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
 
-                                <ul class="dropdown-menu shadow-sm border-0 rounded-3 py-2">
-                                    <li>
-                                        <a class="dropdown-item py-2 small fw-semibold" href="{% url 'services:category_detail' category.slug %}">
-                                            <i class="fas fa-th-list me-2" style="color: #2563EB;"></i> All {{ category.name }}
+                                <!-- Hidden template that JS clones into a floating panel -->
+                                <div class="category-dropdown-content" data-category-id="{{ category.id }}" style="display: none;">
+                                    <div class="dropdown-header">
+                                        <a href="{% url 'services:category_detail' category.slug %}" class="dropdown-all-link">
+                                            <i class="fas fa-th-list me-2"></i> All {{ category.name }}
                                         </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
+                                    </div>
+                                    <hr class="dropdown-divider">
                                     {% for sub in category.subcategories.all %}
                                         {% if sub.is_active %}
-                                        <li>
-                                            <a class="dropdown-item py-2 small" href="{% url 'services:category_detail' sub.slug %}">
-                                                {{ sub.name }}
-                                            </a>
-                                        </li>
+                                        <a href="{% url 'services:category_detail' sub.slug %}" class="dropdown-sub-link">
+                                            {{ sub.name }}
+                                        </a>
                                         {% endif %}
                                     {% endfor %}
-                                </ul>
+                                </div>
                             </div>
                         {% else %}
-                            <!-- Simple category link -->
                             <a href="{% url 'services:category_detail' category.slug %}" 
                                class="category-tab text-decoration-none">
                                 {{ category.name }}
@@ -306,12 +302,11 @@
         .sticky-header {
             position: sticky;
             top: 0;
-            z-index: 2000 !important;
+            z-index: 1030;
             background: #FFFFFF;
             overflow: visible !important;
         }
 
-        /* Keep page content below the header */
         main {
             position: relative;
             z-index: 1;
@@ -400,7 +395,6 @@
             background: #FFFFFF;
             border-bottom: 1px solid #E2E8F0;
             position: relative;
-            z-index: 1029;
             overflow: visible !important;
         }
 
@@ -453,7 +447,6 @@
             display: inline-flex;
             align-items: center;
             gap: 2px;
-            position: relative;
         }
 
         .category-toggle-btn {
@@ -463,7 +456,7 @@
             color: #94A3B8;
             cursor: pointer;
             line-height: 1;
-            transition: transform 0.2s ease, color 0.2s ease;
+            transition: color 0.2s ease;
         }
 
         .category-toggle-btn i {
@@ -484,30 +477,69 @@
         }
 
         /* ============================================================
-           Dropdown — rendered by Popper outside overflow containers
+           Floating Category Dropdown Panel (rendered at <body> level by JS)
            ============================================================ */
-        .dropdown-menu {
+        .category-dropdown-panel {
+            position: fixed;
             min-width: 220px;
-            z-index: 3000 !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
-            border: 1px solid #E2E8F0 !important;
-            background: #FFFFFF !important;
-            margin-top: 6px !important;
-            border-radius: 12px !important;
+            max-width: 300px;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 8px;
+            z-index: 99999 !important;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4px);
+            transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
         }
 
-        .dropdown-menu .dropdown-item:hover {
-            background: #EFF6FF !important;
-            color: #2563EB !important;
+        .category-dropdown-panel.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
 
-        .dropdown-menu .dropdown-item:hover i {
-            color: #2563EB !important;
+        .category-dropdown-panel .dropdown-header {
+            padding-bottom: 6px;
+            margin-bottom: 4px;
+            border-bottom: 1px solid #E2E8F0;
         }
 
-        .dropdown-menu .dropdown-item {
+        .category-dropdown-panel .dropdown-all-link {
+            display: block;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2563EB;
+            text-decoration: none;
             border-radius: 8px;
-            transition: all 0.2s ease;
+            transition: background 0.15s ease;
+        }
+
+        .category-dropdown-panel .dropdown-all-link:hover {
+            background: #EFF6FF;
+        }
+
+        .category-dropdown-panel .dropdown-divider {
+            margin: 4px 0;
+            border-color: #F1F5F9;
+        }
+
+        .category-dropdown-panel .dropdown-sub-link {
+            display: block;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: #0F172A;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.15s ease, color 0.15s ease;
+        }
+
+        .category-dropdown-panel .dropdown-sub-link:hover {
+            background: #EFF6FF;
+            color: #2563EB;
         }
 
         /* ============================================================
@@ -692,6 +724,96 @@
             }
         `;
         document.head.appendChild(animationStyles);
+
+        // ===== FLOATING CATEGORY DROPDOWNS =====
+        (function() {
+            let activePanel = null;
+            let activeBtn = null;
+
+            function closePanel() {
+                if (activePanel) {
+                    activePanel.classList.remove('show');
+                    const panelToRemove = activePanel;
+                    setTimeout(() => {
+                        if (panelToRemove && !panelToRemove.classList.contains('show')) {
+                            panelToRemove.remove();
+                        }
+                    }, 200);
+                    activePanel = null;
+                }
+                if (activeBtn) {
+                    activeBtn.setAttribute('aria-expanded', 'false');
+                    activeBtn = null;
+                }
+            }
+
+            function openPanel(btn) {
+                closePanel();
+
+                const categoryId = btn.dataset.categoryId;
+                const template = document.querySelector(`.category-dropdown-content[data-category-id="${categoryId}"]`);
+                if (!template) return;
+
+                // Build the panel
+                const panel = document.createElement('div');
+                panel.className = 'category-dropdown-panel';
+                panel.innerHTML = template.innerHTML;
+                document.body.appendChild(panel);
+
+                // Position it below the chevron button
+                const btnRect = btn.getBoundingClientRect();
+                const panelWidth = panel.offsetWidth || 220;
+
+                let left = btnRect.left;
+                // Prevent overflow on right side
+                if (left + panelWidth > window.innerWidth - 12) {
+                    left = window.innerWidth - panelWidth - 12;
+                }
+                // Prevent overflow on left side
+                if (left < 12) left = 12;
+
+                panel.style.top = (btnRect.bottom + 6) + 'px';
+                panel.style.left = left + 'px';
+
+                // Show it
+                requestAnimationFrame(() => panel.classList.add('show'));
+
+                activePanel = panel;
+                activeBtn = btn;
+                btn.setAttribute('aria-expanded', 'true');
+            }
+
+            // Attach click handlers
+            document.addEventListener('click', function(e) {
+                const btn = e.target.closest('.category-toggle-btn');
+                if (btn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (activeBtn === btn) {
+                        closePanel();
+                    } else {
+                        openPanel(btn);
+                    }
+                    return;
+                }
+
+                // Close if click is outside any panel
+                if (activePanel && !e.target.closest('.category-dropdown-panel')) {
+                    closePanel();
+                }
+            });
+
+            // Close on ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closePanel();
+            });
+
+            // Close on scroll so it doesn't detach from its trigger
+            window.addEventListener('scroll', closePanel, true);
+
+            // Close on resize
+            window.addEventListener('resize', closePanel);
+        })();
 
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function() {
