@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}</title>
 
+    <!-- Preload CSS for faster rendering -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" as="style">
+
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -14,10 +18,46 @@
 
     {% load static %}
     {% load cloudinary %}
+
+    <!-- CRITICAL CSS — inline to prevent FOUC -->
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #FFFFFF;
+            color: #0F172A;
+            line-height: 1.5;
+        }
+        body.page-loading {
+            visibility: hidden;
+            opacity: 0;
+        }
+        body.page-ready {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.2s ease-in;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background: #FFFFFF;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        .categories-strip-scroll {
+            display: flex;
+            overflow-x: auto;
+            padding: 12px 16px;
+            gap: 28px;
+            white-space: nowrap;
+        }
+        a { text-decoration: none; color: inherit; }
+    </style>
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="page-loading">
     <!-- ============================================================
          STICKY HEADER: Navbar + Categories Strip
          ============================================================ -->
@@ -477,7 +517,7 @@
         }
 
         /* ============================================================
-           Floating Category Dropdown Panel (rendered at <body> level by JS)
+           Floating Category Dropdown Panel
            ============================================================ */
         .category-dropdown-panel {
             position: fixed;
@@ -754,28 +794,23 @@
                 const template = document.querySelector(`.category-dropdown-content[data-category-id="${categoryId}"]`);
                 if (!template) return;
 
-                // Build the panel
                 const panel = document.createElement('div');
                 panel.className = 'category-dropdown-panel';
                 panel.innerHTML = template.innerHTML;
                 document.body.appendChild(panel);
 
-                // Position it below the chevron button
                 const btnRect = btn.getBoundingClientRect();
                 const panelWidth = panel.offsetWidth || 220;
 
                 let left = btnRect.left;
-                // Prevent overflow on right side
                 if (left + panelWidth > window.innerWidth - 12) {
                     left = window.innerWidth - panelWidth - 12;
                 }
-                // Prevent overflow on left side
                 if (left < 12) left = 12;
 
                 panel.style.top = (btnRect.bottom + 6) + 'px';
                 panel.style.left = left + 'px';
 
-                // Show it
                 requestAnimationFrame(() => panel.classList.add('show'));
 
                 activePanel = panel;
@@ -783,7 +818,6 @@
                 btn.setAttribute('aria-expanded', 'true');
             }
 
-            // Attach click handlers
             document.addEventListener('click', function(e) {
                 const btn = e.target.closest('.category-toggle-btn');
                 if (btn) {
@@ -797,23 +831,31 @@
                     return;
                 }
 
-                // Close if click is outside any panel
                 if (activePanel && !e.target.closest('.category-dropdown-panel')) {
                     closePanel();
                 }
             });
 
-            // Close on ESC
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') closePanel();
             });
 
-            // Close on scroll so it doesn't detach from its trigger
             window.addEventListener('scroll', closePanel, true);
-
-            // Close on resize
             window.addEventListener('resize', closePanel);
         })();
+
+        // ===== PAGE LOAD REVEAL (FOUC fix) =====
+        window.addEventListener('load', function() {
+            document.body.classList.remove('page-loading');
+            document.body.classList.add('page-ready');
+        });
+
+        setTimeout(function() {
+            if (document.body.classList.contains('page-loading')) {
+                document.body.classList.remove('page-loading');
+                document.body.classList.add('page-ready');
+            }
+        }, 1000);
 
         // ===== INIT =====
         document.addEventListener('DOMContentLoaded', function() {
