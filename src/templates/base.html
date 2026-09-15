@@ -19,7 +19,7 @@
 </head>
 <body>
     <!-- ============================================================
-         STICKY HEADER: Navbar + Categories Strip (single block)
+         STICKY HEADER: Navbar + Categories Strip
          ============================================================ -->
     <div class="sticky-header" style="position: sticky; top: 0; z-index: 1030; background: #FFFFFF;">
 
@@ -139,7 +139,7 @@
             </div>
         </nav>
 
-        <!-- Categories Strip (SHEIN-style) -->
+        <!-- Categories Strip -->
         {% if navbar_categories %}
         <div class="categories-strip" style="background: #FFFFFF; border-bottom: 1px solid #E2E8F0; position: relative; z-index: 1029;">
             <div class="container-fluid px-0">
@@ -155,38 +155,46 @@
                     <!-- Dynamic Parent Categories -->
                     {% for category in navbar_categories %}
                         {% if category.has_subcategories %}
-                            <!-- Category with subcategory dropdown (hover-based) -->
-                            <div class="dropdown-hover" style="flex-shrink: 0;">
+                            <!-- Category with subcategories: text link + chevron toggle -->
+                            <div class="category-with-sub" style="flex-shrink: 0; position: relative; display: inline-flex; align-items: center; gap: 2px;">
+                                <!-- Parent link (navigates) -->
                                 <a href="{% url 'services:category_detail' category.slug %}" 
-                                   class="category-tab text-decoration-none d-inline-flex align-items-center gap-1" 
+                                   class="category-tab text-decoration-none"
                                    style="color: #0F172A; font-weight: 500; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
                                     {{ category.name }}
-                                    <i class="fas fa-chevron-down" style="font-size: 0.6rem; color: #94A3B8;"></i>
                                 </a>
 
-                                <!-- Dropdown panel -->
-                                <div class="dropdown-hover-menu">
-                                    <ul class="dropdown-menu show shadow-sm border-0 rounded-3 py-2" style="position: static; display: block; min-width: 220px;">
+                                <!-- Chevron button (opens dropdown) -->
+                                <button type="button" 
+                                        class="category-toggle-btn"
+                                        data-bs-toggle="dropdown" 
+                                        data-bs-auto-close="true"
+                                        aria-expanded="false"
+                                        style="background: transparent; border: none; padding: 0 4px; color: #94A3B8; cursor: pointer; line-height: 1;">
+                                    <i class="fas fa-chevron-down" style="font-size: 0.6rem;"></i>
+                                </button>
+
+                                <!-- Dropdown menu -->
+                                <ul class="dropdown-menu shadow-sm border-0 rounded-3 py-2" style="min-width: 220px; z-index: 1100; margin-top: 8px;">
+                                    <li>
+                                        <a class="dropdown-item py-2 small fw-semibold" href="{% url 'services:category_detail' category.slug %}">
+                                            <i class="fas fa-th-list me-2" style="color: #2563EB;"></i> All {{ category.name }}
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    {% for sub in category.subcategories.all %}
+                                        {% if sub.is_active %}
                                         <li>
-                                            <a class="dropdown-item py-2 small fw-semibold" href="{% url 'services:category_detail' category.slug %}">
-                                                <i class="fas fa-th-list me-2" style="color: #2563EB;"></i> All {{ category.name }}
+                                            <a class="dropdown-item py-2 small" href="{% url 'services:category_detail' sub.slug %}">
+                                                {{ sub.name }}
                                             </a>
                                         </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        {% for sub in category.subcategories.all %}
-                                            {% if sub.is_active %}
-                                            <li>
-                                                <a class="dropdown-item py-2 small" href="{% url 'services:category_detail' sub.slug %}">
-                                                    {{ sub.name }}
-                                                </a>
-                                            </li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
                             </div>
                         {% else %}
-                            <!-- Simple category link -->
+                            <!-- Simple category link (no subcategories) -->
                             <a href="{% url 'services:category_detail' category.slug %}" 
                                class="category-tab text-decoration-none" 
                                style="flex-shrink: 0; color: #0F172A; font-weight: 500; font-size: 0.9rem; padding-bottom: 4px; position: relative; transition: color 0.2s ease;">
@@ -421,40 +429,29 @@
         }
 
         /* ============================================================
-           Hover-based Category Dropdown (fixes flicker)
+           Category with Subcategories (chevron toggle)
            ============================================================ */
-        .dropdown-hover {
-            position: relative;
-            padding-bottom: 14px;   /* invisible bridge */
-            margin-bottom: -14px;   /* compensate layout */
+        .category-with-sub {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
         }
 
-        .dropdown-hover-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            padding-top: 10px;      /* bridge between trigger and menu */
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(6px);
-            transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
-            z-index: 1100;
-            pointer-events: none;
-            min-width: 220px;
+        .category-toggle-btn {
+            line-height: 1;
+            transition: transform 0.2s ease, color 0.2s ease;
         }
 
-        .dropdown-hover:hover .dropdown-hover-menu,
-        .dropdown-hover:focus-within .dropdown-hover-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            pointer-events: auto;
+        .category-toggle-btn:hover {
+            color: #2563EB !important;
         }
 
-        .dropdown-hover-menu .dropdown-menu {
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
-            border: 1px solid #E2E8F0 !important;
-            background: #FFFFFF !important;
+        .category-toggle-btn[aria-expanded="true"] {
+            color: #2563EB !important;
+        }
+
+        .category-toggle-btn[aria-expanded="true"] i {
+            transform: rotate(180deg);
         }
 
         /* ============================================================
@@ -493,19 +490,6 @@
             }
             .category-tab {
                 font-size: 0.85rem !important;
-            }
-
-            /* Mobile: use tap instead of hover */
-            .dropdown-hover {
-                padding-bottom: 0;
-                margin-bottom: 0;
-            }
-
-            .dropdown-hover.open .dropdown-hover-menu {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-                pointer-events: auto;
             }
         }
     </style>
@@ -683,35 +667,6 @@
                     bsAlert.close();
                 });
             }, 5000);
-
-            // ===== MOBILE: Tap to open dropdown =====
-            if (window.matchMedia('(hover: none)').matches) {
-                document.querySelectorAll('.dropdown-hover').forEach(el => {
-                    const link = el.querySelector('a.category-tab');
-                    if (!link) return;
-
-                    link.addEventListener('click', function(e) {
-                        if (!el.classList.contains('open')) {
-                            e.preventDefault();
-                            // Close other open dropdowns
-                            document.querySelectorAll('.dropdown-hover.open').forEach(o => {
-                                if (o !== el) o.classList.remove('open');
-                            });
-                            el.classList.add('open');
-                        }
-                        // Else: second tap navigates
-                    });
-                });
-
-                // Close dropdowns when tapping outside
-                document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.dropdown-hover')) {
-                        document.querySelectorAll('.dropdown-hover.open').forEach(o => {
-                            o.classList.remove('open');
-                        });
-                    }
-                });
-            }
         });
 
         // ===== KEYBOARD SHORTCUTS =====
