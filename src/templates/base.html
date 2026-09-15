@@ -21,8 +21,7 @@
     <!-- ============================================================
          STICKY HEADER: Navbar + Categories Strip
          ============================================================ -->
-    <div class="sticky-header" style="position: sticky; top: 0; z-index: 1030; background: #FFFFFF;">
-
+    <div class="sticky-header">
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg bg-white" style="border-bottom: 1px solid #E2E8F0; box-shadow: 0 4px 20px rgba(15,23,42,0.05);">
             <div class="container">
@@ -97,7 +96,7 @@
                                      alt="{{ user.get_full_name|default:user.username }}">
                                 <span class="d-none d-md-inline" style="font-weight: 500;">{{ user.get_full_name|default:user.username|truncatechars:12 }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 py-2" style="min-width: 220px; z-index: 1100;">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-3 py-2" style="min-width: 220px;">
                                 <li><a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
                                     <i class="fas fa-user me-2" style="color: #2563EB;"></i> Profile
                                 </a></li>
@@ -164,7 +163,6 @@
                                 <button type="button" 
                                         class="category-toggle-btn"
                                         data-bs-toggle="dropdown" 
-                                        data-bs-display="static"
                                         data-bs-auto-close="true"
                                         aria-expanded="false">
                                     <i class="fas fa-chevron-down"></i>
@@ -308,9 +306,15 @@
         .sticky-header {
             position: sticky;
             top: 0;
-            z-index: 1030;
+            z-index: 2000 !important;
             background: #FFFFFF;
             overflow: visible !important;
+        }
+
+        /* Keep page content below the header */
+        main {
+            position: relative;
+            z-index: 1;
         }
 
         /* ============================================================
@@ -480,20 +484,16 @@
         }
 
         /* ============================================================
-           Dropdown (Static Position to escape overflow clipping)
+           Dropdown — rendered by Popper outside overflow containers
            ============================================================ */
-        .category-with-sub .dropdown-menu {
-            position: absolute !important;
-            top: 100% !important;
-            left: 0 !important;
-            right: auto !important;
-            transform: none !important;
-            margin-top: 6px !important;
+        .dropdown-menu {
             min-width: 220px;
-            z-index: 1200 !important;
+            z-index: 3000 !important;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
             border: 1px solid #E2E8F0 !important;
             background: #FFFFFF !important;
+            margin-top: 6px !important;
+            border-radius: 12px !important;
         }
 
         .dropdown-menu .dropdown-item:hover {
