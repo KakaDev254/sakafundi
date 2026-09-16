@@ -5,67 +5,96 @@
 {% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-sidebar-section" style="padding: 40px 0; background: #FFFFFF;">
-    <div class="container">
-        <div class="hero-content-wrapper" style="background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%); border-radius: 24px; padding: 48px 40px; position: relative; overflow: hidden;">
-            <div class="row align-items-center g-4">
-                
-                <!-- Text Content (Left) -->
-                <div class="col-lg-6">
-                    <h1 class="fw-bold mb-3" style="color: #0F172A; line-height: 1.15; font-size: clamp(1.8rem, 3vw, 2.8rem); letter-spacing: -0.5px;">
-                        Find Trusted<br>
-                        <span style="color: #2563EB;">Skills & Professionals</span>
-                    </h1>
-                    
-                    <p class="mb-4" style="color: #64748B; font-size: clamp(0.9rem, 1.1vw, 1.05rem); line-height: 1.8; max-width: 480px;">
-                        Pata Fundi, Pata Pro. Pata Kazi. <strong style="color: #0F172A;">Jua kazi, lipa salama</strong> with secure M-PESA payments.
-                    </p>
+<!-- Hero Section with Rotating Video Background -->
+<section class="hero-video-section">
+    <div class="hero-video-wrapper">
 
-                    <!-- Search Box -->
-                    <div class="search-box mb-4" style="background: #FFFFFF; border-radius: 60px; padding: 6px; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1); border: 2px solid #FFFFFF; max-width: 480px; transition: all 0.3s ease;">
-                        <form action="{% url 'services:list' %}" method="get" class="d-flex align-items-center">
-                            <div class="flex-grow-1 px-3">
-                                <input type="text" name="q" class="border-0 bg-transparent w-100" 
-                                       placeholder="Search for a service or skill..." 
-                                       style="outline: none; padding: 10px 0; font-size: clamp(0.85rem, 1vw, 0.95rem); color: #0F172A;">
-                            </div>
-                            <button type="submit" class="btn search-btn" style="background: #2563EB; color: #fff; border-radius: 50px; padding: 10px 24px; font-weight: 600; border: none; font-size: 0.9rem; transition: all 0.3s ease; white-space: nowrap;">
-                                <span class="search-text">Search</span>
-                                <i class="fas fa-search search-icon"></i>
-                            </button>
-                        </form>
-                    </div>
+        <!-- Video backgrounds -->
+        <video class="hero-video hero-video-1 active" autoplay muted loop playsinline preload="auto" poster="{% static 'images/sakafundi-hero.jpg' %}">
+            <source src="{% static 'videos/hero-1.mp4' %}" type="video/mp4">
+        </video>
+        <video class="hero-video hero-video-2" muted loop playsinline preload="auto" poster="{% static 'images/sakafundi-hero.jpg' %}">
+            <source src="{% static 'videos/hero-2.mp4' %}" type="video/mp4">
+        </video>
+        <video class="hero-video hero-video-3" muted loop playsinline preload="auto" poster="{% static 'images/sakafundi-hero.jpg' %}">
+            <source src="{% static 'videos/hero-3.mp4' %}" type="video/mp4">
+        </video>
 
-                    <!-- Trust Badge -->
-                    <div class="d-flex align-items-center gap-2 flex-wrap mb-4">
-                        <div class="d-flex" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
-                            <i class="fas fa-star" style="color: #EAB308;"></i>
-                            <i class="fas fa-star" style="color: #EAB308;"></i>
-                            <i class="fas fa-star" style="color: #EAB308;"></i>
-                            <i class="fas fa-star" style="color: #EAB308;"></i>
-                            <i class="fas fa-star" style="color: #EAB308;"></i>
-                        </div>
-                        <span class="fw-semibold" style="color: #64748B; font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Trusted by Kenyans nationwide</span>
-                    </div>
+        <!-- Dark gradient overlay -->
+        <div class="hero-video-overlay"></div>
 
-                    <!-- Action Buttons -->
-                    <div class="d-flex gap-3 flex-wrap">
-                        <a href="{% url 'services:list' %}" class="btn btn-primary" style="background: #2563EB; color: #fff; border-radius: 12px; padding: 12px 28px; font-weight: 600; border: none; font-size: clamp(0.8rem, 0.95vw, 0.9rem); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
-                            <i class="fas fa-search me-2"></i> Find a Professional
-                        </a>
-                        <a href="{% url 'accounts:register' %}" class="btn btn-secondary" style="background: #FFFFFF; color: #0F172A; border-radius: 12px; padding: 12px 28px; font-weight: 600; border: 2px solid #E2E8F0; font-size: clamp(0.8rem, 0.95vw, 0.9rem); transition: all 0.3s ease;">
-                            <i class="fas fa-briefcase me-2" style="color: #EAB308;"></i> List Your Skills
-                        </a>
-                    </div>
+        <!-- Foreground content -->
+        <div class="hero-inner-content">
+            <div class="hero-text-block">
+
+                <!-- Headline -->
+                <h1 class="hero-title">
+                    Hire Trusted<br>
+                    <span class="hero-title-highlight">Skills & Professionals</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="hero-subtitle">
+                    Pata Fundi, Pata Pro. Pata Kazi. <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
+                </p>
+
+                <!-- Toggle -->
+                <div class="hero-toggle" role="tablist" aria-label="Choose your role">
+                    <button type="button" class="hero-toggle-btn active" data-role="hire" role="tab" aria-selected="true">
+                        Find a Fundi
+                    </button>
+                    <button type="button" class="hero-toggle-btn" data-role="work" role="tab" aria-selected="false">
+                        I'm a Fundi
+                    </button>
                 </div>
 
-                <!-- Image (Right) -->
-                <div class="col-lg-6 text-center">
-                    <img src="{% static 'images/sakafundi-hero.jpg' %}" 
-                         alt="SakaFundi - Find Trusted Professionals" 
-                         class="img-fluid hero-image" 
-                         style="max-height: 400px; width: 100%; object-fit: contain; filter: drop-shadow(0 20px 40px rgba(37, 99, 235, 0.15)); transition: transform 0.3s ease;">
+                <!-- Hire Search Box -->
+                <div class="hero-search-box" id="hireSearchBox">
+                    <form action="{% url 'services:list' %}" method="get" class="hero-search-form">
+                        <input type="text" name="q"
+                               placeholder="Search for a service or skill..."
+                               class="hero-search-input">
+                        <button type="submit" class="hero-search-btn">
+                            <span class="search-text">Search</span>
+                            <i class="fas fa-search search-icon"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Work Buttons -->
+                <div class="hero-work-actions" id="workActions">
+                    <a href="{% url 'accounts:register' %}" class="hero-cta-btn hero-cta-primary">
+                        <i class="fas fa-user-plus me-2"></i> Sign Up
+                    </a>
+                    <a href="{% url 'accounts:register' %}?type=provider" class="hero-cta-btn hero-cta-secondary">
+                        <i class="fas fa-briefcase me-2"></i> List Your Skills
+                    </a>
+                </div>
+
+                <!-- Hire CTA -->
+                <div class="hero-hire-actions" id="hireActions">
+                    <a href="{% url 'services:list' %}" class="hero-cta-btn hero-cta-primary">
+                        <i class="fas fa-search me-2"></i> Find a Professional
+                    </a>
+                </div>
+
+                <!-- Trust Badge -->
+                <div class="hero-trust-badge">
+                    <div class="hero-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span>Trusted by Kenyans nationwide</span>
+                </div>
+
+                <!-- Video Dots -->
+                <div class="hero-video-dots" id="heroVideoDots">
+                    <button class="hero-video-dot active" data-index="0" aria-label="Video 1"></button>
+                    <button class="hero-video-dot" data-index="1" aria-label="Video 2"></button>
+                    <button class="hero-video-dot" data-index="2" aria-label="Video 3"></button>
                 </div>
             </div>
         </div>
@@ -98,7 +127,7 @@
     </div>
 </section>
 
-<!-- Category Circle Grid Section (SHEIN-style) -->
+<!-- Category Circle Grid Section -->
 <section class="py-5" style="background: #FFFFFF;">
     <div class="container">
         <div class="text-center mb-5">
@@ -110,7 +139,6 @@
             {% for category in navbar_categories %}
             <div class="col-4 col-sm-3 col-md-2 col-lg-2 category-circle-col">
                 <a href="{% url 'services:category_detail' category.slug %}" class="text-decoration-none d-block text-center category-circle-link">
-                    <!-- Circular Image -->
                     <div class="category-circle-wrapper mx-auto">
                         {% if category.image %}
                             <img src="{{ category.image.url }}" 
@@ -122,8 +150,6 @@
                             </div>
                         {% endif %}
                     </div>
-
-                    <!-- Category Name -->
                     <p class="category-circle-name mb-0">{{ category.name }}</p>
                 </a>
             </div>
@@ -134,7 +160,6 @@
             {% endfor %}
         </div>
 
-        <!-- View All Categories Button -->
         {% if navbar_categories %}
         <div class="text-center mt-5">
             <a href="{% url 'services:categories' %}" class="btn" style="background: transparent; color: #2563EB; border: 2px solid #2563EB; border-radius: 50px; padding: 10px 32px; font-weight: 600; font-size: clamp(0.85rem, 1vw, 0.95rem); transition: all 0.3s ease;">
@@ -379,7 +404,353 @@
 
 <style>
     /* ======================================================
-       CATEGORY CIRCLE GRID (SHEIN-style)
+       HERO VIDEO SECTION
+       ====================================================== */
+    .hero-video-section {
+        position: relative;
+        width: 100%;
+        padding: 20px 40px;
+        background: #F8FAFC;
+    }
+
+    .hero-video-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        min-height: 560px;
+        border-radius: 24px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        background: #0F172A;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
+    }
+
+    /* ---------- Videos ---------- */
+    .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .hero-video.active {
+        opacity: 1;
+        z-index: 2;
+    }
+
+    /* ---------- Overlay ---------- */
+    .hero-video-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        background:
+            linear-gradient(90deg,
+                rgba(15, 23, 42, 0.88) 0%,
+                rgba(15, 23, 42, 0.7) 40%,
+                rgba(15, 23, 42, 0.35) 75%,
+                rgba(15, 23, 42, 0.2) 100%);
+    }
+
+    /* ---------- Inner content ---------- */
+    .hero-inner-content {
+        position: relative;
+        z-index: 4;
+        width: 100%;
+        padding: 56px 56px;
+    }
+
+    .hero-text-block {
+        max-width: 560px;
+    }
+
+    /* ---------- Title ---------- */
+    .hero-title {
+        color: #FFFFFF;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+        font-size: clamp(1.9rem, 3.2vw, 2.9rem);
+        margin-bottom: 14px;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-title-highlight {
+        color: #EAB308;
+        position: relative;
+        display: inline-block;
+    }
+
+    /* ---------- Subtitle ---------- */
+    .hero-subtitle {
+        color: rgba(255, 255, 255, 0.92);
+        font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+        line-height: 1.7;
+        max-width: 480px;
+        margin-bottom: 22px;
+        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-subtitle strong {
+        color: #FFFFFF;
+        font-weight: 700;
+    }
+
+    /* ---------- Toggle ---------- */
+    .hero-toggle {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px;
+        padding: 3px;
+        margin-bottom: 14px;
+        gap: 2px;
+        height: 40px;
+    }
+
+    .hero-toggle-btn {
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.75);
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0 22px;
+        height: 34px;
+        line-height: 34px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .hero-toggle-btn:hover {
+        color: #FFFFFF;
+    }
+
+    .hero-toggle-btn.active {
+        background: #FFFFFF;
+        color: #0F172A;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ---------- Search Box (Silk / Glass) ---------- */
+    .hero-search-box {
+        max-width: 460px;
+        margin-bottom: 18px;
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .hero-search-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+        border-radius: 50px 50px 0 0;
+        pointer-events: none;
+    }
+
+    .hero-search-box.hidden {
+        display: none;
+    }
+
+    .hero-search-box:hover,
+    .hero-search-box:focus-within {
+        background: rgba(255, 255, 255, 0.16);
+        border-color: rgba(234, 179, 8, 0.6);
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.25),
+            0 0 20px rgba(234, 179, 8, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* ---------- Form layout (input on left, button on right) ---------- */
+    .hero-search-form {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 4px 0 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-search-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        outline: none;
+        padding: 6px 0;
+        font-size: clamp(0.85rem, 1vw, 0.92rem);
+        color: #FFFFFF;
+    }
+
+    .hero-search-input::placeholder {
+        color: rgba(255, 255, 255, 0.65);
+        font-weight: 400;
+    }
+
+    .hero-search-btn {
+        flex-shrink: 0;
+        background: rgba(37, 99, 235, 0.9);
+        color: #fff;
+        border-radius: 50px;
+        padding: 0 22px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(10px);
+    }
+
+    .hero-search-btn:hover {
+        background: #1D4ED8;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+    }
+
+    .hero-search-btn .search-icon {
+        display: none;
+    }
+
+    /* ---------- CTA Buttons ---------- */
+    .hero-work-actions,
+    .hero-hire-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+        transition: opacity 0.25s ease;
+    }
+
+    .hero-work-actions.hidden,
+    .hero-hire-actions.hidden {
+        display: none;
+    }
+
+    .hero-cta-btn {
+        border-radius: 12px;
+        padding: 11px 26px;
+        font-weight: 600;
+        font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .hero-cta-primary {
+        background: #2563EB;
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    .hero-cta-primary:hover {
+        background: #1D4ED8;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(37, 99, 235, 0.5);
+        color: #fff;
+    }
+
+    .hero-cta-secondary {
+        background: rgba(255, 255, 255, 0.15);
+        color: #FFFFFF;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .hero-cta-secondary:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: #EAB308;
+        color: #EAB308;
+        transform: translateY(-2px);
+    }
+
+    /* ---------- Trust Badge ---------- */
+    .hero-trust-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .hero-stars {
+        color: #EAB308;
+        font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+    }
+
+    .hero-trust-badge span {
+        font-size: clamp(0.7rem, 0.85vw, 0.85rem);
+        font-weight: 600;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    /* ---------- Video Dots ---------- */
+    .hero-video-dots {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+    }
+
+    .hero-video-dot {
+        width: 28px;
+        height: 4px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.35);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .hero-video-dot.active {
+        background: #EAB308;
+        width: 40px;
+    }
+
+    .hero-video-dot:hover {
+        background: rgba(255, 255, 255, 0.7);
+    }
+
+    .hero-video-dot.active:hover {
+        background: #EAB308;
+    }
+
+    /* ======================================================
+       CATEGORY CIRCLE GRID
        ====================================================== */
     .category-circle-col {
         padding-bottom: 8px;
@@ -447,22 +818,6 @@
     }
 
     /* ======================================================
-       Hero Image
-       ====================================================== */
-    .hero-image {
-        filter: drop-shadow(0 20px 40px rgba(37, 99, 235, 0.15));
-        transition: transform 0.3s ease;
-    }
-
-    .hero-image:hover {
-        transform: scale(1.02);
-    }
-
-    .hero-content-wrapper {
-        min-height: 100%;
-    }
-
-    /* ======================================================
        Card Hover Effects
        ====================================================== */
     .stat-card:hover {
@@ -493,50 +848,29 @@
         box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
     }
 
-    /* Search Box */
-    .search-box:hover,
-    .search-box:focus-within {
-        border-color: #2563EB !important;
-        box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15) !important;
-    }
-
-    .search-box input:focus {
-        outline: none;
-    }
-
-    /* Search Button */
-    .search-btn {
-        transition: all 0.3s ease;
-    }
-
-    .search-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
-    }
-
-    .search-icon {
-        display: none !important;
-    }
-
-    /* Button hover effects */
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4) !important;
-    }
-
-    .btn-secondary:hover {
-        transform: translateY(-2px);
-        border-color: #2563EB !important;
-        color: #2563EB !important;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    }
-
     /* ======================================================
        Responsive - Tablet
        ====================================================== */
     @media (max-width: 991px) {
-        .hero-content-wrapper {
-            padding: 32px 24px !important;
+        .hero-video-section {
+            padding: 16px 20px;
+        }
+
+        .hero-video-wrapper {
+            min-height: 520px;
+            border-radius: 20px;
+        }
+
+        .hero-inner-content {
+            padding: 40px 32px;
+        }
+
+        .hero-video-overlay {
+            background:
+                linear-gradient(180deg,
+                    rgba(15, 23, 42, 0.85) 0%,
+                    rgba(15, 23, 42, 0.72) 50%,
+                    rgba(15, 23, 42, 0.55) 100%);
         }
     }
 
@@ -544,74 +878,109 @@
        Responsive - Mobile
        ====================================================== */
     @media (max-width: 576px) {
-        .hero-sidebar-section {
-            padding: 16px 0 24px !important;
+        .hero-video-section {
+            padding: 0;
         }
 
-        .hero-sidebar-section .container {
-            padding-left: 12px !important;
-            padding-right: 12px !important;
+        /* Compact height — no full screen */
+        .hero-video-wrapper {
+            min-height: 620px;
+            border-radius: 0;
+            max-width: 100%;
         }
 
-        .hero-content-wrapper {
-            padding: 24px 18px !important;
-            border-radius: 16px !important;
+        .hero-inner-content {
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
         }
 
-        .hero-content-wrapper h1 {
-            font-size: 1.4rem !important;
+        .hero-text-block {
+            max-width: 100%;
+            width: 100%;
         }
 
-        .hero-content-wrapper p {
-            font-size: 0.85rem !important;
+        .hero-title {
+            font-size: 1.7rem;
+            margin-bottom: 10px;
         }
 
-        /* Search Box - Mobile */
-        .search-box {
-            border-radius: 30px !important;
-            padding: 3px !important;
-        }
-        .search-box .px-3 {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-        .search-box input {
-            font-size: 0.8rem !important;
-            padding: 6px 0 !important;
+        .hero-subtitle {
+            font-size: 0.85rem;
+            margin-bottom: 16px;
         }
 
-        /* Search Button - Mobile: Show only icon */
-        .search-btn {
-            padding: 6px 10px !important;
-            font-size: 0.85rem !important;
-            border-radius: 50% !important;
-            min-width: 36px !important;
-            width: 36px !important;
-            height: 36px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+        .hero-toggle {
+            height: 36px;
+            margin-bottom: 12px;
+            padding: 2px;
         }
-        .search-text {
-            display: none !important;
+
+        .hero-toggle-btn {
+            font-size: 0.75rem;
+            padding: 0 16px;
+            height: 32px;
+            line-height: 32px;
         }
-        .search-icon {
+
+        /* Search box mobile */
+        .hero-search-box {
+            max-width: 100%;
+            margin-bottom: 14px;
+        }
+
+        .hero-search-form {
+            height: 44px;
+            padding: 0 3px 0 18px;
+        }
+
+        .hero-search-input {
+            font-size: 0.82rem;
+            padding: 4px 0;
+        }
+
+        .hero-search-btn {
+            height: 38px;
+            padding: 0 14px;
+            font-size: 0.8rem;
+        }
+
+        .hero-search-btn .search-text {
+            display: none;
+        }
+
+        .hero-search-btn .search-icon {
             display: inline-block !important;
-            font-size: 0.85rem !important;
-            margin: 0 !important;
+            margin: 0;
+            font-size: 0.85rem;
         }
 
-        .stat-card {
-            padding: 10px !important;
-        }
-        .stat-card h2 {
-            font-size: 1.2rem !important;
-        }
-        .stat-card p {
-            font-size: 0.65rem !important;
+        .hero-work-actions,
+        .hero-hire-actions {
+            margin-bottom: 16px;
+            width: 100%;
         }
 
-        /* Category Circle - Mobile */
+        .hero-cta-btn {
+            padding: 10px 20px;
+            font-size: 0.78rem;
+            flex: 1;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero-trust-badge {
+            margin-bottom: 16px;
+        }
+
+        .hero-video-dot {
+            width: 22px;
+        }
+
+        .hero-video-dot.active {
+            width: 32px;
+        }
+
         .category-circle-wrapper {
             width: 80px !important;
             height: 80px !important;
@@ -622,6 +991,16 @@
         .category-circle-name {
             font-size: 0.7rem !important;
             margin-top: 8px !important;
+        }
+
+        .stat-card {
+            padding: 10px !important;
+        }
+        .stat-card h2 {
+            font-size: 1.2rem !important;
+        }
+        .stat-card p {
+            font-size: 0.65rem !important;
         }
 
         .service-card .p-3 {
@@ -663,10 +1042,6 @@
         .step-icon + h5 + p {
             font-size: 0.7rem !important;
         }
-        .btn-primary, .btn-secondary {
-            padding: 8px 16px !important;
-            font-size: 0.8rem !important;
-        }
         .provider-card {
             padding: 10px !important;
         }
@@ -686,8 +1061,20 @@
         }
     }
 
-    /* Extra small screens — smaller circles */
     @media (max-width: 400px) {
+        .hero-video-wrapper {
+            min-height: 580px;
+        }
+
+        .hero-title {
+            font-size: 1.4rem;
+        }
+
+        .hero-toggle-btn {
+            font-size: 0.7rem;
+            padding: 0 12px;
+        }
+
         .category-circle-wrapper {
             width: 70px !important;
             height: 70px !important;
@@ -703,7 +1090,97 @@
 
 {% block extra_js %}
 <script>
-    // Add hover effect to stat cards
+    // ===== HERO TOGGLE =====
+    (function() {
+        const buttons = document.querySelectorAll('.hero-toggle-btn');
+        const searchBox = document.getElementById('hireSearchBox');
+        const hireActions = document.getElementById('hireActions');
+        const workActions = document.getElementById('workActions');
+
+        buttons.forEach((btn) => {
+            btn.addEventListener('click', function() {
+                const role = this.dataset.role;
+
+                buttons.forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-selected', 'false');
+                });
+                this.classList.add('active');
+                this.setAttribute('aria-selected', 'true');
+
+                if (role === 'hire') {
+                    searchBox.classList.remove('hidden');
+                    hireActions.classList.remove('hidden');
+                    workActions.classList.add('hidden');
+                } else if (role === 'work') {
+                    searchBox.classList.add('hidden');
+                    hireActions.classList.add('hidden');
+                    workActions.classList.remove('hidden');
+                }
+            });
+        });
+    })();
+
+    // ===== HERO VIDEO ROTATION =====
+    (function() {
+        const videos = document.querySelectorAll('.hero-video');
+        const dots = document.querySelectorAll('.hero-video-dot');
+
+        if (videos.length === 0) return;
+
+        let currentIndex = 0;
+        const ROTATE_MS = 8000;
+
+        function playVideo(index) {
+            videos.forEach((v) => {
+                v.classList.remove('active');
+                try {
+                    v.pause();
+                    v.currentTime = 0;
+                } catch (e) {}
+            });
+
+            const video = videos[index];
+            if (video) {
+                video.classList.add('active');
+                video.muted = true;
+                const p = video.play();
+                if (p !== undefined) p.catch(() => {});
+            }
+
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            currentIndex = index;
+        }
+
+        function nextVideo() {
+            playVideo((currentIndex + 1) % videos.length);
+        }
+
+        playVideo(0);
+
+        let rotateTimer = setInterval(nextVideo, ROTATE_MS);
+
+        dots.forEach((dot) => {
+            dot.addEventListener('click', function() {
+                const idx = parseInt(this.dataset.index, 10);
+                clearInterval(rotateTimer);
+                playVideo(idx);
+                rotateTimer = setInterval(nextVideo, ROTATE_MS);
+            });
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                videos.forEach(v => { try { v.pause(); } catch (e) {} });
+                clearInterval(rotateTimer);
+            } else {
+                playVideo(currentIndex);
+                rotateTimer = setInterval(nextVideo, ROTATE_MS);
+            }
+        });
+    })();
+
+    // ===== Stat card hover =====
     document.querySelectorAll('.stat-card').forEach(card => {
         card.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-4px)';
