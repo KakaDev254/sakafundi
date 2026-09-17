@@ -38,18 +38,18 @@
                     Pata Fundi, Pata Pro. Pata Kazi. <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
                 </p>
 
-                <!-- Toggle -->
-                <div class="hero-toggle" role="tablist" aria-label="Choose your role">
-                    <button type="button" class="hero-toggle-btn active" data-role="hire" role="tab" aria-selected="true">
-                        Find a Fundi
-                    </button>
-                    <button type="button" class="hero-toggle-btn" data-role="work" role="tab" aria-selected="false">
-                        I'm a Fundi
-                    </button>
+                <!-- Toggle (glass pill) with link buttons -->
+                <div class="hero-toggle" role="group" aria-label="Choose your role">
+                    <a href="{% url 'services:list' %}" class="hero-toggle-btn hero-toggle-blue active">
+                        <i class="fas fa-search me-2"></i> Find a Fundi
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="hero-toggle-btn hero-toggle-yellow">
+                        <i class="fas fa-briefcase me-2"></i> I'm a Fundi
+                    </a>
                 </div>
 
-                <!-- Hire Search Box -->
-                <div class="hero-search-box" id="hireSearchBox">
+                <!-- Search Box -->
+                <div class="hero-search-box">
                     <form action="{% url 'services:list' %}" method="get" class="hero-search-form">
                         <input type="text" name="q"
                                placeholder="Search for a service or skill..."
@@ -59,23 +59,6 @@
                             <i class="fas fa-search search-icon"></i>
                         </button>
                     </form>
-                </div>
-
-                <!-- Work Buttons -->
-                <div class="hero-work-actions" id="workActions">
-                    <a href="{% url 'accounts:register' %}" class="hero-cta-btn hero-cta-primary">
-                        <i class="fas fa-user-plus me-2"></i> Sign Up
-                    </a>
-                    <a href="{% url 'accounts:register' %}?type=provider" class="hero-cta-btn hero-cta-secondary">
-                        <i class="fas fa-briefcase me-2"></i> List Your Skills
-                    </a>
-                </div>
-
-                <!-- Hire CTA -->
-                <div class="hero-hire-actions" id="hireActions">
-                    <a href="{% url 'services:list' %}" class="hero-cta-btn hero-cta-primary">
-                        <i class="fas fa-search me-2"></i> Find a Professional
-                    </a>
                 </div>
 
                 <!-- Trust Badge -->
@@ -100,32 +83,6 @@
         </div>
     </div>
 </section>
-
-{% comment %} <!-- Stats Section -->
-<section class="py-5" style="background: #F8FAFC;">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-6 col-md-4">
-                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #2563EB; font-size: clamp(1.8rem, 3vw, 2.5rem);">{{ total_services }}+</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Services Available</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4">
-                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #16A34A; font-size: clamp(1.8rem, 3vw, 2.5rem);">{{ total_providers }}+</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Verified Providers</p>
-                </div>
-            </div>
-            <div class="col-6 col-md-4">
-                <div class="stat-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease;">
-                    <h2 class="fw-bold mb-0" style="color: #EAB308; font-size: clamp(1.8rem, 3vw, 2.5rem);">{{ completed_projects }}+</h2>
-                    <p class="text-secondary small mb-0" style="font-weight: 500; font-size: clamp(0.7rem, 0.9vw, 0.85rem);">Projects Completed</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section> {% endcomment %}
 
 <!-- Category Circle Grid Section -->
 <section class="py-5" style="background: #FFFFFF;">
@@ -427,7 +384,6 @@
         box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
     }
 
-    /* ---------- Videos ---------- */
     .hero-video {
         position: absolute;
         inset: 0;
@@ -445,7 +401,6 @@
         z-index: 2;
     }
 
-    /* ---------- Overlay ---------- */
     .hero-video-overlay {
         position: absolute;
         inset: 0;
@@ -458,7 +413,6 @@
                 rgba(15, 23, 42, 0.2) 100%);
     }
 
-    /* ---------- Inner content ---------- */
     .hero-inner-content {
         position: relative;
         z-index: 4;
@@ -502,47 +456,83 @@
         font-weight: 700;
     }
 
-    /* ---------- Toggle ---------- */
+    /* ---------- Toggle (glass pill with link buttons) ---------- */
     .hero-toggle {
         display: inline-flex;
         align-items: center;
         background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(14px) saturate(180%);
+        -webkit-backdrop-filter: blur(14px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         border-radius: 50px;
-        padding: 3px;
-        margin-bottom: 14px;
-        gap: 2px;
-        height: 40px;
+        padding: 4px;
+        margin-bottom: 18px;
+        gap: 4px;
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
     .hero-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         border: none;
         background: transparent;
-        color: rgba(255, 255, 255, 0.75);
+        color: rgba(255, 255, 255, 0.85);
         font-weight: 600;
-        font-size: 0.85rem;
-        padding: 0 22px;
-        height: 34px;
-        line-height: 34px;
+        font-size: 0.9rem;
+        padding: 12px 26px;
         border-radius: 50px;
         transition: all 0.3s ease;
         cursor: pointer;
         white-space: nowrap;
+        text-decoration: none;
     }
 
-    .hero-toggle-btn:hover {
+    .hero-toggle-btn i {
+        font-size: 0.8rem;
+    }
+
+    /* ---------- Blue variant (Find a Fundi) ---------- */
+    .hero-toggle-blue:hover {
+        color: #FFFFFF;
+        background: rgba(37, 99, 235, 0.25);
+        border: 1px solid rgba(37, 99, 235, 0.5);
+    }
+
+    .hero-toggle-blue.active {
+        background: #2563EB;
+        color: #FFFFFF;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+        border: 1px solid rgba(37, 99, 235, 0.8);
+    }
+
+    .hero-toggle-blue.active:hover {
+        background: #1D4ED8;
         color: #FFFFFF;
     }
 
-    .hero-toggle-btn.active {
-        background: #FFFFFF;
-        color: #0F172A;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    /* ---------- Yellow variant (I'm a Fundi) ---------- */
+    .hero-toggle-yellow:hover {
+        color: #FFFFFF;
+        background: rgba(234, 179, 8, 0.25);
+        border: 1px solid rgba(234, 179, 8, 0.5);
     }
 
-    /* ---------- Search Box (Silk / Glass) ---------- */
+    .hero-toggle-yellow.active {
+        background: #EAB308;
+        color: #0F172A;
+        box-shadow: 0 4px 14px rgba(234, 179, 8, 0.5);
+        border: 1px solid rgba(234, 179, 8, 0.8);
+    }
+
+    .hero-toggle-yellow.active:hover {
+        background: #CA8A04;
+        color: #0F172A;
+    }
+
+    /* ---------- Search Box ---------- */
     .hero-search-box {
         max-width: 460px;
         margin-bottom: 18px;
@@ -572,10 +562,6 @@
         pointer-events: none;
     }
 
-    .hero-search-box.hidden {
-        display: none;
-    }
-
     .hero-search-box:hover,
     .hero-search-box:focus-within {
         background: rgba(255, 255, 255, 0.16);
@@ -587,7 +573,6 @@
             inset 0 -1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    /* ---------- Form layout (input on left, button on right) ---------- */
     .hero-search-form {
         display: flex;
         align-items: center;
@@ -639,62 +624,6 @@
 
     .hero-search-btn .search-icon {
         display: none;
-    }
-
-    /* ---------- CTA Buttons ---------- */
-    .hero-work-actions,
-    .hero-hire-actions {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 22px;
-        transition: opacity 0.25s ease;
-    }
-
-    .hero-work-actions.hidden,
-    .hero-hire-actions.hidden {
-        display: none;
-    }
-
-    .hero-cta-btn {
-        border-radius: 12px;
-        padding: 11px 26px;
-        font-weight: 600;
-        font-size: clamp(0.8rem, 0.95vw, 0.9rem);
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        white-space: nowrap;
-    }
-
-    .hero-cta-primary {
-        background: #2563EB;
-        color: #fff;
-        border: none;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-    }
-
-    .hero-cta-primary:hover {
-        background: #1D4ED8;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 28px rgba(37, 99, 235, 0.5);
-        color: #fff;
-    }
-
-    .hero-cta-secondary {
-        background: rgba(255, 255, 255, 0.15);
-        color: #FFFFFF;
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-    }
-
-    .hero-cta-secondary:hover {
-        background: rgba(255, 255, 255, 0.25);
-        border-color: #EAB308;
-        color: #EAB308;
-        transform: translateY(-2px);
     }
 
     /* ---------- Trust Badge ---------- */
@@ -882,7 +811,6 @@
             padding: 0;
         }
 
-        /* Compact height — no full screen */
         .hero-video-wrapper {
             min-height: 620px;
             border-radius: 0;
@@ -910,20 +838,25 @@
             margin-bottom: 16px;
         }
 
+        /* Toggle becomes full width stacked row */
         .hero-toggle {
-            height: 36px;
+            display: flex;
+            width: 100%;
             margin-bottom: 12px;
-            padding: 2px;
+            padding: 3px;
         }
 
         .hero-toggle-btn {
-            font-size: 0.75rem;
-            padding: 0 16px;
-            height: 32px;
-            line-height: 32px;
+            flex: 1;
+            font-size: 0.78rem;
+            padding: 10px 12px;
+            text-align: center;
         }
 
-        /* Search box mobile */
+        .hero-toggle-btn i {
+            font-size: 0.7rem;
+        }
+
         .hero-search-box {
             max-width: 100%;
             margin-bottom: 14px;
@@ -953,20 +886,6 @@
             display: inline-block !important;
             margin: 0;
             font-size: 0.85rem;
-        }
-
-        .hero-work-actions,
-        .hero-hire-actions {
-            margin-bottom: 16px;
-            width: 100%;
-        }
-
-        .hero-cta-btn {
-            padding: 10px 20px;
-            font-size: 0.78rem;
-            flex: 1;
-            justify-content: center;
-            text-align: center;
         }
 
         .hero-trust-badge {
@@ -1063,7 +982,7 @@
 
     @media (max-width: 400px) {
         .hero-video-wrapper {
-            min-height: 580px;
+            min-height: 620px;
         }
 
         .hero-title {
@@ -1072,7 +991,7 @@
 
         .hero-toggle-btn {
             font-size: 0.7rem;
-            padding: 0 12px;
+            padding: 9px 8px;
         }
 
         .category-circle-wrapper {
@@ -1090,37 +1009,6 @@
 
 {% block extra_js %}
 <script>
-    // ===== HERO TOGGLE =====
-    (function() {
-        const buttons = document.querySelectorAll('.hero-toggle-btn');
-        const searchBox = document.getElementById('hireSearchBox');
-        const hireActions = document.getElementById('hireActions');
-        const workActions = document.getElementById('workActions');
-
-        buttons.forEach((btn) => {
-            btn.addEventListener('click', function() {
-                const role = this.dataset.role;
-
-                buttons.forEach(b => {
-                    b.classList.remove('active');
-                    b.setAttribute('aria-selected', 'false');
-                });
-                this.classList.add('active');
-                this.setAttribute('aria-selected', 'true');
-
-                if (role === 'hire') {
-                    searchBox.classList.remove('hidden');
-                    hireActions.classList.remove('hidden');
-                    workActions.classList.add('hidden');
-                } else if (role === 'work') {
-                    searchBox.classList.add('hidden');
-                    hireActions.classList.add('hidden');
-                    workActions.classList.remove('hidden');
-                }
-            });
-        });
-    })();
-
     // ===== HERO VIDEO ROTATION =====
     (function() {
         const videos = document.querySelectorAll('.hero-video');
@@ -1179,18 +1067,6 @@
             }
         });
     })();
-
-    // ===== Stat card hover =====
-    document.querySelectorAll('.stat-card').forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-4px)';
-            this.style.boxShadow = '0 8px 24px rgba(0,0,0,0.08)';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.04)';
-        });
-    });
 </script>
 {% endblock %}
 {% endblock %}
