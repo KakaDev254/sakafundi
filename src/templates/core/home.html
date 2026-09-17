@@ -97,8 +97,8 @@
 <section class="explore-section">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="explore-title">Explore Services</h2>
-            <p class="explore-subtitle">Find the right professional for your needs</p>
+            <h2 class="section-title">Explore Services</h2>
+            <p class="section-subtitle">Find the right professional for your needs</p>
         </div>
 
         <div class="row g-3 g-md-4 justify-content-center">
@@ -140,8 +140,8 @@
 <section class="py-5" style="background: #FFFFFF;">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">Featured Services</h2>
-            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Find the most popular professionals this week</p>
+            <h2 class="section-title">Featured Services</h2>
+            <p class="section-subtitle">Find the most popular professionals this week</p>
         </div>
         
         <div class="row g-4">
@@ -211,8 +211,8 @@
 <section class="py-5" style="background: #F8FAFC;">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">Top Rated Providers</h2>
-            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Professionals with the best reviews</p>
+            <h2 class="section-title">Top Rated Providers</h2>
+            <p class="section-subtitle">Professionals with the best reviews</p>
         </div>
         
         <div class="row g-4">
@@ -245,8 +245,8 @@
 <section class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">How SakaFundi Works</h2>
-            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Four simple steps to get your project done</p>
+            <h2 class="section-title">How SakaFundi Works</h2>
+            <p class="section-subtitle">Four simple steps to get your project done</p>
         </div>
         
         <div class="row g-4">
@@ -286,8 +286,8 @@
 <section class="py-5" style="background: #F8FAFC;">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold" style="color: #0F172A; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">What Our Users Say</h2>
-            <p class="text-secondary" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">Real reviews from real Kenyans</p>
+            <h2 class="section-title">What Our Users Say</h2>
+            <p class="section-subtitle">Real reviews from real Kenyans</p>
         </div>
         
         <div class="row g-4">
@@ -355,8 +355,8 @@
 <!-- CTA Section -->
 <section class="py-5" style="background: #2563EB;">
     <div class="container text-center text-white">
-        <h2 class="fw-bold mb-3" style="font-size: clamp(1.6rem, 2.5vw, 2.2rem);">Ready to Get Started?</h2>
-        <p class="lead mb-4" style="opacity: 0.9; font-weight: 400; font-size: clamp(1rem, 1.3vw, 1.2rem);">Join thousands of Kenyans finding skilled professionals on SakaFundi</p>
+        <h2 class="section-title section-title-light">Ready to Get Started?</h2>
+        <p class="section-subtitle section-subtitle-light">Join thousands of Kenyans finding skilled professionals on SakaFundi</p>
         <div class="d-flex gap-3 justify-content-center flex-wrap">
             <a href="{% url 'accounts:register' %}" class="btn" style="background: #EAB308; color: #0F172A; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
                 <i class="fas fa-user-plus me-2"></i> Create Free Account
@@ -369,6 +369,38 @@
 </section>
 
 <style>
+    /* ======================================================
+       SECTION HEADERS — CORMORANT FONT
+       ====================================================== */
+    .section-title {
+        font-family: 'Cormorant', 'Old Standard TT', 'Times New Roman', Times, serif;
+        font-weight: 700;
+        color: #0F172A;
+        font-size: clamp(2rem, 3.5vw, 3rem);
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+        margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+        font-family: 'Inter', sans-serif;
+        color: #64748B;
+        font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+        font-weight: 400;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    /* Light variant for dark backgrounds */
+    .section-title-light {
+        color: #FFFFFF;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-subtitle-light {
+        color: rgba(255, 255, 255, 0.9);
+    }
+
     /* ======================================================
        ANNOUNCEMENT BAR (bluish)
        ====================================================== */
@@ -443,7 +475,6 @@
         z-index: 2;
     }
 
-    /* Vertical gradient — light top → dark bottom */
     .hero-video-overlay {
         position: absolute;
         inset: 0;
@@ -500,7 +531,7 @@
         font-weight: 700;
     }
 
-    /* ---------- Toggle (chip-style with Blue & Yellow active) ---------- */
+    /* ---------- Toggle ---------- */
     .hero-toggle {
         display: inline-flex;
         align-items: center;
@@ -540,7 +571,6 @@
         background: rgba(255, 255, 255, 0.08);
     }
 
-    /* Find a Fundi — BLUE active */
     .hero-toggle-blue.active {
         background: #2563EB;
         color: #FFFFFF;
@@ -552,7 +582,6 @@
         color: #FFFFFF;
     }
 
-    /* I'm a Fundi — YELLOW active */
     .hero-toggle-yellow.active {
         background: #EAB308;
         color: #0F172A;
@@ -564,7 +593,7 @@
         color: #0F172A;
     }
 
-    /* ---------- Search Box (blue circular icon) ---------- */
+    /* ---------- Search Box ---------- */
     .hero-search-box {
         max-width: 520px;
         margin-bottom: 20px;
@@ -606,7 +635,6 @@
         font-weight: 400;
     }
 
-    /* BLUE circular search button */
     .hero-search-btn {
         flex-shrink: 0;
         background: #2563EB;
@@ -723,18 +751,6 @@
     .explore-section .container {
         position: relative;
         z-index: 1;
-    }
-
-    .explore-title {
-        color: #0F172A;
-        font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-        font-weight: 800;
-        margin-bottom: 8px;
-    }
-
-    .explore-subtitle {
-        color: #64748B;
-        font-size: clamp(0.9rem, 1.2vw, 1.1rem);
     }
 
     .explore-view-all-btn {
@@ -870,6 +886,10 @@
         .hero-title {
             font-size: clamp(1.8rem, 4vw, 2.8rem);
         }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+        }
     }
 
     /* ======================================================
@@ -917,7 +937,6 @@
             max-width: 100%;
         }
 
-        /* Toggle: full-width chip row */
         .hero-toggle {
             display: flex;
             width: 100%;
@@ -934,7 +953,6 @@
             text-align: center;
         }
 
-        /* Search box */
         .hero-search-box {
             max-width: 100%;
             margin-bottom: 16px;
@@ -956,7 +974,6 @@
             font-size: 0.85rem;
         }
 
-        /* Trust badge */
         .hero-trust-badge {
             margin-bottom: 18px;
             gap: 8px;
@@ -970,7 +987,6 @@
             font-size: 0.75rem;
         }
 
-        /* Video dots */
         .hero-video-dot {
             width: 20px;
             height: 3px;
@@ -980,7 +996,16 @@
             width: 30px;
         }
 
-        /* Explore */
+        /* Section titles mobile */
+        .section-title {
+            font-size: 1.85rem;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+        }
+
         .explore-section {
             padding: 44px 0;
         }
@@ -997,7 +1022,6 @@
             margin-top: 8px !important;
         }
 
-        /* Service cards */
         .service-card .p-3 {
             padding: 8px !important;
         }
@@ -1012,7 +1036,6 @@
             font-size: 0.7rem !important;
         }
 
-        /* Testimonial */
         .testimonial-card {
             padding: 14px !important;
         }
@@ -1027,7 +1050,6 @@
             font-size: 0.75rem !important;
         }
 
-        /* Steps */
         .step-icon {
             width: 40px !important;
             height: 40px !important;
@@ -1042,7 +1064,6 @@
             font-size: 0.7rem !important;
         }
 
-        /* Provider */
         .provider-card {
             padding: 10px !important;
         }
@@ -1092,6 +1113,10 @@
         .hero-search-btn {
             width: 38px;
             height: 38px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
         }
 
         .category-circle-wrapper {
