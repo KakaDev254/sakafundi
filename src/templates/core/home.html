@@ -4,13 +4,6 @@
 
 {% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}
 
-{% block extra_css %}
-<!-- Anton Font for hero headline -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
 <!-- Hero Section with Rotating Video Background -->
 <section class="hero-video-section">
@@ -365,6 +358,7 @@
         </div>
     </div>
 </section>
+
 <style>
     /* ======================================================
        HERO VIDEO SECTION
@@ -694,7 +688,6 @@
         overflow: hidden;
     }
 
-    /* Soft decorative blur circles */
     .explore-section::before {
         content: '';
         position: absolute;
@@ -881,7 +874,7 @@
     }
 
     /* ======================================================
-       Responsive - Mobile
+       Responsive - Mobile (Improved spacing & UI)
        ====================================================== */
     @media (max-width: 576px) {
         .hero-video-section {
@@ -889,15 +882,15 @@
         }
 
         .hero-video-wrapper {
-            min-height: 620px;
+            min-height: auto;
             border-radius: 0;
             max-width: 100%;
+            padding: 0;
         }
 
         .hero-inner-content {
-            padding: 40px 20px;
-            display: flex;
-            align-items: center;
+            padding: 28px 18px 32px;
+            display: block;
         }
 
         .hero-text-block {
@@ -905,54 +898,66 @@
             width: 100%;
         }
 
+        /* --- Title: tighter, better rhythm --- */
         .hero-title {
-            font-size: 2.1rem;
+            font-size: 1.85rem;
             margin-bottom: 12px;
-            line-height: 1.1;
+            line-height: 1.15;
         }
 
+        /* --- Subtitle: cleaner spacing --- */
         .hero-subtitle {
             font-size: 0.85rem;
-            margin-bottom: 16px;
+            line-height: 1.55;
+            margin-bottom: 18px;
+            max-width: 100%;
         }
 
+        /* --- Toggle: full width stacked, better touch targets --- */
         .hero-toggle {
             display: flex;
             width: 100%;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             padding: 3px;
+            gap: 3px;
         }
 
         .hero-toggle-btn {
             flex: 1;
             font-size: 0.78rem;
-            padding: 10px 12px;
+            padding: 11px 10px;
             text-align: center;
+            gap: 4px;
         }
 
         .hero-toggle-btn i {
             font-size: 0.7rem;
+            margin-right: 4px !important;
         }
 
+        /* --- Search box: bigger, cleaner --- */
         .hero-search-box {
             max-width: 100%;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
+            border-radius: 50px;
         }
 
         .hero-search-form {
-            height: 44px;
-            padding: 0 3px 0 18px;
+            height: 48px;
+            padding: 0 4px 0 18px;
         }
 
         .hero-search-input {
-            font-size: 0.82rem;
-            padding: 4px 0;
+            font-size: 0.85rem;
+            padding: 6px 0;
         }
 
         .hero-search-btn {
-            height: 38px;
-            padding: 0 14px;
-            font-size: 0.8rem;
+            height: 40px;
+            padding: 0 16px;
+            font-size: 0.82rem;
+            margin-right: 2px;
+            border-radius: 50px;
         }
 
         .hero-search-btn .search-text {
@@ -962,24 +967,40 @@
         .hero-search-btn .search-icon {
             display: inline-block !important;
             margin: 0;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
+        /* --- Trust badge: compact --- */
         .hero-trust-badge {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
+            gap: 8px;
+        }
+
+        .hero-trust-badge span {
+            font-size: 0.72rem;
+        }
+
+        .hero-stars {
+            font-size: 0.75rem;
+        }
+
+        /* --- Video dots: tighter --- */
+        .hero-video-dots {
+            gap: 6px;
         }
 
         .hero-video-dot {
-            width: 22px;
+            width: 20px;
+            height: 3px;
         }
 
         .hero-video-dot.active {
-            width: 32px;
+            width: 30px;
         }
 
         /* Explore section mobile */
         .explore-section {
-            padding: 50px 0;
+            padding: 44px 0;
         }
 
         .category-circle-wrapper {
@@ -992,16 +1013,6 @@
         .category-circle-name {
             font-size: 0.7rem !important;
             margin-top: 8px !important;
-        }
-
-        .stat-card {
-            padding: 10px !important;
-        }
-        .stat-card h2 {
-            font-size: 1.2rem !important;
-        }
-        .stat-card p {
-            font-size: 0.65rem !important;
         }
 
         .service-card .p-3 {
@@ -1063,17 +1074,35 @@
     }
 
     @media (max-width: 400px) {
-        .hero-video-wrapper {
-            min-height: 620px;
+        .hero-inner-content {
+            padding: 24px 16px 28px;
         }
 
         .hero-title {
-            font-size: 1.85rem;
+            font-size: 1.6rem;
+        }
+
+        .hero-subtitle {
+            font-size: 0.8rem;
         }
 
         .hero-toggle-btn {
-            font-size: 0.7rem;
-            padding: 9px 8px;
+            font-size: 0.72rem;
+            padding: 10px 6px;
+        }
+
+        .hero-search-form {
+            height: 44px;
+            padding: 0 3px 0 16px;
+        }
+
+        .hero-search-input {
+            font-size: 0.8rem;
+        }
+
+        .hero-search-btn {
+            height: 36px;
+            padding: 0 12px;
         }
 
         .category-circle-wrapper {
