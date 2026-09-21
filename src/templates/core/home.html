@@ -2,1206 +2,2705 @@
 {% load static %}
 {% load cloudinary %}
 
-{% block title %}SakaFundi - Find Skilled Professionals in Kenya{% endblock %}
+{% block title %}SakaFundi - Find Trusted Professionals in Kenya{% endblock %}
 
 {% block content %}
-<!-- Announcement Bar (bluish) -->
-<section class="announce-bar">
+
+<!-- =========================================================
+     ANNOUNCEMENT BAR
+========================================================= -->
+<section class="sf-announcement">
     <div class="container">
-        <p class="announce-text">
-            Home of Kenya's top Fundis.
-            <a href="{% url 'accounts:register' %}" class="announce-link">Get started <i class="fas fa-chevron-right ms-1"></i></a>
-        </p>
+        <div class="sf-announcement-inner">
+            <span>
+                <i class="fas fa-shield-alt me-2"></i>
+                Kenya's marketplace for trusted skills and professionals
+            </span>
+
+            <a href="{% url 'accounts:register' %}">
+                Join SakaFundi
+                <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
     </div>
 </section>
 
-<!-- Hero Section with Rotating Video Background (inset on desktop) -->
-<section class="hero-video-section">
-    <div class="hero-video-wrapper">
 
-        <!-- Video backgrounds -->
-        <video class="hero-video hero-video-1 active" autoplay muted loop playsinline preload="auto" poster="{% static 'images/sakafundi-hero.jpg' %}">
+<!-- =========================================================
+     HERO
+========================================================= -->
+<section class="sf-hero">
+
+    <!-- Video background -->
+    <div class="sf-hero-media">
+
+        <video
+            class="sf-hero-video active"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="auto"
+            poster="{% static 'images/sakafundi-hero.jpg' %}"
+        >
             <source src="{% static 'videos/hero-1.mp4' %}" type="video/mp4">
         </video>
-        <video class="hero-video hero-video-2" muted loop playsinline preload="auto" poster="{% static 'images/sakafundi-hero.jpg' %}">
+
+        <video
+            class="sf-hero-video"
+            muted
+            loop
+            playsinline
+            preload="auto"
+            poster="{% static 'images/sakafundi-hero.jpg' %}"
+        >
             <source src="{% static 'videos/hero-2.mp4' %}" type="video/mp4">
         </video>
-        <video class="hero-video hero-video-3" muted loop playsinline preload="auto" poster="{% static 'images/sakafundi-hero.jpg' %}">
+
+        <video
+            class="sf-hero-video"
+            muted
+            loop
+            playsinline
+            preload="auto"
+            poster="{% static 'images/sakafundi-hero.jpg' %}"
+        >
             <source src="{% static 'videos/hero-3.mp4' %}" type="video/mp4">
         </video>
 
-        <!-- Dark gradient overlay -->
-        <div class="hero-video-overlay"></div>
+        <div class="sf-hero-overlay"></div>
+    </div>
 
-        <!-- Foreground content -->
-        <div class="hero-inner-content">
-            <div class="hero-text-block">
 
-                <!-- Headline (Cormorant) -->
-                <h1 class="hero-title">
-                    Hire Trusted<br>
-                    <span class="hero-title-highlight">Skills & Professionals</span>
-                </h1>
+    <div class="container sf-hero-container">
 
-                <!-- Subtitle -->
-                <p class="hero-subtitle">
-                    Pata Fundi, Pata Pro. Pata Kazi. <strong>Jua kazi, lipa salama</strong> with secure M-PESA payments.
+        <div class="sf-hero-content">
+
+            <!-- Small label -->
+            <div class="sf-hero-eyebrow">
+                <span class="sf-live-dot"></span>
+                <span>Connecting Kenya's skilled professionals</span>
+            </div>
+
+
+            <!-- Main heading -->
+            <h1>
+                Find the right
+                <span>fundi for the job.</span>
+            </h1>
+
+
+            <p class="sf-hero-description">
+                From construction and repairs to creative and digital services,
+                discover skilled professionals you can connect with, hire and pay securely.
+            </p>
+
+
+            <!-- Role switch -->
+            <div class="sf-role-switch" role="group" aria-label="Choose your role">
+
+                <a
+                    href="{% url 'services:list' %}"
+                    class="sf-role-btn active"
+                >
+                    <i class="fas fa-search"></i>
+                    <span>Find a Fundi</span>
+                </a>
+
+                <a
+                    href="{% url 'accounts:login' %}"
+                    class="sf-role-btn"
+                >
+                    <i class="fas fa-briefcase"></i>
+                    <span>I'm a Fundi</span>
+                </a>
+
+            </div>
+
+
+            <!-- Search -->
+            <form
+                action="{% url 'services:list' %}"
+                method="get"
+                class="sf-search"
+            >
+
+                <div class="sf-search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="What service do you need?"
+                    autocomplete="off"
+                >
+
+                <button type="submit">
+                    Search
+                </button>
+
+            </form>
+
+
+            <!-- Popular searches -->
+            <div class="sf-popular-searches">
+
+                <span>Popular:</span>
+
+                <a href="{% url 'services:list' %}?q=plumber">
+                    Plumber
+                </a>
+
+                <a href="{% url 'services:list' %}?q=electrician">
+                    Electrician
+                </a>
+
+                <a href="{% url 'services:list' %}?q=web+developer">
+                    Web Developer
+                </a>
+
+                <a href="{% url 'services:list' %}?q=carpenter">
+                    Carpenter
+                </a>
+
+            </div>
+
+
+            <!-- Trust -->
+            <div class="sf-hero-trust">
+
+                <div class="sf-trust-avatars">
+                    <div class="sf-avatar sf-avatar-1">M</div>
+                    <div class="sf-avatar sf-avatar-2">J</div>
+                    <div class="sf-avatar sf-avatar-3">A</div>
+                    <div class="sf-avatar sf-avatar-4">K</div>
+                </div>
+
+                <div class="sf-trust-copy">
+
+                    <div class="sf-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+
+                    <span>
+                        Trusted by customers and professionals across Kenya
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Video controls -->
+            <div class="sf-video-controls">
+
+                <button
+                    class="sf-video-dot active"
+                    data-index="0"
+                    aria-label="Show hero video 1"
+                ></button>
+
+                <button
+                    class="sf-video-dot"
+                    data-index="1"
+                    aria-label="Show hero video 2"
+                ></button>
+
+                <button
+                    class="sf-video-dot"
+                    data-index="2"
+                    aria-label="Show hero video 3"
+                ></button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Right floating card -->
+        <div class="sf-hero-card">
+
+            <div class="sf-card-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+
+            <div>
+                <strong>Need a professional?</strong>
+                <span>Find someone for your next job.</span>
+            </div>
+
+            <a href="{% url 'services:list' %}">
+                <i class="fas fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     QUICK TRUST STRIP
+========================================================= -->
+<section class="sf-trust-strip">
+
+    <div class="container">
+
+        <div class="row g-0">
+
+            <div class="col-6 col-lg-3">
+                <div class="sf-trust-item">
+
+                    <div class="sf-trust-icon">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>Skilled Professionals</strong>
+                        <span>Find people with the skills you need</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-6 col-lg-3">
+                <div class="sf-trust-item">
+
+                    <div class="sf-trust-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+
+                    <div>
+                        <strong>Direct Communication</strong>
+                        <span>Discuss your job before you hire</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-6 col-lg-3">
+                <div class="sf-trust-item">
+
+                    <div class="sf-trust-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+
+                    <div>
+                        <strong>M-PESA Payments</strong>
+                        <span>Convenient payment experience</span>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <div class="col-6 col-lg-3">
+                <div class="sf-trust-item">
+
+                    <div class="sf-trust-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+
+                    <div>
+                        <strong>Across Kenya</strong>
+                        <span>Discover professionals near you</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CATEGORIES
+========================================================= -->
+<section class="sf-categories">
+
+    <div class="container">
+
+        <div class="sf-section-heading">
+
+            <div>
+                <span class="sf-kicker">EXPLORE</span>
+
+                <h2>
+                    What do you need done?
+                </h2>
+
+                <p>
+                    Browse popular categories and find the right professional
+                    for your project.
+                </p>
+            </div>
+
+            {% if navbar_categories %}
+                <a
+                    href="{% url 'services:categories' %}"
+                    class="sf-outline-btn"
+                >
+                    View all categories
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            {% endif %}
+
+        </div>
+
+
+        <div class="row g-3 g-md-4">
+
+            {% for category in navbar_categories %}
+
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+
+                    <a
+                        href="{% url 'services:category_detail' category.slug %}"
+                        class="sf-category-card"
+                    >
+
+                        <div class="sf-category-image">
+
+                            {% if category.image %}
+
+                                <img
+                                    src="{{ category.image.url }}"
+                                    alt="{{ category.name }}"
+                                >
+
+                            {% else %}
+
+                                <div class="sf-category-placeholder">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+
+                            {% endif %}
+
+                            <span class="sf-category-arrow">
+                                <i class="fas fa-arrow-up"></i>
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            {{ category.name }}
+                        </h3>
+
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <div class="col-12">
+
+                    <div class="sf-empty">
+                        <i class="fas fa-layer-group"></i>
+                        <p>No categories available yet.</p>
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     HOW IT WORKS
+========================================================= -->
+<section class="sf-how">
+
+    <div class="container">
+
+        <div class="sf-centered-heading">
+
+            <span class="sf-kicker">HOW IT WORKS</span>
+
+            <h2>
+                Getting the job done is simple.
+            </h2>
+
+            <p>
+                Whether you need a professional or you're looking for work,
+                SakaFundi makes the process straightforward.
+            </p>
+
+        </div>
+
+
+        <!-- Toggle -->
+        <div class="sf-work-toggle">
+
+            <button
+                type="button"
+                class="sf-work-toggle-btn active"
+                data-target="customer"
+                aria-selected="true"
+            >
+                <i class="fas fa-search"></i>
+                I need a Fundi
+            </button>
+
+            <button
+                type="button"
+                class="sf-work-toggle-btn"
+                data-target="provider"
+                aria-selected="false"
+            >
+                <i class="fas fa-briefcase"></i>
+                I'm a Fundi
+            </button>
+
+        </div>
+
+
+        <!-- CUSTOMER -->
+        <div
+            class="sf-work-panel active"
+            id="sf-panel-customer"
+        >
+
+            <div class="row g-4">
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">01</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+
+                        <h3>Find a Service</h3>
+
+                        <p>
+                            Search for the skill or service you need.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">02</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+
+                        <h3>Talk & Agree</h3>
+
+                        <p>
+                            Connect with the professional and agree on the job.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">03</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+
+                        <h3>Pay Securely</h3>
+
+                        <p>
+                            Make your payment conveniently through M-PESA.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">04</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+
+                        <h3>Get It Done</h3>
+
+                        <p>
+                            Review the completed work and close the job.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROVIDER -->
+        <div
+            class="sf-work-panel"
+            id="sf-panel-provider"
+        >
+
+            <div class="row g-4">
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">01</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+
+                        <h3>Create Your Profile</h3>
+
+                        <p>
+                            Sign up and tell customers what you do.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">02</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+
+                        <h3>List Your Services</h3>
+
+                        <p>
+                            Showcase your skills, experience and services.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">03</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+
+                        <h3>Receive Requests</h3>
+
+                        <p>
+                            Connect with customers looking for your skills.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-6 col-md-3">
+
+                    <div class="sf-step">
+
+                        <div class="sf-step-number">04</div>
+
+                        <div class="sf-step-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+
+                        <h3>Get Paid</h3>
+
+                        <p>
+                            Complete the job and receive your payment.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FEATURE / MARKETPLACE CTA
+========================================================= -->
+<section class="sf-marketplace-cta">
+
+    <div class="container">
+
+        <div class="sf-marketplace-box">
+
+            <div class="sf-marketplace-content">
+
+                <span class="sf-kicker sf-kicker-light">
+                    FOR PROFESSIONALS
+                </span>
+
+                <h2>
+                    Your skills can take you further.
+                </h2>
+
+                <p>
+                    Create your SakaFundi profile, showcase your work
+                    and connect with customers looking for your skills.
                 </p>
 
-                <!-- Toggle (chip-style, blue + yellow when active) -->
-                <div class="hero-toggle" role="group" aria-label="Choose your role">
-                    <a href="{% url 'services:list' %}" class="hero-toggle-btn hero-toggle-blue active">
-                        <i class="fas fa-search me-2"></i> Find a Fundi
+                <div class="sf-cta-buttons">
+
+                    <a
+                        href="{% url 'accounts:register' %}"
+                        class="sf-primary-btn"
+                    >
+                        Create your profile
+                        <i class="fas fa-arrow-right"></i>
                     </a>
-                    <a href="{% url 'accounts:login' %}" class="hero-toggle-btn hero-toggle-yellow">
-                        <i class="fas fa-briefcase me-2"></i> I'm a Fundi
+
+                    <a
+                        href="{% url 'accounts:login' %}"
+                        class="sf-text-btn"
+                    >
+                        Already registered?
+                        Log in
                     </a>
+
                 </div>
 
-                <!-- Search Box -->
-                <div class="hero-search-box">
-                    <form action="{% url 'services:list' %}" method="get" class="hero-search-form">
-                        <input type="text" name="q"
-                               placeholder="Search for a service or skill..."
-                               class="hero-search-input">
-                        <button type="submit" class="hero-search-btn" aria-label="Search">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Trust Badge -->
-                <div class="hero-trust-badge">
-                    <div class="hero-stars">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <span>Trusted by Kenyans nationwide</span>
-                </div>
-
-                <!-- Video Dots -->
-                <div class="hero-video-dots" id="heroVideoDots">
-                    <button class="hero-video-dot active" data-index="0" aria-label="Video 1"></button>
-                    <button class="hero-video-dot" data-index="1" aria-label="Video 2"></button>
-                    <button class="hero-video-dot" data-index="2" aria-label="Video 3"></button>
-                </div>
             </div>
+
+
+            <div class="sf-marketplace-visual">
+
+                <div class="sf-floating-card sf-floating-card-main">
+
+                    <div class="sf-floating-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+
+                    <div>
+                        <strong>Showcase your skills</strong>
+                        <span>Reach new customers</span>
+                    </div>
+
+                </div>
+
+
+                <div class="sf-floating-card sf-floating-card-small">
+
+                    <i class="fas fa-check-circle"></i>
+
+                    <span>
+                        New opportunity
+                    </span>
+
+                </div>
+
+            </div>
+
         </div>
+
     </div>
+
 </section>
 
-<!-- Category Circle Grid Section -->
-<section class="explore-section">
+
+<!-- =========================================================
+     TESTIMONIALS
+========================================================= -->
+<section class="sf-testimonials">
+
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Explore Services</h2>
-            <p class="section-subtitle">Find the right professional for your needs</p>
+
+        <div class="sf-centered-heading">
+
+            <span class="sf-kicker">COMMUNITY</span>
+
+            <h2>
+                Built for people who get things done.
+            </h2>
+
+            <p>
+                See how customers and professionals are using SakaFundi.
+            </p>
+
         </div>
 
-        <div class="row g-3 g-md-4 justify-content-center">
-            {% for category in navbar_categories %}
-            <div class="col-4 col-sm-3 col-md-2 col-lg-2 category-circle-col">
-                <a href="{% url 'services:category_detail' category.slug %}" class="text-decoration-none d-block text-center category-circle-link">
-                    <div class="category-circle-wrapper mx-auto">
-                        {% if category.image %}
-                            <img src="{{ category.image.url }}" 
-                                 alt="{{ category.name }}" 
-                                 class="category-circle-img">
-                        {% else %}
-                            <div class="category-circle-placeholder">
-                                <i class="fas fa-th-large"></i>
-                            </div>
-                        {% endif %}
+
+        <div class="row g-4">
+
+            <!-- Testimonial 1 -->
+            <div class="col-md-4">
+
+                <article class="sf-testimonial">
+
+                    <div class="sf-quote-icon">
+                        <i class="fas fa-quote-left"></i>
                     </div>
-                    <p class="category-circle-name mb-0">{{ category.name }}</p>
+
+                    <div class="sf-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+
+                    <p>
+                        "Found an amazing graphic designer for my business.
+                        The process was simple and straightforward."
+                    </p>
+
+                    <div class="sf-person">
+
+                        <img
+                            src="{% static 'images/avatar1.jpg' %}"
+                            alt="Mary"
+                        >
+
+                        <div>
+                            <strong>Mary W.</strong>
+                            <span>Nairobi</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- Testimonial 2 -->
+            <div class="col-md-4">
+
+                <article class="sf-testimonial">
+
+                    <div class="sf-quote-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+
+                    <div class="sf-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+
+                    <p>
+                        "As a web developer, SakaFundi has helped me
+                        showcase my services and connect with clients."
+                    </p>
+
+                    <div class="sf-person">
+
+                        <img
+                            src="{% static 'images/avatar2.jpg' %}"
+                            alt="James"
+                        >
+
+                        <div>
+                            <strong>James K.</strong>
+                            <span>Mombasa</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- Testimonial 3 -->
+            <div class="col-md-4">
+
+                <article class="sf-testimonial">
+
+                    <div class="sf-quote-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+
+                    <div class="sf-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+
+                    <p>
+                        "It's a convenient way to put my skills in front
+                        of customers who are actively looking for services."
+                    </p>
+
+                    <div class="sf-person">
+
+                        <img
+                            src="{% static 'images/avatar3.jpg' %}"
+                            alt="Sarah"
+                        >
+
+                        <div>
+                            <strong>Sarah A.</strong>
+                            <span>Kisumu</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FINAL CTA
+========================================================= -->
+<section class="sf-final-cta">
+
+    <div class="container">
+
+        <div class="sf-final-content">
+
+            <span class="sf-kicker">
+                START TODAY
+            </span>
+
+            <h2>
+                Have a job to get done?
+            </h2>
+
+            <p>
+                Find the skills you need or join SakaFundi and
+                start showcasing what you can do.
+            </p>
+
+            <div class="sf-final-buttons">
+
+                <a
+                    href="{% url 'services:list' %}"
+                    class="sf-final-primary"
+                >
+                    <i class="fas fa-search"></i>
+                    Find a Fundi
                 </a>
+
+                <a
+                    href="{% url 'accounts:register' %}"
+                    class="sf-final-secondary"
+                >
+                    <i class="fas fa-user-plus"></i>
+                    Join as a Fundi
+                </a>
+
             </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-secondary">No categories available yet.</p>
-            </div>
-            {% endfor %}
+
         </div>
 
-        {% if navbar_categories %}
-        <div class="text-center mt-5">
-            <a href="{% url 'services:categories' %}" class="explore-view-all-btn">
-                View All Categories <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-        {% endif %}
     </div>
+
 </section>
 
-<!-- Featured Services -->
-<section class="py-5" style="background: #FFFFFF;">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Featured Services</h2>
-            <p class="section-subtitle">Find the most popular professionals this week</p>
-        </div>
-        
-        <div class="row g-4">
-            {% for service in featured_services %}
-            <div class="col-md-4 col-lg-3 col-6">
-                <div class="service-card h-100" style="background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #F1F5F9;">
-                    <div class="position-relative">
-                        {% if service.portfolio.first %}
-                            <img src="{{ service.portfolio.first.image.url }}" class="w-100" 
-                                 alt="{{ service.title }}" style="height: 180px; object-fit: cover;">
-                        {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center" 
-                                 style="height: 180px; background: #F8FAFC !important;">
-                                <i class="fas fa-image fa-3x text-secondary" style="opacity: 0.3;"></i>
-                            </div>
-                        {% endif %}
-                        {% if service.is_featured %}
-                            <span class="badge position-absolute top-0 end-0 m-2" style="background: #EAB308; color: #fff; padding: 4px 12px; border-radius: 50px; font-weight: 500; font-size: 0.7rem;">Featured</span>
-                        {% endif %}
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-semibold mb-1" style="color: #0F172A; font-size: clamp(0.85rem, 1.1vw, 0.95rem);">{{ service.title|truncatechars:25 }}</h6>
-                        <div class="d-flex align-items-center gap-1 mb-1">
-                            <span class="text-warning" style="font-size: clamp(0.7rem, 0.9vw, 0.8rem);">
-                                {% for i in "12345"|make_list %}
-                                    {% if forloop.counter <= service.rating|floatformat:"0"|add:"0" %}
-                                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                                    {% else %}
-                                        <i class="far fa-star" style="color: #EAB308;"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </span>
-                            <span class="text-secondary" style="font-size: clamp(0.65rem, 0.8vw, 0.75rem);">({{ service.rating|floatformat:1 }})</span>
-                        </div>
-                        <p class="text-secondary mb-1" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">
-                            <i class="fas fa-user me-1"></i> {{ service.provider.get_full_name|truncatechars:12 }}
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold" style="color: #2563EB; font-size: clamp(0.9rem, 1.1vw, 1rem);">
-                                KSh {{ service.price_min|floatformat:0 }}
-                            </span>
-                            <span class="text-secondary" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">- KSh {{ service.price_max|floatformat:0 }}</span>
-                        </div>
-                        <a href="{% url 'services:detail' service.id %}" 
-                           class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 8px; font-weight: 600; border: 1px solid #E2E8F0; font-size: clamp(0.75rem, 0.9vw, 0.85rem); transition: all 0.3s ease;">
-                            View Service <i class="fas fa-arrow-right ms-1"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-secondary">No featured services available yet.</p>
-            </div>
-            {% endfor %}
-        </div>
-        
-        <div class="text-center mt-4">
-            <a href="{% url 'services:list' %}" class="btn" style="background: transparent; color: #2563EB; border: 2px solid #2563EB; border-radius: 50px; padding: 10px 32px; font-weight: 600; font-size: clamp(0.85rem, 1vw, 0.95rem); transition: all 0.3s ease;">
-                View All Services <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Top Providers -->
-<section class="py-5" style="background: #F8FAFC;">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Top Rated Providers</h2>
-            <p class="section-subtitle">Professionals with the best reviews</p>
-        </div>
-        
-        <div class="row g-4">
-            {% for provider in top_providers %}
-            <div class="col-md-3 col-6">
-                <div class="provider-card text-center p-3" style="background: #FFFFFF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transition: all 0.3s ease; border: 1px solid #F1F5F9;">
-                    <img src="{{ provider.profile_image.url }}" alt="{{ provider.get_full_name }}"
-                         class="rounded-circle mb-2" style="width: 72px; height: 72px; object-fit: cover; border: 3px solid #E2E8F0;">
-                    <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.8rem, 0.95vw, 0.9rem);">{{ provider.get_full_name|truncatechars:16 }}</h6>
-                    <p class="text-secondary mb-1" style="font-size: clamp(0.65rem, 0.8vw, 0.75rem);">{{ provider.location|default:"Kenya"|truncatechars:12 }}</p>
-                    <div class="text-warning mb-2" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem);">
-                        <i class="fas fa-star" style="color: #EAB308;"></i> {{ provider.rating|floatformat:1 }}
-                    </div>
-                    <a href="{% url 'accounts:provider_profile' provider.id %}" 
-                       class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 6px; font-weight: 500; border: 1px solid #E2E8F0; font-size: clamp(0.7rem, 0.85vw, 0.8rem); transition: all 0.3s ease;">
-                        View Profile
-                    </a>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <p class="text-secondary">No providers available yet.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
-<!-- How It Works -->
-<section class="py-5">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">How SakaFundi Works</h2>
-            <p class="section-subtitle">Four simple steps to get your project done</p>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-6 col-md-3 text-center">
-                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-search fa-2x" style="color: #2563EB;"></i>
-                </div>
-                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">1. Find a Service</h5>
-                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Browse services from verified providers across Kenya</p>
-            </div>
-            <div class="col-6 col-md-3 text-center">
-                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #FEF9C3; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-handshake fa-2x" style="color: #EAB308;"></i>
-                </div>
-                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1rem);">2. Agree on Price</h5>
-                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Chat with the provider and agree on the project price</p>
-            </div>
-            <div class="col-6 col-md-3 text-center">
-                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #D1FAE5; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-lock fa-2x" style="color: #16A34A;"></i>
-                </div>
-                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1.1rem);">3. Secure Deposit</h5>
-                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Pay a deposit via M-PESA. Funds held securely in escrow</p>
-            </div>
-            <div class="col-6 col-md-3 text-center">
-                <div class="step-icon mx-auto mb-3" style="width: 64px; height: 64px; background: #E0E7FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-check-circle fa-2x" style="color: #8B5CF6;"></i>
-                </div>
-                <h5 class="fw-semibold" style="color: #0F172A; font-size: clamp(0.9rem, 1.1vw, 1.1rem);">4. Complete & Pay</h5>
-                <p class="text-secondary" style="font-size: clamp(0.75rem, 0.9vw, 0.85rem); line-height: 1.6;">Approve the work and release the final payment</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials -->
-<section class="py-5" style="background: #F8FAFC;">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-title">What Our Users Say</h2>
-            <p class="section-subtitle">Real reviews from real Kenyans</p>
-        </div>
-        
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="testimonial-card h-100 p-4" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; transition: all 0.3s ease;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <img src="{% static 'images/avatar1.jpg' %}" alt="Mary" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #E2E8F0;">
-                        <div>
-                            <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.9rem, 1vw, 1rem);">Mary W.</h6>
-                            <p class="text-secondary mb-0" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Nairobi</p>
-                        </div>
-                    </div>
-                    <div class="text-warning mb-2" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                    </div>
-                    <p class="text-secondary mb-0" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem); line-height: 1.7;">"Found an amazing graphic designer for my business. The M-PESA payment was seamless and secure."</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="testimonial-card h-100 p-4" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; transition: all 0.3s ease;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <img src="{% static 'images/avatar2.jpg' %}" alt="James" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #E2E8F0;">
-                        <div>
-                            <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.9rem, 1vw, 1rem);">James K.</h6>
-                            <p class="text-secondary mb-0" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Mombasa</p>
-                        </div>
-                    </div>
-                    <div class="text-warning mb-2" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                    </div>
-                    <p class="text-secondary mb-0" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem); line-height: 1.7;">"As a web developer, SakaFundi has helped me find clients across Kenya. The platform is easy to use."</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="testimonial-card h-100 p-4" style="background: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #F1F5F9; transition: all 0.3s ease;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <img src="{% static 'images/avatar3.jpg' %}" alt="Sarah" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover; border: 2px solid #E2E8F0;">
-                        <div>
-                            <h6 class="fw-semibold mb-0" style="color: #0F172A; font-size: clamp(0.9rem, 1vw, 1rem);">Sarah A.</h6>
-                            <p class="text-secondary mb-0" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">Kisumu</p>
-                        </div>
-                    </div>
-                    <div class="text-warning mb-2" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem);">
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                    </div>
-                    <p class="text-secondary mb-0" style="font-size: clamp(0.8rem, 0.95vw, 0.9rem); line-height: 1.7;">"The 10% platform fee is fair. I've completed over 50 projects through SakaFundi with great results."</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-5" style="background: #2563EB;">
-    <div class="container text-center text-white">
-        <h2 class="section-title section-title-light">Ready to Get Started?</h2>
-        <p class="section-subtitle section-subtitle-light">Join thousands of Kenyans finding skilled professionals on SakaFundi</p>
-        <div class="d-flex gap-3 justify-content-center flex-wrap">
-            <a href="{% url 'accounts:register' %}" class="btn" style="background: #EAB308; color: #0F172A; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: none; font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
-                <i class="fas fa-user-plus me-2"></i> Create Free Account
-            </a>
-            <a href="{% url 'services:list' %}" class="btn" style="background: rgba(255,255,255,0.15); color: #fff; border-radius: 12px; padding: 12px 32px; font-weight: 600; border: 1px solid rgba(255,255,255,0.3); font-size: clamp(0.85rem, 1.1vw, 1rem); transition: all 0.3s ease;">
-                <i class="fas fa-search me-2"></i> Browse Services
-            </a>
-        </div>
-    </div>
-</section>
 
 <style>
-    /* ======================================================
-       SECTION HEADERS — CORMORANT FONT
-       ====================================================== */
-    .section-title {
-        font-family: 'Cormorant', 'Old Standard TT', 'Times New Roman', Times, serif;
-        font-weight: 700;
-        color: #0F172A;
-        font-size: clamp(2rem, 3.5vw, 3rem);
-        line-height: 1.15;
-        letter-spacing: -0.5px;
-        margin-bottom: 10px;
-    }
 
-    .section-subtitle {
-        font-family: 'Inter', sans-serif;
-        color: #64748B;
-        font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-        font-weight: 400;
-        line-height: 1.6;
-        margin-bottom: 0;
-    }
+/* =========================================================
+   ROOT / GLOBAL
+========================================================= */
 
-    .section-title-light {
-        color: #FFFFFF;
-        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-    }
+:root {
+    --sf-navy: #102A43;
+    --sf-navy-dark: #0B1F33;
+    --sf-green: #16805B;
+    --sf-green-dark: #106044;
+    --sf-yellow: #F4B942;
+    --sf-cream: #F8F5EF;
+    --sf-white: #FFFFFF;
+    --sf-text: #102A43;
+    --sf-muted: #627D98;
+    --sf-border: #E5E7EB;
+    --sf-light: #F6F8FA;
+}
 
-    .section-subtitle-light {
-        color: rgba(255, 255, 255, 0.9);
-    }
+.sf-hero,
+.sf-hero *,
+.sf-categories,
+.sf-categories *,
+.sf-how,
+.sf-how *,
+.sf-testimonials,
+.sf-testimonials *,
+.sf-final-cta,
+.sf-final-cta * {
+    box-sizing: border-box;
+}
 
-    /* ======================================================
-       ANNOUNCEMENT BAR (bluish)
-       ====================================================== */
-    .announce-bar {
-        background: linear-gradient(90deg, #EFF6FF 0%, #DBEAFE 100%);
-        border-bottom: 1px solid #BFDBFE;
-        padding: 12px 0;
-    }
+.sf-hero,
+.sf-categories,
+.sf-how,
+.sf-marketplace-cta,
+.sf-testimonials,
+.sf-final-cta,
+.sf-trust-strip {
+    font-family: 'Inter', sans-serif;
+}
 
-    .announce-text {
-        margin: 0;
-        font-size: 0.88rem;
-        font-weight: 500;
-        color: #1E3A8A;
-        line-height: 1.5;
-    }
 
-    .announce-link {
-        color: #1D4ED8;
-        font-weight: 700;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: opacity 0.2s ease;
-    }
+/* =========================================================
+   ANNOUNCEMENT
+========================================================= */
 
-    .announce-link:hover {
-        opacity: 0.75;
-    }
+.sf-announcement {
+    background: var(--sf-cream);
+    border-bottom: 1px solid #E9E4DA;
+}
 
-    .announce-link i {
-        font-size: 0.7rem;
-    }
+.sf-announcement-inner {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--sf-text);
+}
 
-    /* ======================================================
-       HERO VIDEO SECTION (inset on desktop)
-       ====================================================== */
-    .hero-video-section {
-        position: relative;
-        width: 100%;
-        padding: 20px 40px;
-        background: #F8FAFC;
-    }
+.sf-announcement-inner span {
+    font-weight: 500;
+}
 
-    .hero-video-wrapper {
-        position: relative;
-        width: 100%;
-        max-width: 1300px;
-        margin: 0 auto;
-        min-height: 620px;
-        border-radius: 24px;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        background: #0F172A;
-        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15);
-    }
+.sf-announcement-inner span i {
+    color: var(--sf-green);
+}
 
-    .hero-video {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+.sf-announcement-inner a {
+    color: var(--sf-green);
+    text-decoration: none;
+    font-weight: 700;
+    transition: all .2s ease;
+}
+
+.sf-announcement-inner a:hover {
+    color: var(--sf-green-dark);
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.sf-hero {
+    position: relative;
+    min-height: 690px;
+    overflow: hidden;
+    background: var(--sf-navy);
+    color: white;
+}
+
+.sf-hero-media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+.sf-hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.sf-hero-video.active {
+    opacity: 1;
+}
+
+.sf-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 25, 40, .94) 0%,
+            rgba(8, 25, 40, .82) 42%,
+            rgba(8, 25, 40, .42) 75%,
+            rgba(8, 25, 40, .25) 100%
+        );
+}
+
+.sf-hero-container {
+    position: relative;
+    min-height: 690px;
+    display: flex;
+    align-items: center;
+}
+
+.sf-hero-content {
+    position: relative;
+    z-index: 2;
+    width: min(700px, 100%);
+    padding: 80px 0;
+}
+
+.sf-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(255,255,255,.08);
+    border-radius: 100px;
+    backdrop-filter: blur(10px);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.sf-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #51D88A;
+    box-shadow: 0 0 0 5px rgba(81,216,138,.12);
+}
+
+.sf-hero h1 {
+    margin: 0 0 22px;
+    max-width: 680px;
+    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(3.4rem, 6vw, 5.7rem);
+    line-height: .93;
+    letter-spacing: -2px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.sf-hero h1 span {
+    color: var(--sf-yellow);
+}
+
+.sf-hero-description {
+    max-width: 590px;
+    margin: 0 0 28px;
+    color: rgba(255,255,255,.82);
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   ROLE SWITCH
+========================================================= */
+
+.sf-role-switch {
+    display: inline-flex;
+    padding: 5px;
+    margin-bottom: 14px;
+    gap: 3px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.3);
+    border: 1px solid rgba(255,255,255,.15);
+    backdrop-filter: blur(10px);
+}
+
+.sf-role-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: rgba(255,255,255,.72);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all .25s ease;
+}
+
+.sf-role-btn:hover {
+    color: white;
+    background: rgba(255,255,255,.08);
+}
+
+.sf-role-btn.active {
+    color: var(--sf-navy);
+    background: white;
+}
+
+.sf-role-btn i {
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.sf-search {
+    width: min(650px, 100%);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 15px 45px rgba(0,0,0,.22);
+}
+
+.sf-search-icon {
+    width: 48px;
+    flex: 0 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sf-muted);
+    font-size: 16px;
+}
+
+.sf-search input {
+    min-width: 0;
+    flex: 1;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    color: var(--sf-text);
+}
+
+.sf-search input::placeholder {
+    color: #9AA5B1;
+}
+
+.sf-search button {
+    height: 52px;
+    padding: 0 26px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--sf-green);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all .25s ease;
+}
+
+.sf-search button:hover {
+    background: var(--sf-green-dark);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   POPULAR SEARCHES
+========================================================= */
+
+.sf-popular-searches {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+}
+
+.sf-popular-searches span {
+    color: rgba(255,255,255,.6);
+}
+
+.sf-popular-searches a {
+    color: rgba(255,255,255,.8);
+    text-decoration: none;
+    padding: 4px 9px;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.05);
+    transition: all .2s ease;
+}
+
+.sf-popular-searches a:hover {
+    background: rgba(255,255,255,.12);
+    color: white;
+}
+
+
+/* =========================================================
+   TRUST
+========================================================= */
+
+.sf-hero-trust {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+.sf-trust-avatars {
+    display: flex;
+    padding-left: 7px;
+}
+
+.sf-avatar {
+    width: 32px;
+    height: 32px;
+    margin-left: -7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid var(--sf-navy);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.sf-avatar-1 {
+    background: #8D6E63;
+}
+
+.sf-avatar-2 {
+    background: #546E7A;
+}
+
+.sf-avatar-3 {
+    background: #78909C;
+}
+
+.sf-avatar-4 {
+    background: #6D4C41;
+}
+
+.sf-stars {
+    color: var(--sf-yellow);
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.sf-trust-copy span {
+    color: rgba(255,255,255,.68);
+    font-size: 11px;
+}
+
+.sf-video-controls {
+    display: flex;
+    gap: 6px;
+    margin-top: 28px;
+}
+
+.sf-video-dot {
+    width: 24px;
+    height: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    background: rgba(255,255,255,.35);
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.sf-video-dot.active {
+    width: 42px;
+    background: white;
+}
+
+
+/* =========================================================
+   FLOATING HERO CARD
+========================================================= */
+
+.sf-hero-card {
+    position: absolute;
+    z-index: 3;
+    right: 8%;
+    bottom: 70px;
+    width: 285px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.94);
+    color: var(--sf-text);
+    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    backdrop-filter: blur(10px);
+}
+
+.sf-card-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: var(--sf-green);
+    background: #E8F6F0;
+}
+
+.sf-hero-card div:nth-child(2) {
+    min-width: 0;
+    flex: 1;
+}
+
+.sf-hero-card strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.sf-hero-card span {
+    display: block;
+    color: var(--sf-muted);
+    font-size: 10px;
+}
+
+.sf-hero-card > a {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: white;
+    background: var(--sf-green);
+}
+
+
+/* =========================================================
+   TRUST STRIP
+========================================================= */
+
+.sf-trust-strip {
+    background: white;
+    border-bottom: 1px solid var(--sf-border);
+}
+
+.sf-trust-item {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 18px 20px;
+    border-right: 1px solid var(--sf-border);
+}
+
+.sf-trust-item:last-child {
+    border-right: 0;
+}
+
+.sf-trust-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: var(--sf-green);
+    background: #EAF6F1;
+}
+
+.sf-trust-item strong {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--sf-text);
+    font-size: 12px;
+}
+
+.sf-trust-item span {
+    display: block;
+    color: var(--sf-muted);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+========================================================= */
+
+.sf-kicker {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--sf-green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.sf-section-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 42px;
+}
+
+.sf-section-heading h2,
+.sf-centered-heading h2 {
+    margin: 0 0 9px;
+    color: var(--sf-text);
+    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2.2rem, 4vw, 3.3rem);
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -.8px;
+}
+
+.sf-section-heading p,
+.sf-centered-heading p {
+    max-width: 580px;
+    margin: 0;
+    color: var(--sf-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.sf-centered-heading {
+    max-width: 650px;
+    margin: 0 auto 45px;
+    text-align: center;
+}
+
+.sf-centered-heading p {
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+.sf-categories {
+    padding: 90px 0;
+    background: #F8FAFB;
+}
+
+.sf-outline-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 17px;
+    border: 1px solid #CBD5E1;
+    border-radius: 8px;
+    color: var(--sf-text);
+    background: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    transition: all .25s ease;
+}
+
+.sf-outline-btn:hover {
+    color: white;
+    border-color: var(--sf-green);
+    background: var(--sf-green);
+}
+
+.sf-category-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.sf-category-image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 14px;
+    background: white;
+    border: 1px solid var(--sf-border);
+    box-shadow: 0 5px 20px rgba(16,42,67,.04);
+}
+
+.sf-category-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .45s ease;
+}
+
+.sf-category-card:hover .sf-category-image img {
+    transform: scale(1.06);
+}
+
+.sf-category-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sf-green);
+    background: #EAF6F1;
+    font-size: 28px;
+}
+
+.sf-category-arrow {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    background: rgba(16,42,67,.85);
+    font-size: 10px;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all .25s ease;
+}
+
+.sf-category-card:hover .sf-category-arrow {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sf-category-card h3 {
+    margin: 12px 0 0;
+    color: var(--sf-text);
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 700;
+    transition: color .2s ease;
+}
+
+.sf-category-card:hover h3 {
+    color: var(--sf-green);
+}
+
+.sf-empty {
+    padding: 50px;
+    text-align: center;
+    color: var(--sf-muted);
+    border: 1px dashed #CBD5E1;
+    border-radius: 14px;
+    background: white;
+}
+
+.sf-empty i {
+    margin-bottom: 12px;
+    font-size: 30px;
+}
+
+.sf-empty p {
+    margin: 0;
+}
+
+
+/* =========================================================
+   HOW IT WORKS
+========================================================= */
+
+.sf-how {
+    padding: 95px 0;
+    background: white;
+}
+
+.sf-work-toggle {
+    width: fit-content;
+    display: flex;
+    margin: 0 auto 50px;
+    padding: 5px;
+    gap: 3px;
+    border-radius: 10px;
+    background: #F1F5F7;
+    border: 1px solid var(--sf-border);
+}
+
+.sf-work-toggle-btn {
+    min-width: 175px;
+    padding: 11px 17px;
+    border: 0;
+    border-radius: 7px;
+    color: var(--sf-muted);
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+.sf-work-toggle-btn i {
+    margin-right: 6px;
+}
+
+.sf-work-toggle-btn.active {
+    color: white;
+    background: var(--sf-navy);
+    box-shadow: 0 4px 12px rgba(16,42,67,.18);
+}
+
+.sf-work-panel {
+    display: none;
+    animation: sfFade .3s ease;
+}
+
+.sf-work-panel.active {
+    display: block;
+}
+
+@keyframes sfFade {
+    from {
         opacity: 0;
-        transition: opacity 1.2s ease-in-out;
-        z-index: 1;
-        pointer-events: none;
+        transform: translateY(8px);
     }
 
-    .hero-video.active {
+    to {
         opacity: 1;
-        z-index: 2;
+        transform: translateY(0);
+    }
+}
+
+.sf-step {
+    position: relative;
+    height: 100%;
+    padding: 25px;
+    border: 1px solid var(--sf-border);
+    border-radius: 14px;
+    background: white;
+    transition: all .25s ease;
+}
+
+.sf-step:hover {
+    transform: translateY(-5px);
+    border-color: #C8E5D9;
+    box-shadow: 0 15px 35px rgba(16,42,67,.08);
+}
+
+.sf-step-number {
+    position: absolute;
+    top: 17px;
+    right: 20px;
+    color: #D9E1E7;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.sf-step-icon {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    border-radius: 12px;
+    color: var(--sf-green);
+    background: #EAF6F1;
+    font-size: 18px;
+}
+
+.sf-step h3 {
+    margin: 0 0 8px;
+    color: var(--sf-text);
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.sf-step p {
+    margin: 0;
+    color: var(--sf-muted);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   MARKETPLACE CTA
+========================================================= */
+
+.sf-marketplace-cta {
+    padding: 0 0 95px;
+    background: white;
+}
+
+.sf-marketplace-box {
+    position: relative;
+    overflow: hidden;
+    min-height: 370px;
+    display: flex;
+    align-items: center;
+    padding: 60px;
+    border-radius: 22px;
+    background: var(--sf-navy);
+    color: white;
+}
+
+.sf-marketplace-content {
+    position: relative;
+    z-index: 2;
+    width: 58%;
+}
+
+.sf-kicker-light {
+    color: var(--sf-yellow);
+}
+
+.sf-marketplace-content h2 {
+    max-width: 570px;
+    margin: 0 0 15px;
+    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2.3rem, 4vw, 3.5rem);
+    line-height: 1;
+    letter-spacing: -.7px;
+}
+
+.sf-marketplace-content p {
+    max-width: 520px;
+    margin: 0 0 25px;
+    color: rgba(255,255,255,.7);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.sf-cta-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.sf-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 18px;
+    border-radius: 8px;
+    color: var(--sf-navy);
+    background: var(--sf-yellow);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    transition: all .25s ease;
+}
+
+.sf-primary-btn:hover {
+    color: var(--sf-navy);
+    background: #FFD16A;
+    transform: translateY(-2px);
+}
+
+.sf-text-btn {
+    color: rgba(255,255,255,.75);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.sf-text-btn:hover {
+    color: white;
+}
+
+.sf-marketplace-visual {
+    position: absolute;
+    right: 5%;
+    top: 0;
+    width: 38%;
+    height: 100%;
+}
+
+.sf-marketplace-visual::before {
+    content: "";
+    position: absolute;
+    width: 270px;
+    height: 270px;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 50%;
+}
+
+.sf-marketplace-visual::after {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 50%;
+}
+
+.sf-floating-card {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 12px;
+    background: white;
+    color: var(--sf-text);
+    box-shadow: 0 20px 50px rgba(0,0,0,.22);
+}
+
+.sf-floating-card-main {
+    width: 250px;
+    right: 65px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 16px;
+}
+
+.sf-floating-card-small {
+    right: 0;
+    top: 80px;
+    padding: 11px 14px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.sf-floating-card-small i {
+    color: var(--sf-green);
+}
+
+.sf-floating-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    color: var(--sf-green);
+    background: #EAF6F1;
+}
+
+.sf-floating-card strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.sf-floating-card span {
+    display: block;
+    color: var(--sf-muted);
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   TESTIMONIALS
+========================================================= */
+
+.sf-testimonials {
+    padding: 95px 0;
+    background: #F8FAFB;
+}
+
+.sf-testimonial {
+    position: relative;
+    height: 100%;
+    padding: 30px;
+    border: 1px solid var(--sf-border);
+    border-radius: 16px;
+    background: white;
+    transition: all .25s ease;
+}
+
+.sf-testimonial:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(16,42,67,.07);
+}
+
+.sf-quote-icon {
+    color: #DDEFE7;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.sf-rating {
+    margin-bottom: 15px;
+    color: var(--sf-yellow);
+    font-size: 11px;
+}
+
+.sf-testimonial > p {
+    min-height: 85px;
+    margin: 0 0 25px;
+    color: #486581;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.sf-person {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sf-person img {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #E5E7EB;
+}
+
+.sf-person strong {
+    display: block;
+    color: var(--sf-text);
+    font-size: 12px;
+}
+
+.sf-person span {
+    display: block;
+    margin-top: 2px;
+    color: var(--sf-muted);
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   FINAL CTA
+========================================================= */
+
+.sf-final-cta {
+    padding: 95px 0;
+    background: var(--sf-cream);
+    border-top: 1px solid #ECE7DD;
+}
+
+.sf-final-content {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.sf-final-content h2 {
+    margin: 0 0 12px;
+    color: var(--sf-text);
+    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: .95;
+    letter-spacing: -1px;
+}
+
+.sf-final-content p {
+    max-width: 550px;
+    margin: 0 auto 28px;
+    color: var(--sf-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.sf-final-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.sf-final-primary,
+.sf-final-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 19px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    transition: all .25s ease;
+}
+
+.sf-final-primary {
+    color: white;
+    background: var(--sf-green);
+}
+
+.sf-final-primary:hover {
+    color: white;
+    background: var(--sf-green-dark);
+    transform: translateY(-2px);
+}
+
+.sf-final-secondary {
+    color: var(--sf-text);
+    background: white;
+    border: 1px solid #D9DEE3;
+}
+
+.sf-final-secondary:hover {
+    color: var(--sf-green);
+    border-color: var(--sf-green);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .sf-hero,
+    .sf-hero-container {
+        min-height: 650px;
     }
 
-    .hero-video-overlay {
-        position: absolute;
-        inset: 0;
-        z-index: 3;
+    .sf-hero-content {
+        padding: 70px 0;
+    }
+
+    .sf-hero h1 {
+        font-size: clamp(3rem, 8vw, 4.6rem);
+    }
+
+    .sf-hero-card {
+        right: 4%;
+        bottom: 40px;
+    }
+
+    .sf-trust-item {
+        min-height: 90px;
+        padding: 14px;
+    }
+
+    .sf-trust-item strong {
+        font-size: 11px;
+    }
+
+    .sf-trust-item span {
+        font-size: 9px;
+    }
+
+    .sf-marketplace-box {
+        padding: 45px;
+    }
+
+    .sf-marketplace-content {
+        width: 62%;
+    }
+
+    .sf-marketplace-visual {
+        width: 38%;
+    }
+
+    .sf-floating-card-main {
+        right: 10px;
+    }
+
+    .sf-floating-card-small {
+        right: -10px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .sf-announcement-inner {
+        min-height: 40px;
+        font-size: 10px;
+    }
+
+    .sf-announcement-inner a {
+        font-size: 10px;
+    }
+
+
+    /* Hero */
+
+    .sf-hero,
+    .sf-hero-container {
+        min-height: 690px;
+    }
+
+    .sf-hero-overlay {
         background:
-            linear-gradient(180deg,
-                rgba(15, 23, 42, 0.3) 0%,
-                rgba(15, 23, 42, 0.6) 50%,
-                rgba(15, 23, 42, 0.9) 100%);
+            linear-gradient(
+                180deg,
+                rgba(8,25,40,.68) 0%,
+                rgba(8,25,40,.88) 55%,
+                rgba(8,25,40,.98) 100%
+            );
     }
 
-    .hero-inner-content {
-        position: relative;
-        z-index: 4;
-        width: 100%;
-        padding: 100px 56px 60px;
+    .sf-hero-container {
+        align-items: flex-end;
     }
 
-    .hero-text-block {
-        max-width: 720px;
+    .sf-hero-content {
+        padding: 65px 0 45px;
     }
 
-    /* ---------- Title (Cormorant) ---------- */
-    .hero-title {
-        font-family: 'Cormorant', 'Old Standard TT', 'Times New Roman', Times, serif;
-        color: #FFFFFF;
-        font-weight: 700;
-        line-height: 1.05;
-        letter-spacing: -0.5px;
-        font-size: clamp(2.4rem, 5vw, 4rem);
-        margin-bottom: 20px;
-        text-shadow: 0 2px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .hero-title-highlight {
-        color: #EAB308;
-        display: inline-block;
-    }
-
-    /* ---------- Subtitle ---------- */
-    .hero-subtitle {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: clamp(0.95rem, 1.15vw, 1.15rem);
-        line-height: 1.6;
-        max-width: 560px;
-        margin-bottom: 28px;
-        font-weight: 400;
-        text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
-    }
-
-    .hero-subtitle strong {
-        color: #FFFFFF;
-        font-weight: 700;
-    }
-
-    /* ---------- Toggle ---------- */
-    .hero-toggle {
-        display: inline-flex;
-        align-items: center;
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(14px) saturate(180%);
-        -webkit-backdrop-filter: blur(14px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 50px;
-        padding: 5px;
+    .sf-hero-eyebrow {
         margin-bottom: 18px;
-        gap: 4px;
+        font-size: 10px;
     }
 
-    .hero-toggle-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: none;
-        background: transparent;
-        color: rgba(255, 255, 255, 0.85);
-        font-weight: 600;
-        font-size: 0.95rem;
-        padding: 14px 30px;
-        border-radius: 50px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        white-space: nowrap;
-        text-decoration: none;
+    .sf-hero h1 {
+        font-size: clamp(2.7rem, 14vw, 4rem);
+        letter-spacing: -1.3px;
     }
 
-    .hero-toggle-btn i {
-        font-size: 0.8rem;
-    }
-
-    .hero-toggle-btn:hover {
-        color: #FFFFFF;
-        background: rgba(255, 255, 255, 0.08);
-    }
-
-    .hero-toggle-blue.active {
-        background: #2563EB;
-        color: #FFFFFF;
-        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
-    }
-
-    .hero-toggle-blue.active:hover {
-        background: #1D4ED8;
-        color: #FFFFFF;
-    }
-
-    .hero-toggle-yellow.active {
-        background: #EAB308;
-        color: #0F172A;
-        box-shadow: 0 4px 14px rgba(234, 179, 8, 0.5);
-    }
-
-    .hero-toggle-yellow.active:hover {
-        background: #CA8A04;
-        color: #0F172A;
-    }
-
-    /* ---------- Search Box ---------- */
-    .hero-search-box {
-        max-width: 520px;
+    .sf-hero-description {
+        font-size: 13px;
+        line-height: 1.6;
         margin-bottom: 20px;
-        border-radius: 50px;
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s ease;
     }
 
-    .hero-search-box:focus-within {
-        box-shadow: 0 8px 32px rgba(37, 99, 235, 0.25);
-        border-color: #2563EB;
-    }
-
-    .hero-search-form {
+    .sf-role-switch {
         display: flex;
-        align-items: center;
-        height: 56px;
-        padding: 0 6px 0 22px;
+        width: 100%;
     }
 
-    .hero-search-input {
-        flex: 1 1 auto;
-        min-width: 0;
-        border: 0;
-        background: transparent;
-        outline: none;
-        padding: 8px 0;
-        font-size: clamp(0.9rem, 1vw, 1rem);
-        color: #0F172A;
-        font-weight: 500;
+    .sf-role-btn {
+        flex: 1;
+        padding: 11px 8px;
+        font-size: 11px;
     }
 
-    .hero-search-input::placeholder {
-        color: #94A3B8;
-        font-weight: 400;
+    .sf-search {
+        height: 57px;
+        border-radius: 11px;
     }
 
-    .hero-search-btn {
-        flex-shrink: 0;
-        background: #2563EB;
-        color: #fff;
-        border-radius: 50%;
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        border: none;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+    .sf-search-icon {
+        width: 40px;
+        flex-basis: 40px;
+        font-size: 13px;
     }
 
-    .hero-search-btn:hover {
-        background: #1D4ED8;
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+    .sf-search input {
+        font-size: 12px;
     }
 
-    .hero-search-btn .search-text {
+    .sf-search button {
+        height: 45px;
+        padding: 0 16px;
+        font-size: 11px;
+    }
+
+    .sf-popular-searches {
         display: none;
     }
 
-    .hero-search-btn .search-icon {
-        display: inline-block;
-        margin: 0;
+    .sf-hero-trust {
+        margin-top: 20px;
     }
 
-    /* ---------- Trust Badge ---------- */
-    .hero-trust-badge {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 22px;
-        color: rgba(255, 255, 255, 0.9);
+    .sf-trust-copy span {
+        font-size: 9px;
     }
 
-    .hero-stars {
-        color: #EAB308;
-        font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+    .sf-hero-card {
+        display: none;
     }
 
-    .hero-trust-badge span {
-        font-size: clamp(0.7rem, 0.85vw, 0.85rem);
-        font-weight: 600;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    .sf-video-controls {
+        margin-top: 20px;
     }
 
-    /* ---------- Video Dots ---------- */
-    .hero-video-dots {
-        display: flex;
+
+    /* Trust strip */
+
+    .sf-trust-item {
+        min-height: 82px;
+        padding: 12px 8px;
         gap: 8px;
-        margin-top: 4px;
     }
 
-    .hero-video-dot {
-        width: 28px;
-        height: 4px;
-        border-radius: 4px;
-        background: rgba(255, 255, 255, 0.35);
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
+    .sf-trust-icon {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+        font-size: 11px;
     }
 
-    .hero-video-dot.active {
-        background: #FFFFFF;
-        width: 40px;
+    .sf-trust-item strong {
+        font-size: 9px;
     }
 
-    .hero-video-dot:hover {
-        background: rgba(255, 255, 255, 0.7);
+    .sf-trust-item span {
+        font-size: 8px;
     }
 
-    /* ======================================================
-       EXPLORE SERVICES SECTION
-       ====================================================== */
-    .explore-section {
-        padding: 70px 0;
-        background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 50%, #FEF9C3 100%);
-        position: relative;
-        overflow: hidden;
+    .sf-trust-strip .col-6:nth-child(2) .sf-trust-item {
+        border-right: 0;
     }
 
-    .explore-section::before {
-        content: '';
-        position: absolute;
-        top: -80px;
-        right: -80px;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
+    .sf-trust-strip .col-6:nth-child(-n+2) .sf-trust-item {
+        border-bottom: 1px solid var(--sf-border);
     }
 
-    .explore-section::after {
-        content: '';
-        position: absolute;
-        bottom: -80px;
-        left: -80px;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(234, 179, 8, 0.1) 0%, rgba(234, 179, 8, 0) 70%);
-        border-radius: 50%;
-        pointer-events: none;
+
+    /* Sections */
+
+    .sf-categories,
+    .sf-how,
+    .sf-testimonials,
+    .sf-final-cta {
+        padding: 65px 0;
     }
 
-    .explore-section .container {
-        position: relative;
-        z-index: 1;
-    }
-
-    .explore-view-all-btn {
-        display: inline-flex;
-        align-items: center;
-        background: transparent;
-        color: #2563EB;
-        border: 2px solid #2563EB;
-        border-radius: 50px;
-        padding: 10px 32px;
-        font-weight: 600;
-        font-size: clamp(0.85rem, 1vw, 0.95rem);
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .explore-view-all-btn:hover {
-        background: #2563EB;
-        color: #FFFFFF;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-    }
-
-    /* ---------- Category Circle ---------- */
-    .category-circle-col {
-        padding-bottom: 8px;
-    }
-
-    .category-circle-link {
+    .sf-section-heading {
         display: block;
-        transition: transform 0.25s ease;
+        margin-bottom: 30px;
     }
 
-    .category-circle-link:hover {
-        transform: translateY(-4px);
+    .sf-section-heading h2,
+    .sf-centered-heading h2 {
+        font-size: 2.45rem;
     }
 
-    .category-circle-wrapper {
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: #FFFFFF;
-        border: 2px solid #E2E8F0;
-        transition: all 0.25s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    .sf-section-heading p,
+    .sf-centered-heading p {
+        font-size: 12px;
     }
 
-    .category-circle-link:hover .category-circle-wrapper {
-        border-color: #2563EB;
-        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
-        transform: scale(1.03);
+    .sf-outline-btn {
+        margin-top: 18px;
     }
 
-    .category-circle-img {
+
+    /* Categories */
+
+    .sf-category-image {
+        border-radius: 11px;
+    }
+
+    .sf-category-card h3 {
+        margin-top: 8px;
+        font-size: 11px;
+    }
+
+    .sf-category-arrow {
+        display: none;
+    }
+
+
+    /* How it works */
+
+    .sf-work-toggle {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
+        margin-bottom: 35px;
     }
 
-    .category-circle-placeholder {
+    .sf-work-toggle-btn {
+        min-width: 0;
+        flex: 1;
+        padding: 10px 7px;
+        font-size: 10px;
+    }
+
+    .sf-step {
+        padding: 18px;
+    }
+
+    .sf-step-icon {
+        width: 46px;
+        height: 46px;
+        margin-bottom: 16px;
+        font-size: 15px;
+    }
+
+    .sf-step h3 {
+        font-size: 12px;
+    }
+
+    .sf-step p {
+        font-size: 10px;
+    }
+
+    .sf-step-number {
+        top: 13px;
+        right: 14px;
+        font-size: 9px;
+    }
+
+
+    /* Marketplace */
+
+    .sf-marketplace-cta {
+        padding: 0 0 65px;
+    }
+
+    .sf-marketplace-box {
+        min-height: 0;
+        padding: 40px 25px;
+    }
+
+    .sf-marketplace-content {
         width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
+    }
+
+    .sf-marketplace-content h2 {
+        font-size: 2.7rem;
+    }
+
+    .sf-marketplace-content p {
+        font-size: 12px;
+    }
+
+    .sf-marketplace-visual {
+        display: none;
+    }
+
+
+    /* Testimonials */
+
+    .sf-testimonial {
+        padding: 23px;
+    }
+
+    .sf-testimonial > p {
+        min-height: auto;
+        font-size: 12px;
+    }
+
+
+    /* Final */
+
+    .sf-final-content h2 {
+        font-size: 3rem;
+    }
+
+    .sf-final-content p {
+        font-size: 12px;
+    }
+
+    .sf-final-buttons {
+        flex-direction: column;
+    }
+
+    .sf-final-primary,
+    .sf-final-secondary {
+        width: 100%;
         justify-content: center;
-        background: #EFF6FF;
-        color: #2563EB;
-        font-size: 2rem;
     }
 
-    .category-circle-name {
-        font-size: clamp(0.75rem, 1vw, 0.85rem);
-        font-weight: 600;
-        color: #0F172A;
-        margin-top: 10px;
-        line-height: 1.3;
-        text-align: center;
-        word-wrap: break-word;
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .sf-hero,
+    .sf-hero-container {
+        min-height: 650px;
     }
 
-    .category-circle-link:hover .category-circle-name {
-        color: #2563EB;
+    .sf-hero-content {
+        padding-bottom: 30px;
     }
 
-    /* ======================================================
-       Card Hover Effects
-       ====================================================== */
-    .service-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+    .sf-hero h1 {
+        font-size: 2.55rem;
     }
 
-    .service-card .btn:hover {
-        background: #2563EB !important;
-        color: #fff !important;
-        border-color: #2563EB !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    .sf-hero-description {
+        font-size: 12px;
     }
 
-    .provider-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+    .sf-role-btn {
+        font-size: 10px;
     }
 
-    .testimonial-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+    .sf-search button {
+        padding: 0 13px;
     }
 
-    /* ======================================================
-       Responsive - Tablet
-       ====================================================== */
-    @media (max-width: 991px) {
-        .hero-video-section {
-            padding: 16px 20px;
-        }
-
-        .hero-video-wrapper {
-            min-height: 560px;
-            border-radius: 20px;
-        }
-
-        .hero-inner-content {
-            padding: 80px 32px 50px;
-        }
-
-        .hero-title {
-            font-size: clamp(2rem, 4.5vw, 3rem);
-        }
-
-        .section-title {
-            font-size: clamp(1.8rem, 3vw, 2.4rem);
-        }
+    .sf-section-heading h2,
+    .sf-centered-heading h2 {
+        font-size: 2.15rem;
     }
 
-    /* ======================================================
-       Responsive - Mobile (full-bleed)
-       ====================================================== */
-    @media (max-width: 576px) {
-        .announce-bar {
-            padding: 10px 0;
-        }
-
-        .announce-text {
-            font-size: 0.8rem;
-            line-height: 1.4;
-        }
-
-        .hero-video-section {
-            padding: 0;
-        }
-
-        .hero-video-wrapper {
-            min-height: auto;
-            border-radius: 0;
-            max-width: 100%;
-        }
-
-        .hero-inner-content {
-            padding: 72px 18px 32px;
-        }
-
-        .hero-text-block {
-            max-width: 100%;
-            width: 100%;
-        }
-
-        .hero-title {
-            font-size: 2rem;
-            margin-bottom: 14px;
-            line-height: 1.1;
-        }
-
-        .hero-subtitle {
-            font-size: 0.85rem;
-            line-height: 1.55;
-            margin-bottom: 22px;
-            max-width: 100%;
-        }
-
-        .hero-toggle {
-            display: flex;
-            width: 100%;
-            margin-bottom: 14px;
-            padding: 4px;
-            gap: 4px;
-            background: rgba(15, 23, 42, 0.65);
-        }
-
-        .hero-toggle-btn {
-            flex: 1;
-            font-size: 0.82rem;
-            padding: 12px 10px;
-            text-align: center;
-        }
-
-        .hero-search-box {
-            max-width: 100%;
-            margin-bottom: 16px;
-        }
-
-        .hero-search-form {
-            height: 52px;
-            padding: 0 5px 0 18px;
-        }
-
-        .hero-search-input {
-            font-size: 0.85rem;
-            padding: 6px 0;
-        }
-
-        .hero-search-btn {
-            width: 42px;
-            height: 42px;
-            font-size: 0.85rem;
-        }
-
-        .hero-trust-badge {
-            margin-bottom: 18px;
-            gap: 8px;
-        }
-
-        .hero-trust-badge span {
-            font-size: 0.72rem;
-        }
-
-        .hero-stars {
-            font-size: 0.75rem;
-        }
-
-        .hero-video-dot {
-            width: 20px;
-            height: 3px;
-        }
-
-        .hero-video-dot.active {
-            width: 30px;
-        }
-
-        /* Section titles mobile */
-        .section-title {
-            font-size: 1.85rem;
-            margin-bottom: 8px;
-        }
-
-        .section-subtitle {
-            font-size: 0.85rem;
-        }
-
-        .explore-section {
-            padding: 44px 0;
-        }
-
-        .category-circle-wrapper {
-            width: 80px !important;
-            height: 80px !important;
-        }
-        .category-circle-placeholder {
-            font-size: 1.5rem !important;
-        }
-        .category-circle-name {
-            font-size: 0.7rem !important;
-            margin-top: 8px !important;
-        }
-
-        .service-card .p-3 {
-            padding: 8px !important;
-        }
-        .service-card img {
-            height: 120px !important;
-        }
-        .service-card h6 {
-            font-size: 0.8rem !important;
-        }
-        .service-card .btn {
-            padding: 6px !important;
-            font-size: 0.7rem !important;
-        }
-
-        .testimonial-card {
-            padding: 14px !important;
-        }
-        .testimonial-card img {
-            width: 36px !important;
-            height: 36px !important;
-        }
-        .testimonial-card h6 {
-            font-size: 0.85rem !important;
-        }
-        .testimonial-card p {
-            font-size: 0.75rem !important;
-        }
-
-        .step-icon {
-            width: 40px !important;
-            height: 40px !important;
-        }
-        .step-icon i {
-            font-size: 1rem !important;
-        }
-        .step-icon + h5 {
-            font-size: 0.8rem !important;
-        }
-        .step-icon + h5 + p {
-            font-size: 0.7rem !important;
-        }
-
-        .provider-card {
-            padding: 10px !important;
-        }
-        .provider-card img {
-            width: 48px !important;
-            height: 48px !important;
-        }
-        .provider-card h6 {
-            font-size: 0.75rem !important;
-        }
-        .provider-card .btn {
-            padding: 4px !important;
-            font-size: 0.65rem !important;
-        }
-        .provider-card .text-warning {
-            font-size: 0.7rem !important;
-        }
+    .sf-step {
+        padding: 15px;
     }
 
-    @media (max-width: 400px) {
-        .hero-inner-content {
-            padding: 64px 16px 28px;
-        }
-
-        .hero-title {
-            font-size: 1.75rem;
-        }
-
-        .hero-subtitle {
-            font-size: 0.82rem;
-        }
-
-        .hero-toggle-btn {
-            font-size: 0.76rem;
-            padding: 11px 6px;
-        }
-
-        .hero-search-form {
-            height: 48px;
-            padding: 0 4px 0 16px;
-        }
-
-        .hero-search-input {
-            font-size: 0.82rem;
-        }
-
-        .hero-search-btn {
-            width: 38px;
-            height: 38px;
-        }
-
-        .section-title {
-            font-size: 1.6rem;
-        }
-
-        .category-circle-wrapper {
-            width: 70px !important;
-            height: 70px !important;
-        }
-        .category-circle-placeholder {
-            font-size: 1.2rem !important;
-        }
-        .category-circle-name {
-            font-size: 0.65rem !important;
-        }
+    .sf-step p {
+        font-size: 9px;
     }
+
+}
+
 </style>
 
-{% block extra_js %}
-<script>
-    // ===== HERO VIDEO ROTATION =====
-    (function() {
-        const videos = document.querySelectorAll('.hero-video');
-        const dots = document.querySelectorAll('.hero-video-dot');
 
-        if (videos.length === 0) return;
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       HERO VIDEO ROTATION
+    ===================================================== */
+
+    const videos = document.querySelectorAll(".sf-hero-video");
+    const dots = document.querySelectorAll(".sf-video-dot");
+
+    if (videos.length) {
 
         let currentIndex = 0;
-        const ROTATE_MS = 8000;
+        const rotateTime = 8000;
+        let rotateTimer;
+
 
         function playVideo(index) {
-            videos.forEach((v) => {
-                v.classList.remove('active');
+
+            videos.forEach(function (video) {
+
+                video.classList.remove("active");
+
                 try {
-                    v.pause();
-                    v.currentTime = 0;
-                } catch (e) {}
+                    video.pause();
+                    video.currentTime = 0;
+                } catch (error) {}
+
             });
+
 
             const video = videos[index];
+
             if (video) {
-                video.classList.add('active');
+
+                video.classList.add("active");
                 video.muted = true;
-                const p = video.play();
-                if (p !== undefined) p.catch(() => {});
+
+                const playPromise = video.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.catch(function () {});
+                }
+
             }
 
-            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+
+            dots.forEach(function (dot, i) {
+
+                dot.classList.toggle(
+                    "active",
+                    i === index
+                );
+
+            });
+
+
             currentIndex = index;
+
         }
+
 
         function nextVideo() {
-            playVideo((currentIndex + 1) % videos.length);
+
+            const nextIndex =
+                (currentIndex + 1) % videos.length;
+
+            playVideo(nextIndex);
+
         }
 
+
+        function startRotation() {
+
+            clearInterval(rotateTimer);
+
+            rotateTimer =
+                setInterval(nextVideo, rotateTime);
+
+        }
+
+
         playVideo(0);
+        startRotation();
 
-        let rotateTimer = setInterval(nextVideo, ROTATE_MS);
 
-        dots.forEach((dot) => {
-            dot.addEventListener('click', function() {
-                const idx = parseInt(this.dataset.index, 10);
-                clearInterval(rotateTimer);
-                playVideo(idx);
-                rotateTimer = setInterval(nextVideo, ROTATE_MS);
+        dots.forEach(function (dot) {
+
+            dot.addEventListener("click", function () {
+
+                const index =
+                    parseInt(this.dataset.index, 10);
+
+                playVideo(index);
+                startRotation();
+
             });
+
         });
 
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                videos.forEach(v => { try { v.pause(); } catch (e) {} });
-                clearInterval(rotateTimer);
-            } else {
-                playVideo(currentIndex);
-                rotateTimer = setInterval(nextVideo, ROTATE_MS);
+
+        document.addEventListener(
+            "visibilitychange",
+            function () {
+
+                if (document.hidden) {
+
+                    clearInterval(rotateTimer);
+
+                    videos.forEach(function (video) {
+
+                        try {
+                            video.pause();
+                        } catch (error) {}
+
+                    });
+
+                } else {
+
+                    playVideo(currentIndex);
+                    startRotation();
+
+                }
+
             }
-        });
-    })();
+        );
 
-    // ===== TOGGLE ACTIVE STATE ON CLICK =====
-    (function() {
-        const buttons = document.querySelectorAll('.hero-toggle-btn');
+    }
 
-        buttons.forEach((btn) => {
-            btn.addEventListener('click', function() {
-                buttons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+
+    /* =====================================================
+       HOW IT WORKS TOGGLE
+    ===================================================== */
+
+    const workButtons =
+        document.querySelectorAll(".sf-work-toggle-btn");
+
+    const workPanels =
+        document.querySelectorAll(".sf-work-panel");
+
+
+    workButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const target =
+                this.dataset.target;
+
+
+            workButtons.forEach(function (btn) {
+
+                btn.classList.remove("active");
+                btn.setAttribute(
+                    "aria-selected",
+                    "false"
+                );
+
             });
+
+
+            this.classList.add("active");
+
+            this.setAttribute(
+                "aria-selected",
+                "true"
+            );
+
+
+            workPanels.forEach(function (panel) {
+
+                panel.classList.toggle(
+                    "active",
+                    panel.id ===
+                    "sf-panel-" + target
+                );
+
+            });
+
         });
-    })();
+
+    });
+
+
+    /* =====================================================
+       SEARCH INPUT
+    ===================================================== */
+
+    const searchInput =
+        document.querySelector(".sf-search input");
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            "focus",
+            function () {
+
+                this.closest(".sf-search")
+                    .classList.add("focused");
+
+            }
+        );
+
+        searchInput.addEventListener(
+            "blur",
+            function () {
+
+                this.closest(".sf-search")
+                    .classList.remove("focused");
+
+            }
+        );
+
+    }
+
+});
+
 </script>
+
 {% endblock %}
+
 {% endblock %}

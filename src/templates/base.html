@@ -191,7 +191,7 @@
             </div>
         </nav>
 
-        <!-- Categories Strip (auto-scrolling marquee) -->
+        <!-- Categories Strip -->
         {% if navbar_categories %}
         <div class="categories-strip">
             <div class="categories-strip-scroll" id="categoriesStripScroll">
@@ -440,7 +440,7 @@
         }
 
         /* ============================================================
-           Categories Strip (auto-scrolling marquee — Option 2)
+           Categories Strip
            ============================================================ */
         .categories-strip {
             background: #FFFFFF;
@@ -487,28 +487,12 @@
             display: none;
         }
 
-        /* Track — the element that actually translates */
+        /* Track — static horizontal list */
         .categories-strip-track {
             display: inline-flex;
             align-items: center;
             gap: 28px;
             padding: 0 16px;
-            will-change: transform;
-            animation: categoryScroll 40s linear infinite;
-        }
-
-        /* Option 2 — pause only when JS adds .paused (instant, reliable) */
-        .categories-strip-track.paused {
-            animation-play-state: paused;
-        }
-
-        @keyframes categoryScroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-50%);
-            }
         }
 
         .category-tab {
@@ -656,7 +640,6 @@
             .categories-strip-track {
                 padding: 0 12px;
                 gap: 22px;
-                animation-duration: 30s;
             }
             .category-tab {
                 font-size: 0.85rem !important;
@@ -665,13 +648,6 @@
             .categories-strip::before,
             .categories-strip::after {
                 width: 24px;
-            }
-        }
-
-        /* Reduced motion — disable animation */
-        @media (prefers-reduced-motion: reduce) {
-            .categories-strip-track {
-                animation: none;
             }
         }
     </style>
@@ -836,65 +812,10 @@
         `;
         document.head.appendChild(animationStyles);
 
-        // ===== DUPLICATE CATEGORY STRIP FOR SEAMLESS LOOP + INSTANT PAUSE (Option 2) =====
-        (function() {
-            const track = document.getElementById('categoriesStripTrack');
-            if (!track) return;
-
-            // 1. Duplicate children for seamless -50% translate loop
-            const originalChildren = Array.from(track.children);
-            originalChildren.forEach((child) => {
-                const clone = child.cloneNode(true);
-                clone.removeAttribute('id');
-
-                // Strip dropdown behavior from clones so they don't fight the originals
-                const innerTemplate = clone.querySelector('.category-dropdown-content');
-                if (innerTemplate) innerTemplate.remove();
-
-                const toggleBtn = clone.querySelector('.category-toggle-btn');
-                if (toggleBtn) {
-                    toggleBtn.setAttribute('tabindex', '-1');
-                    toggleBtn.setAttribute('aria-hidden', 'true');
-                    // Remove the category-id so the JS ignores cloned buttons
-                    toggleBtn.removeAttribute('data-category-id');
-                }
-
-                track.appendChild(clone);
-            });
-
-            // 2. INSTANT pause on pointerenter — fires before hover CSS can lag
-            track.addEventListener('pointerenter', () => {
-                track.classList.add('paused');
-            });
-
-            track.addEventListener('pointerleave', () => {
-                track.classList.remove('paused');
-            });
-
-            // 3. Pause while the user is scroll-touching on mobile
-            const scrollContainer = track.parentElement;
-            if (scrollContainer) {
-                scrollContainer.addEventListener('touchstart', () => track.classList.add('paused'), { passive: true });
-                scrollContainer.addEventListener('touchend', () => {
-                    setTimeout(() => track.classList.remove('paused'), 800);
-                }, { passive: true });
-            }
-        })();
-
         // ===== FLOATING CATEGORY DROPDOWNS =====
         (function() {
             let activePanel = null;
             let activeBtn = null;
-
-            function pauseMarquee() {
-                const track = document.getElementById('categoriesStripTrack');
-                if (track) track.classList.add('paused');
-            }
-
-            function resumeMarquee() {
-                const track = document.getElementById('categoriesStripTrack');
-                if (track) track.classList.remove('paused');
-            }
 
             function closePanel() {
                 if (activePanel) {
@@ -911,15 +832,13 @@
                     activeBtn.setAttribute('aria-expanded', 'false');
                     activeBtn = null;
                 }
-                resumeMarquee();
             }
 
             function openPanel(btn) {
                 closePanel();
-                pauseMarquee();
 
                 const categoryId = btn.dataset.categoryId;
-                if (!categoryId) return; // cloned button — ignore
+                if (!categoryId) return;
                 const template = document.querySelector(`.category-dropdown-content[data-category-id="${categoryId}"]`);
                 if (!template) return;
 
@@ -950,7 +869,6 @@
             document.addEventListener('click', function(e) {
                 const btn = e.target.closest('.category-toggle-btn');
                 if (btn) {
-                    // Ignore cloned buttons (no data-category-id)
                     if (!btn.dataset.categoryId) return;
 
                     e.preventDefault();
