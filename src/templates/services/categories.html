@@ -1,47 +1,320 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Categories - SakaFundi{% endblock %}
+{% block title %}Service Categories - SakaFundi{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row">
-        <div class="col-12">
-            <h4 class="fw-bold mb-4" style="color: #0F172A;">
-                <i class="fas fa-th-large" style="color: #2563EB;"></i> Service Categories
-            </h4>
-            
-            <div class="row g-4">
-                {% for category in categories %}
-                    <div class="col-md-3 col-6">
-                        <a href="{% url 'services:category_detail' category.slug %}" 
-                           class="text-decoration-none">
-                            <div class="card shadow-sm border-0 rounded-3 text-center hover-card">
-                                <div class="card-body p-4">
-                                    <i class="{{ category.icon|default:'fas fa-tag' }} fa-3x" style="color: #2563EB;"></i>
-                                    <h6 class="fw-semibold mt-2" style="color: #0F172A;">{{ category.name }}</h6>
-                                    <small class="text-muted">{{ category.service_count }} service{{ category.service_count|pluralize }}</small>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                {% empty %}
-                    <div class="col-12 text-center py-5">
-                        <p class="text-muted">No categories available.</p>
-                    </div>
-                {% endfor %}
-            </div>
+
+<!-- =========================================================
+     PAGE HEADER
+========================================================= -->
+<section class="sf-page-header">
+
+    <div class="container">
+
+        <div class="sf-page-header-inner">
+
+            <span class="sf-kicker">BROWSE</span>
+
+            <h1>
+                All service categories
+            </h1>
+
+            <p>
+                Explore every category on SakaFundi and find the right
+                professional for your next project.
+            </p>
+
         </div>
+
     </div>
-</div>
+
+</section>
+
+
+<!-- =========================================================
+     CATEGORIES GRID
+========================================================= -->
+<section class="sf-categories-page">
+
+    <div class="container">
+
+        <div class="row g-3 g-md-4">
+
+            {% for category in categories %}
+
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+
+                    <a
+                        href="{% url 'services:category_detail' category.slug %}"
+                        class="sf-category-card"
+                    >
+
+                        <div class="sf-category-image">
+
+                            {% if category.image %}
+
+                                <img
+                                    src="{{ category.image.url }}"
+                                    alt="{{ category.name }}"
+                                >
+
+                            {% else %}
+
+                                <img
+                                    src="{% static 'images/category-default.jpg' %}"
+                                    alt="{{ category.name }}"
+                                >
+
+                            {% endif %}
+
+                            <span class="sf-category-arrow">
+                                <i class="fas fa-arrow-up"></i>
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            {{ category.name }}
+                        </h3>
+
+                        <span class="sf-category-count">
+                            {{ category.service_count }}
+                            service{{ category.service_count|pluralize }}
+                        </span>
+
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <div class="col-12">
+
+                    <div class="sf-empty">
+                        <img
+                            src="{% static 'images/empty-categories.png' %}"
+                            alt="No categories"
+                            class="sf-empty-image"
+                        >
+                        <p>No categories available yet.</p>
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
 
 <style>
-    .hover-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.sf-page-header {
+    padding: 60px 0 45px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%);
+    border-bottom: 1px solid var(--sf-border, #E2E8F0);
+}
+
+.sf-page-header-inner {
+    max-width: 720px;
+}
+
+.sf-kicker {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--sf-blue, #2563EB);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.sf-page-header h1 {
+    margin: 0 0 10px;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3.3rem);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -.8px;
+}
+
+.sf-page-header p {
+    max-width: 560px;
+    margin: 0;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   CATEGORIES PAGE
+========================================================= */
+
+.sf-categories-page {
+    padding: 60px 0 90px;
+    background: #FFFFFF;
+}
+
+.sf-category-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.sf-category-image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 14px;
+    background: white;
+    border: 1px solid var(--sf-border, #E2E8F0);
+    box-shadow: 0 5px 20px rgba(16,42,67,.04);
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+
+.sf-category-card:hover .sf-category-image {
+    transform: translateY(-3px);
+    border-color: #BFDBFE;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, .12);
+}
+
+.sf-category-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .45s ease;
+}
+
+.sf-category-card:hover .sf-category-image img {
+    transform: scale(1.06);
+}
+
+.sf-category-arrow {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    background: rgba(15,23,42,.85);
+    font-size: 10px;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all .25s ease;
+}
+
+.sf-category-card:hover .sf-category-arrow {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sf-category-card h3 {
+    margin: 12px 0 3px;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 700;
+    transition: color .2s ease;
+}
+
+.sf-category-card:hover h3 {
+    color: var(--sf-blue, #2563EB);
+}
+
+.sf-category-count {
+    display: block;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+
+/* ---------- Empty state ---------- */
+
+.sf-empty {
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--sf-muted, #64748B);
+    border: 1px dashed #CBD5E1;
+    border-radius: 14px;
+    background: white;
+}
+
+.sf-empty-image {
+    display: block;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin: 0 auto 14px;
+    opacity: .8;
+}
+
+.sf-empty p {
+    margin: 0;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .sf-page-header {
+        padding: 42px 0 34px;
     }
-    .hover-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+
+    .sf-page-header h1 {
+        font-size: 2rem;
     }
+
+    .sf-page-header p {
+        font-size: 12px;
+    }
+
+    .sf-categories-page {
+        padding: 42px 0 65px;
+    }
+
+    .sf-category-image {
+        border-radius: 11px;
+    }
+
+    .sf-category-card h3 {
+        margin-top: 8px;
+        font-size: 11px;
+    }
+
+    .sf-category-count {
+        font-size: 10px;
+    }
+
+    .sf-category-arrow {
+        display: none;
+    }
+
+}
+
 </style>
+
 {% endblock %}

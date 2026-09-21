@@ -5,251 +5,926 @@
 {% block title %}{{ category.name }} - SakaFundi{% endblock %}
 
 {% block content %}
-<!-- Page Header -->
-<section class="py-4" style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+
+<!-- =========================================================
+     PAGE HEADER
+========================================================= -->
+<section class="sf-page-header">
+
     <div class="container">
+
         <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb mb-0" style="font-size: 0.85rem;">
-                <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-decoration-none" style="color: #2563EB;">Home</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'services:list' %}" class="text-decoration-none" style="color: #2563EB;">Services</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'services:categories' %}" class="text-decoration-none" style="color: #2563EB;">Categories</a></li>
-                <li class="breadcrumb-item active" aria-current="page" style="color: #64748B;">{{ category.name }}</li>
+        <nav aria-label="breadcrumb" class="sf-breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'core:home' %}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'services:list' %}">Services</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'services:categories' %}">Categories</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ category.name }}
+                </li>
             </ol>
         </nav>
 
-        <!-- Category Header -->
-        <div class="d-flex align-items-center gap-3 mb-2 flex-wrap flex-sm-nowrap">
-            <!-- Category Image (circular) -->
-            <div class="category-header-image" style="width: 72px; height: 72px; border-radius: 50%; overflow: hidden; flex-shrink: 0; border: 3px solid #E2E8F0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <!-- Category header -->
+        <div class="sf-cat-header">
+
+            <div class="sf-cat-thumb">
+
                 {% if category.image %}
-                    <img src="{{ category.image.url }}" 
-                         alt="{{ category.name }}" 
-                         style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
                 {% else %}
-                    <div style="width: 100%; height: 100%; background: #EFF6FF; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-th-large" style="color: #2563EB; font-size: 1.6rem;"></i>
-                    </div>
+                    <img src="{% static 'images/category-default.jpg' %}" alt="{{ category.name }}">
                 {% endif %}
+
             </div>
 
-            <div>
-                <h1 class="fw-bold mb-0" style="color: #0F172A; font-size: clamp(1.4rem, 2.5vw, 2rem);">{{ category.name }}</h1>
-                <p class="text-secondary mb-0 small">
-                    {{ total_count }} service{{ total_count|pluralize }} available
+            <div class="sf-cat-heading">
+
+                <h1>{{ category.name }}</h1>
+
+                <p>
+                    {{ total_count }}
+                    service{{ total_count|pluralize }} available
                 </p>
+
             </div>
+
         </div>
 
         {% if category.description %}
-        <p class="text-secondary mb-0 mt-2" style="font-size: 0.9rem; max-width: 700px;">
-            {{ category.description }}
-        </p>
+            <p class="sf-cat-description">
+                {{ category.description }}
+            </p>
         {% endif %}
+
     </div>
+
 </section>
 
-<!-- Services Grid -->
-<section class="py-5">
+
+<!-- =========================================================
+     SERVICES GRID
+========================================================= -->
+<section class="sf-services-page">
+
     <div class="container">
-        <div class="row g-4">
+
+        <div class="row g-3 g-md-4">
+
             {% for service in services %}
-            <div class="col-md-4 col-lg-3 col-6">
-                <div class="service-card h-100" style="background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.05); transition: all 0.3s ease; border: 1px solid #F1F5F9;">
-                    <div class="position-relative">
-                        {% if service.portfolio.first %}
-                            <img src="{{ service.portfolio.first.image.url }}" class="w-100" 
-                                 alt="{{ service.title }}" style="height: 180px; object-fit: cover;">
-                        {% else %}
-                            <div class="bg-light d-flex align-items-center justify-content-center" 
-                                 style="height: 180px; background: #F8FAFC !important;">
-                                <i class="fas fa-image fa-3x text-secondary" style="opacity: 0.3;"></i>
-                            </div>
-                        {% endif %}
-                        {% if service.is_featured %}
-                            <span class="badge position-absolute top-0 end-0 m-2" style="background: #EAB308; color: #fff; padding: 4px 12px; border-radius: 50px; font-weight: 500; font-size: 0.7rem;">Featured</span>
-                        {% endif %}
-                    </div>
-                    <div class="p-3">
-                        <h6 class="fw-semibold mb-1" style="color: #0F172A; font-size: clamp(0.85rem, 1.1vw, 0.95rem);">{{ service.title|truncatechars:25 }}</h6>
-                        <div class="d-flex align-items-center gap-1 mb-1">
-                            <span class="text-warning" style="font-size: clamp(0.7rem, 0.9vw, 0.8rem);">
-                                {% for i in "12345"|make_list %}
-                                    {% if forloop.counter <= service.rating|floatformat:"0"|add:"0" %}
-                                        <i class="fas fa-star" style="color: #EAB308;"></i>
-                                    {% else %}
-                                        <i class="far fa-star" style="color: #EAB308;"></i>
-                                    {% endif %}
-                                {% endfor %}
-                            </span>
-                            <span class="text-secondary" style="font-size: clamp(0.65rem, 0.8vw, 0.75rem);">({{ service.rating|floatformat:1 }})</span>
-                        </div>
-                        <p class="text-secondary mb-1" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">
-                            <i class="fas fa-user me-1"></i> {{ service.provider.get_full_name|truncatechars:12 }}
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold" style="color: #2563EB; font-size: clamp(0.9rem, 1.1vw, 1rem);">
-                                KSh {{ service.price_min|floatformat:0 }}
-                            </span>
-                            <span class="text-secondary" style="font-size: clamp(0.7rem, 0.85vw, 0.8rem);">- KSh {{ service.price_max|floatformat:0 }}</span>
-                        </div>
-                        <a href="{% url 'services:detail' service.id %}" 
-                           class="btn w-100" style="background: #F8FAFC; color: #2563EB; border-radius: 50px; padding: 8px; font-weight: 600; border: 1px solid #E2E8F0; font-size: clamp(0.75rem, 0.9vw, 0.85rem); transition: all 0.3s ease;">
-                            View Service <i class="fas fa-arrow-right ms-1"></i>
+
+                <div class="col-6 col-md-4 col-lg-3">
+
+                    <article class="sf-service-card">
+
+                        <a href="{% url 'services:detail' service.id %}" class="sf-service-image">
+
+                            {% if service.portfolio.first %}
+                                <img
+                                    src="{{ service.portfolio.first.image.url }}"
+                                    alt="{{ service.title }}"
+                                >
+                            {% else %}
+                                <img
+                                    src="{% static 'images/service-default.jpg' %}"
+                                    alt="{{ service.title }}"
+                                >
+                            {% endif %}
+
+                            {% if service.is_featured %}
+                                <span class="sf-featured-badge">Featured</span>
+                            {% endif %}
+
                         </a>
-                    </div>
+
+                        <div class="sf-service-body">
+
+                            <h3>
+                                {{ service.title|truncatechars:28 }}
+                            </h3>
+
+                            <div class="sf-rating">
+                                <span class="sf-stars">
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= service.rating|floatformat:"0"|add:"0" %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <span class="sf-rating-num">
+                                    ({{ service.rating|floatformat:1 }})
+                                </span>
+                            </div>
+
+                            <p class="sf-service-provider">
+                                {{ service.provider.get_full_name|default:service.provider.username|truncatechars:18 }}
+                            </p>
+
+                            <div class="sf-service-price">
+                                <strong>KSh {{ service.price_min|floatformat:0 }}</strong>
+                                <span>– KSh {{ service.price_max|floatformat:0 }}</span>
+                            </div>
+
+                            <a
+                                href="{% url 'services:detail' service.id %}"
+                                class="sf-service-btn"
+                            >
+                                View Service
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+
+                        </div>
+
+                    </article>
+
                 </div>
-            </div>
+
             {% empty %}
-            <div class="col-12 text-center py-5">
-                <div class="mb-3">
-                    <i class="fas fa-inbox" style="font-size: 3rem; color: #CBD5E1;"></i>
+
+                <div class="col-12">
+
+                    <div class="sf-empty-state">
+
+                        <img
+                            src="{% static 'images/empty-services.png' %}"
+                            alt="No services"
+                            class="sf-empty-image"
+                        >
+
+                        <h5>No Services Yet</h5>
+
+                        <p>
+                            There are no services in this category yet.
+                            Check back soon!
+                        </p>
+
+                        <a href="{% url 'services:list' %}" class="sf-primary-btn">
+                            Browse All Services
+                        </a>
+
+                    </div>
+
                 </div>
-                <h5 class="fw-bold" style="color: #0F172A;">No Services Yet</h5>
-                <p class="text-secondary">There are no services in this category yet. Check back soon!</p>
-                <a href="{% url 'services:list' %}" class="btn" style="background: #2563EB; color: #fff; border-radius: 8px; padding: 10px 24px; font-weight: 600; border: none;">
-                    Browse All Services
-                </a>
-            </div>
+
             {% endfor %}
+
         </div>
+
 
         <!-- Pagination -->
         {% if services.has_other_pages %}
-        <nav aria-label="Page navigation" class="mt-5">
-            <ul class="pagination justify-content-center">
-                {% if services.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ services.previous_page_number }}" style="border-radius: 8px; margin: 0 4px; border-color: #E2E8F0; color: #2563EB;">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
-                {% endif %}
 
-                {% for num in services.paginator.page_range %}
-                    {% if services.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link" style="border-radius: 8px; margin: 0 4px; background: #2563EB; border-color: #2563EB;">{{ num }}</span>
-                        </li>
-                    {% elif num > services.number|add:'-3' and num < services.number|add:'3' %}
+            <nav aria-label="Page navigation" class="sf-pagination-wrap">
+
+                <ul class="pagination justify-content-center mb-0">
+
+                    {% if services.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ num }}" style="border-radius: 8px; margin: 0 4px; border-color: #E2E8F0; color: #2563EB;">{{ num }}</a>
+                            <a
+                                class="page-link sf-page-link"
+                                href="?page={{ services.previous_page_number }}"
+                            >
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
                         </li>
                     {% endif %}
-                {% endfor %}
 
-                {% if services.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ services.next_page_number }}" style="border-radius: 8px; margin: 0 4px; border-color: #E2E8F0; color: #2563EB;">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-        </nav>
+                    {% for num in services.paginator.page_range %}
+                        {% if services.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link sf-page-link sf-page-link-active">
+                                    {{ num }}
+                                </span>
+                            </li>
+                        {% elif num > services.number|add:'-3' and num < services.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link sf-page-link" href="?page={{ num }}">
+                                    {{ num }}
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if services.has_next %}
+                        <li class="page-item">
+                            <a
+                                class="page-link sf-page-link"
+                                href="?page={{ services.next_page_number }}"
+                            >
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
         {% endif %}
+
     </div>
+
 </section>
 
-<!-- Other Categories -->
-<section class="py-5" style="background: #F8FAFC;">
+
+<!-- =========================================================
+     OTHER CATEGORIES
+========================================================= -->
+<section class="sf-other-cats">
+
     <div class="container">
-        <div class="text-center mb-4">
-            <h3 class="fw-bold" style="color: #0F172A;">Browse Other Categories</h3>
-            <p class="text-secondary small">Explore more services across Kenya</p>
+
+        <div class="sf-centered-heading">
+
+            <span class="sf-kicker">EXPLORE MORE</span>
+
+            <h2>Browse Other Categories</h2>
+
+            <p>Explore more services across Kenya</p>
+
         </div>
 
-        <div class="row g-3 justify-content-center">
+        <div class="row g-3 g-md-4">
+
             {% for cat in navbar_categories %}
                 {% if cat.id != category.id %}
-                <div class="col-4 col-sm-3 col-md-2">
-                    <a href="{% url 'services:category_detail' cat.slug %}" class="text-decoration-none">
-                        <div class="text-center h-100">
-                            <!-- Circular Category Image -->
-                            <div class="other-cat-circle mx-auto" style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid #E2E8F0; background: #F8FAFC; transition: all 0.25s ease;">
+
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+
+                        <a
+                            href="{% url 'services:category_detail' cat.slug %}"
+                            class="sf-category-card"
+                        >
+
+                            <div class="sf-category-image">
+
                                 {% if cat.image %}
-                                    <img src="{{ cat.image.url }}" 
-                                         alt="{{ cat.name }}" 
-                                         style="width: 100%; height: 100%; object-fit: cover;">
+                                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
                                 {% else %}
-                                    <div style="width: 100%; height: 100%; background: #EFF6FF; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-th-large" style="color: #2563EB; font-size: 1.4rem;"></i>
-                                    </div>
+                                    <img src="{% static 'images/category-default.jpg' %}" alt="{{ cat.name }}">
                                 {% endif %}
+
+                                <span class="sf-category-arrow">
+                                    <i class="fas fa-arrow-up"></i>
+                                </span>
+
                             </div>
-                            <!-- Name -->
-                            <p class="mb-0 fw-medium mt-2" style="color: #0F172A; font-size: 0.8rem; line-height: 1.3;">
+
+                            <h3>
                                 {{ cat.name|truncatechars:20 }}
-                            </p>
-                        </div>
-                    </a>
-                </div>
+                            </h3>
+
+                        </a>
+
+                    </div>
+
                 {% endif %}
             {% endfor %}
+
         </div>
+
     </div>
+
 </section>
 
+
 <style>
-    /* Service Card */
-    .service-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.sf-page-header {
+    padding: 40px 0 40px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%);
+    border-bottom: 1px solid var(--sf-border, #E2E8F0);
+}
+
+/* Breadcrumb */
+.sf-breadcrumb {
+    margin-bottom: 22px;
+}
+
+.sf-breadcrumb .breadcrumb {
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.sf-breadcrumb .breadcrumb-item a {
+    color: var(--sf-blue, #2563EB);
+    text-decoration: none;
+    transition: opacity .2s ease;
+}
+
+.sf-breadcrumb .breadcrumb-item a:hover {
+    opacity: .75;
+}
+
+.sf-breadcrumb .breadcrumb-item.active {
+    color: var(--sf-muted, #64748B);
+}
+
+.sf-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    color: #CBD5E1;
+    padding: 0 6px;
+}
+
+/* Category header */
+.sf-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 8px;
+}
+
+.sf-cat-thumb {
+    width: 84px;
+    height: 84px;
+    flex: 0 0 84px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, .12);
+    background: #FFFFFF;
+}
+
+.sf-cat-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sf-cat-heading h1 {
+    margin: 0 0 4px;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -.5px;
+    line-height: 1.1;
+}
+
+.sf-cat-heading p {
+    margin: 0;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.sf-cat-description {
+    margin: 14px 0 0;
+    max-width: 720px;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   SERVICES PAGE
+========================================================= */
+
+.sf-services-page {
+    padding: 60px 0 80px;
+    background: #FFFFFF;
+}
+
+.sf-service-card {
+    height: 100%;
+    background: #FFFFFF;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--sf-border, #E2E8F0);
+    box-shadow: 0 5px 20px rgba(16, 42, 67, .04);
+    transition: all .3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.sf-service-card:hover {
+    transform: translateY(-5px);
+    border-color: #BFDBFE;
+    box-shadow: 0 20px 40px rgba(16, 42, 67, .08);
+}
+
+.sf-service-image {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 11;
+    overflow: hidden;
+    background: #F8FAFC;
+}
+
+.sf-service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .45s ease;
+}
+
+.sf-service-card:hover .sf-service-image img {
+    transform: scale(1.06);
+}
+
+.sf-featured-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 11px;
+    border-radius: 50px;
+    background: var(--sf-yellow, #EAB308);
+    color: #FFFFFF;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.sf-service-body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.sf-service-body h3 {
+    margin: 0 0 6px;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(0.85rem, 1.05vw, 0.95rem);
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.sf-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.sf-stars {
+    color: var(--sf-yellow, #EAB308);
+    font-size: 11px;
+}
+
+.sf-rating-num {
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 11px;
+}
+
+.sf-service-provider {
+    margin: 0 0 10px;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.sf-service-price {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.sf-service-price strong {
+    color: var(--sf-blue, #2563EB);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+    font-weight: 800;
+}
+
+.sf-service-price span {
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 11px;
+}
+
+.sf-service-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: auto;
+    padding: 10px 14px;
+    border-radius: 50px;
+    border: 1px solid var(--sf-border, #E2E8F0);
+    background: #F8FAFC;
+    color: var(--sf-blue, #2563EB);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all .25s ease;
+}
+
+.sf-service-btn:hover {
+    background: var(--sf-blue, #2563EB);
+    border-color: var(--sf-blue, #2563EB);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, .3);
+}
+
+.sf-service-btn i {
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.sf-empty-state {
+    padding: 70px 30px;
+    text-align: center;
+    border: 1px dashed #CBD5E1;
+    border-radius: 18px;
+    background: #FFFFFF;
+}
+
+.sf-empty-image {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin: 0 auto 20px;
+    opacity: .85;
+}
+
+.sf-empty-state h5 {
+    margin: 0 0 8px;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.sf-empty-state p {
+    margin: 0 auto 20px;
+    max-width: 420px;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.sf-primary-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 22px;
+    border-radius: 8px;
+    background: var(--sf-blue, #2563EB);
+    color: #FFFFFF;
+    text-decoration: none;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    transition: all .25s ease;
+}
+
+.sf-primary-btn:hover {
+    background: var(--sf-blue-dark, #1D4ED8);
+    color: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.sf-pagination-wrap {
+    margin-top: 55px;
+}
+
+.sf-page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    margin: 0 4px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--sf-border, #E2E8F0);
+    background: #FFFFFF;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .2s ease;
+}
+
+.sf-page-link:hover {
+    background: #EFF6FF;
+    border-color: var(--sf-blue, #2563EB);
+    color: var(--sf-blue, #2563EB);
+}
+
+.sf-page-link-active {
+    background: var(--sf-blue, #2563EB) !important;
+    border-color: var(--sf-blue, #2563EB) !important;
+    color: #FFFFFF !important;
+}
+
+
+/* =========================================================
+   OTHER CATEGORIES  (square cards, same as categories page)
+========================================================= */
+
+.sf-other-cats {
+    padding: 80px 0 90px;
+    background: #F8FAFB;
+}
+
+.sf-centered-heading {
+    max-width: 620px;
+    margin: 0 auto 45px;
+    text-align: center;
+}
+
+.sf-kicker {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--sf-blue, #2563EB);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.sf-centered-heading h2 {
+    margin: 0 0 9px;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -.6px;
+}
+
+.sf-centered-heading p {
+    margin: 0;
+    color: var(--sf-muted, #64748B);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Square category card — consistent with categories page */
+.sf-category-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.sf-category-image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #FFFFFF;
+    border: 1px solid var(--sf-border, #E2E8F0);
+    box-shadow: 0 5px 20px rgba(16, 42, 67, .04);
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+
+.sf-category-card:hover .sf-category-image {
+    transform: translateY(-3px);
+    border-color: #BFDBFE;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, .12);
+}
+
+.sf-category-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform .45s ease;
+}
+
+.sf-category-card:hover .sf-category-image img {
+    transform: scale(1.06);
+}
+
+.sf-category-arrow {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #FFFFFF;
+    background: rgba(15, 23, 42, .85);
+    font-size: 10px;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all .25s ease;
+}
+
+.sf-category-card:hover .sf-category-arrow {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sf-category-card h3 {
+    margin: 12px 0 0;
+    color: var(--sf-text, #0F172A);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 700;
+    transition: color .2s ease;
+}
+
+.sf-category-card:hover h3 {
+    color: var(--sf-blue, #2563EB);
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .sf-services-page {
+        padding: 50px 0 65px;
     }
 
-    .service-card .btn:hover {
-        background: #2563EB !important;
-        color: #fff !important;
-        border-color: #2563EB !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    .sf-other-cats {
+        padding: 65px 0 70px;
     }
 
-    /* Pagination */
-    .page-link:hover {
-        background: #EFF6FF;
-        color: #2563EB !important;
-        border-color: #2563EB !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .sf-page-header {
+        padding: 30px 0 30px;
     }
 
-    /* Other Categories circles */
-    .other-cat-circle {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-    a:hover .other-cat-circle {
-        border-color: #2563EB !important;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
-        transform: translateY(-3px);
-    }
-    a:hover .other-cat-circle + p {
-        color: #2563EB !important;
+    .sf-breadcrumb {
+        margin-bottom: 18px;
     }
 
-    /* Responsive */
-    @media (max-width: 576px) {
-        .category-header-image {
-            width: 56px !important;
-            height: 56px !important;
-        }
-        .category-header-image i {
-            font-size: 1.2rem !important;
-        }
-
-        .other-cat-circle {
-            width: 64px !important;
-            height: 64px !important;
-        }
-        .other-cat-circle i {
-            font-size: 1.1rem !important;
-        }
-
-        .service-card .p-3 { padding: 8px !important; }
-        .service-card img { height: 120px !important; }
-        .service-card h6 { font-size: 0.8rem !important; }
-        .service-card .btn {
-            padding: 6px !important;
-            font-size: 0.7rem !important;
-        }
+    .sf-cat-header {
+        gap: 14px;
     }
+
+    .sf-cat-thumb {
+        width: 64px;
+        height: 64px;
+        flex-basis: 64px;
+        border-width: 2px;
+    }
+
+    .sf-cat-heading h1 {
+        font-size: 1.35rem;
+    }
+
+    .sf-cat-heading p {
+        font-size: 11px;
+    }
+
+    .sf-cat-description {
+        font-size: 12px;
+    }
+
+    .sf-services-page {
+        padding: 40px 0 55px;
+    }
+
+    .sf-service-card {
+        border-radius: 14px;
+    }
+
+    .sf-service-body {
+        padding: 12px 12px 12px;
+    }
+
+    .sf-service-body h3 {
+        font-size: 0.82rem;
+    }
+
+    .sf-service-provider {
+        font-size: 10px;
+    }
+
+    .sf-service-price strong {
+        font-size: 0.9rem;
+    }
+
+    .sf-service-price span {
+        font-size: 10px;
+    }
+
+    .sf-service-btn {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    .sf-featured-badge {
+        font-size: 9px;
+        padding: 3px 8px;
+    }
+
+    .sf-pagination-wrap {
+        margin-top: 40px;
+    }
+
+    .sf-page-link {
+        min-width: 34px;
+        height: 34px;
+        margin: 0 3px;
+        font-size: 11px;
+        border-radius: 8px;
+    }
+
+    .sf-other-cats {
+        padding: 50px 0 55px;
+    }
+
+    .sf-centered-heading {
+        margin-bottom: 32px;
+    }
+
+    .sf-category-image {
+        border-radius: 11px;
+    }
+
+    .sf-category-card h3 {
+        margin-top: 8px;
+        font-size: 11px;
+    }
+
+    .sf-category-arrow {
+        display: none;
+    }
+
+    .sf-empty-state {
+        padding: 50px 20px;
+    }
+
+    .sf-empty-image {
+        width: 90px;
+        height: 90px;
+        margin-bottom: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .sf-cat-thumb {
+        width: 56px;
+        height: 56px;
+        flex-basis: 56px;
+    }
+
+    .sf-cat-heading h1 {
+        font-size: 1.2rem;
+    }
+
+    .sf-service-body h3 {
+        font-size: 0.78rem;
+    }
+
+}
+
 </style>
+
 {% endblock %}

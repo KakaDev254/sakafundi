@@ -14,13 +14,10 @@
         <div class="sf-announcement-inner">
             <span>
                 <i class="fas fa-shield-alt me-2"></i>
-                Kenya's marketplace for trusted skills and professionals
+                Home of Kenya's Top Fundis
             </span>
 
-            <a href="{% url 'accounts:register' %}">
-                Join SakaFundi
-                <i class="fas fa-arrow-right ms-1"></i>
-            </a>
+           
         </div>
     </div>
 </section>
@@ -85,8 +82,8 @@
 
             <!-- Main heading -->
             <h1>
-                Find the right
-                <span>fundi for the job.</span>
+                Find the right<br>
+                fundi for the job.
             </h1>
 
 
@@ -101,7 +98,7 @@
 
                 <a
                     href="{% url 'services:list' %}"
-                    class="sf-role-btn active"
+                    class="sf-role-btn sf-role-btn-blue active"
                 >
                     <i class="fas fa-search"></i>
                     <span>Find a Fundi</span>
@@ -109,7 +106,7 @@
 
                 <a
                     href="{% url 'accounts:login' %}"
-                    class="sf-role-btn"
+                    class="sf-role-btn sf-role-btn-yellow"
                 >
                     <i class="fas fa-briefcase"></i>
                     <span>I'm a Fundi</span>
@@ -957,17 +954,23 @@
 ========================================================= */
 
 :root {
-    --sf-navy: #102A43;
-    --sf-navy-dark: #0B1F33;
-    --sf-green: #16805B;
-    --sf-green-dark: #106044;
-    --sf-yellow: #F4B942;
+    --sf-navy: #0F172A;
+    --sf-navy-dark: #0B1220;
+
+    /* BLUE — primary */
+    --sf-blue: #2563EB;
+    --sf-blue-dark: #1D4ED8;
+
+    /* YELLOW — accent */
+    --sf-yellow: #EAB308;
+    --sf-yellow-dark: #CA8A04;
+
     --sf-cream: #F8F5EF;
     --sf-white: #FFFFFF;
-    --sf-text: #102A43;
-    --sf-muted: #627D98;
-    --sf-border: #E5E7EB;
-    --sf-light: #F6F8FA;
+    --sf-text: #0F172A;
+    --sf-muted: #64748B;
+    --sf-border: #E2E8F0;
+    --sf-light: #F8FAFC;
 }
 
 .sf-hero,
@@ -989,8 +992,9 @@
 .sf-marketplace-cta,
 .sf-testimonials,
 .sf-final-cta,
-.sf-trust-strip {
-    font-family: 'Inter', sans-serif;
+.sf-trust-strip,
+.sf-announcement {
+    font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 
 
@@ -1018,18 +1022,18 @@
 }
 
 .sf-announcement-inner span i {
-    color: var(--sf-green);
+    color: var(--sf-blue);
 }
 
 .sf-announcement-inner a {
-    color: var(--sf-green);
+    color: var(--sf-blue);
     text-decoration: none;
     font-weight: 700;
     transition: all .2s ease;
 }
 
 .sf-announcement-inner a:hover {
-    color: var(--sf-green-dark);
+    color: var(--sf-blue-dark);
 }
 
 
@@ -1117,16 +1121,23 @@
 .sf-hero h1 {
     margin: 0 0 22px;
     max-width: 680px;
-    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
-    font-size: clamp(3.4rem, 6vw, 5.7rem);
-    line-height: .93;
-    letter-spacing: -2px;
-    font-weight: 700;
-    color: #fff;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-weight: 300;             /* thin / silk */
+    font-size: clamp(3rem, 5.6vw, 5.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #FFFFFF;
 }
 
-.sf-hero h1 span {
-    color: var(--sf-yellow);
+/* Hide the manual line break on small screens so the title wraps naturally */
+.sf-hero h1 br {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .sf-hero h1 br {
+        display: inline;
+    }
 }
 
 .sf-hero-description {
@@ -1139,7 +1150,7 @@
 
 
 /* =========================================================
-   ROLE SWITCH
+   ROLE SWITCH — BLUE + YELLOW
 ========================================================= */
 
 .sf-role-switch {
@@ -1172,13 +1183,32 @@
     background: rgba(255,255,255,.08);
 }
 
-.sf-role-btn.active {
-    color: var(--sf-navy);
-    background: white;
-}
-
 .sf-role-btn i {
     font-size: 13px;
+}
+
+/* Active "Find a Fundi" — BLUE */
+.sf-role-btn-blue.active {
+    color: #FFFFFF;
+    background: var(--sf-blue);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, .45);
+}
+
+.sf-role-btn-blue.active:hover {
+    background: var(--sf-blue-dark);
+    color: #FFFFFF;
+}
+
+/* Active "I'm a Fundi" — YELLOW */
+.sf-role-btn-yellow.active {
+    color: var(--sf-navy);
+    background: var(--sf-yellow);
+    box-shadow: 0 4px 14px rgba(234, 179, 8, .45);
+}
+
+.sf-role-btn-yellow.active:hover {
+    background: var(--sf-yellow-dark);
+    color: var(--sf-navy);
 }
 
 
@@ -1213,7 +1243,7 @@
     height: 100%;
     border: 0;
     outline: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', 'Inter', sans-serif;
     font-size: 15px;
     color: var(--sf-text);
 }
@@ -1227,15 +1257,16 @@
     padding: 0 26px;
     border: 0;
     border-radius: 10px;
-    background: var(--sf-green);
+    background: var(--sf-blue);
     color: white;
+    font-family: 'Manrope', 'Inter', sans-serif;
     font-weight: 700;
     font-size: 14px;
     transition: all .25s ease;
 }
 
 .sf-search button:hover {
-    background: var(--sf-green-dark);
+    background: var(--sf-blue-dark);
     transform: translateY(-1px);
 }
 
@@ -1382,8 +1413,8 @@
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    color: var(--sf-green);
-    background: #E8F6F0;
+    color: var(--sf-blue);
+    background: #EFF6FF;
 }
 
 .sf-hero-card div:nth-child(2) {
@@ -1411,7 +1442,7 @@
     justify-content: center;
     border-radius: 8px;
     color: white;
-    background: var(--sf-green);
+    background: var(--sf-blue);
 }
 
 
@@ -1445,8 +1476,8 @@
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    color: var(--sf-green);
-    background: #EAF6F1;
+    color: var(--sf-blue);
+    background: #EFF6FF;
 }
 
 .sf-trust-item strong {
@@ -1471,7 +1502,7 @@
 .sf-kicker {
     display: block;
     margin-bottom: 9px;
-    color: var(--sf-green);
+    color: var(--sf-blue);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -1489,10 +1520,10 @@
 .sf-centered-heading h2 {
     margin: 0 0 9px;
     color: var(--sf-text);
-    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Manrope', 'Inter', sans-serif;
     font-size: clamp(2.2rem, 4vw, 3.3rem);
-    line-height: 1;
-    font-weight: 700;
+    line-height: 1.05;
+    font-weight: 800;
     letter-spacing: -.8px;
 }
 
@@ -1543,8 +1574,8 @@
 
 .sf-outline-btn:hover {
     color: white;
-    border-color: var(--sf-green);
-    background: var(--sf-green);
+    border-color: var(--sf-blue);
+    background: var(--sf-blue);
 }
 
 .sf-category-card {
@@ -1581,8 +1612,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--sf-green);
-    background: #EAF6F1;
+    color: var(--sf-blue);
+    background: #EFF6FF;
     font-size: 28px;
 }
 
@@ -1597,7 +1628,7 @@
     justify-content: center;
     border-radius: 50%;
     color: white;
-    background: rgba(16,42,67,.85);
+    background: rgba(15,23,42,.85);
     font-size: 10px;
     opacity: 0;
     transform: translateY(5px);
@@ -1619,7 +1650,7 @@
 }
 
 .sf-category-card:hover h3 {
-    color: var(--sf-green);
+    color: var(--sf-blue);
 }
 
 .sf-empty {
@@ -1668,7 +1699,7 @@
     border-radius: 7px;
     color: var(--sf-muted);
     background: transparent;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', 'Inter', sans-serif;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
@@ -1681,8 +1712,8 @@
 
 .sf-work-toggle-btn.active {
     color: white;
-    background: var(--sf-navy);
-    box-shadow: 0 4px 12px rgba(16,42,67,.18);
+    background: var(--sf-blue);
+    box-shadow: 0 4px 12px rgba(37,99,235,.18);
 }
 
 .sf-work-panel {
@@ -1718,7 +1749,7 @@
 
 .sf-step:hover {
     transform: translateY(-5px);
-    border-color: #C8E5D9;
+    border-color: #BFDBFE;
     box-shadow: 0 15px 35px rgba(16,42,67,.08);
 }
 
@@ -1740,8 +1771,8 @@
     justify-content: center;
     margin-bottom: 22px;
     border-radius: 12px;
-    color: var(--sf-green);
-    background: #EAF6F1;
+    color: var(--sf-blue);
+    background: #EFF6FF;
     font-size: 18px;
 }
 
@@ -1749,7 +1780,7 @@
     margin: 0 0 8px;
     color: var(--sf-text);
     font-size: 15px;
-    font-weight: 750;
+    font-weight: 800;
 }
 
 .sf-step p {
@@ -1794,10 +1825,11 @@
 .sf-marketplace-content h2 {
     max-width: 570px;
     margin: 0 0 15px;
-    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Manrope', 'Inter', sans-serif;
     font-size: clamp(2.3rem, 4vw, 3.5rem);
-    line-height: 1;
+    line-height: 1.05;
     letter-spacing: -.7px;
+    font-weight: 800;
 }
 
 .sf-marketplace-content p {
@@ -1831,7 +1863,7 @@
 
 .sf-primary-btn:hover {
     color: var(--sf-navy);
-    background: #FFD16A;
+    background: #FACC15;
     transform: translateY(-2px);
 }
 
@@ -1907,7 +1939,7 @@
 }
 
 .sf-floating-card-small i {
-    color: var(--sf-green);
+    color: var(--sf-blue);
 }
 
 .sf-floating-icon {
@@ -1917,8 +1949,8 @@
     align-items: center;
     justify-content: center;
     border-radius: 9px;
-    color: var(--sf-green);
-    background: #EAF6F1;
+    color: var(--sf-blue);
+    background: #EFF6FF;
 }
 
 .sf-floating-card strong {
@@ -1959,7 +1991,7 @@
 }
 
 .sf-quote-icon {
-    color: #DDEFE7;
+    color: #DBEAFE;
     font-size: 24px;
     margin-bottom: 15px;
 }
@@ -1973,7 +2005,7 @@
 .sf-testimonial > p {
     min-height: 85px;
     margin: 0 0 25px;
-    color: #486581;
+    color: #475569;
     font-size: 13px;
     line-height: 1.8;
 }
@@ -2025,10 +2057,11 @@
 .sf-final-content h2 {
     margin: 0 0 12px;
     color: var(--sf-text);
-    font-family: 'Cormorant', 'Cormorant Garamond', Georgia, serif;
+    font-family: 'Manrope', 'Inter', sans-serif;
     font-size: clamp(2.5rem, 5vw, 4rem);
-    line-height: .95;
+    line-height: 1;
     letter-spacing: -1px;
+    font-weight: 800;
 }
 
 .sf-final-content p {
@@ -2061,12 +2094,12 @@
 
 .sf-final-primary {
     color: white;
-    background: var(--sf-green);
+    background: var(--sf-blue);
 }
 
 .sf-final-primary:hover {
     color: white;
-    background: var(--sf-green-dark);
+    background: var(--sf-blue-dark);
     transform: translateY(-2px);
 }
 
@@ -2077,8 +2110,8 @@
 }
 
 .sf-final-secondary:hover {
-    color: var(--sf-green);
-    border-color: var(--sf-green);
+    color: var(--sf-blue);
+    border-color: var(--sf-blue);
 }
 
 
@@ -2090,7 +2123,7 @@
 
     .sf-hero,
     .sf-hero-container {
-        min-height: 650px;
+        min-height: 620px;
     }
 
     .sf-hero-content {
@@ -2098,7 +2131,7 @@
     }
 
     .sf-hero h1 {
-        font-size: clamp(3rem, 8vw, 4.6rem);
+        font-size: clamp(2.8rem, 7.5vw, 4.4rem);
     }
 
     .sf-hero-card {
@@ -2157,11 +2190,11 @@
     }
 
 
-    /* Hero */
+    /* Hero — remove forced height so no empty space at the top */
 
     .sf-hero,
     .sf-hero-container {
-        min-height: 690px;
+        min-height: auto;
     }
 
     .sf-hero-overlay {
@@ -2175,11 +2208,11 @@
     }
 
     .sf-hero-container {
-        align-items: flex-end;
+        align-items: stretch;
     }
 
     .sf-hero-content {
-        padding: 65px 0 45px;
+        padding: 72px 0 40px;
     }
 
     .sf-hero-eyebrow {
@@ -2188,8 +2221,8 @@
     }
 
     .sf-hero h1 {
-        font-size: clamp(2.7rem, 14vw, 4rem);
-        letter-spacing: -1.3px;
+        font-size: clamp(2.4rem, 11vw, 3.4rem);
+        letter-spacing: -0.015em;
     }
 
     .sf-hero-description {
@@ -2439,15 +2472,15 @@
 
     .sf-hero,
     .sf-hero-container {
-        min-height: 650px;
+        min-height: auto;
     }
 
     .sf-hero-content {
-        padding-bottom: 30px;
+        padding: 64px 0 32px;
     }
 
     .sf-hero h1 {
-        font-size: 2.55rem;
+        font-size: 2.35rem;
     }
 
     .sf-hero-description {
