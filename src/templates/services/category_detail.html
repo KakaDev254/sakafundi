@@ -7,11 +7,23 @@
 {% block content %}
 
 <!-- =========================================================
-     PAGE HEADER
+     HERO BANNER
 ========================================================= -->
-<section class="sf-page-header">
+<section class="sf-cat-hero">
 
-    <div class="container">
+    <div class="sf-cat-hero-bg">
+
+        {% if category.image %}
+            <img src="{{ category.image.url }}" alt="{{ category.name }}">
+        {% else %}
+            <img src="{% static 'images/category-default.jpg' %}" alt="{{ category.name }}">
+        {% endif %}
+
+        <div class="sf-cat-hero-overlay"></div>
+
+    </div>
+
+    <div class="container sf-cat-hero-content">
 
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="sf-breadcrumb">
@@ -31,37 +43,19 @@
             </ol>
         </nav>
 
-        <!-- Category header -->
-        <div class="sf-cat-header">
+        <!-- Category title block -->
+        <div class="sf-cat-hero-text">
 
-            <div class="sf-cat-thumb">
+            <h1>{{ category.name }}</h1>
 
-                {% if category.image %}
-                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
-                {% else %}
-                    <img src="{% static 'images/category-default.jpg' %}" alt="{{ category.name }}">
-                {% endif %}
-
-            </div>
-
-            <div class="sf-cat-heading">
-
-                <h1>{{ category.name }}</h1>
-
-                <p>
+            {% if total_count %}
+                <p class="sf-cat-hero-meta">
                     {{ total_count }}
                     service{{ total_count|pluralize }} available
                 </p>
-
-            </div>
+            {% endif %}
 
         </div>
-
-        {% if category.description %}
-            <p class="sf-cat-description">
-                {{ category.description }}
-            </p>
-        {% endif %}
 
     </div>
 
@@ -69,8 +63,24 @@
 
 
 <!-- =========================================================
+     CATEGORY DESCRIPTION (if any)
+========================================================= -->
+{% if category.description %}
+    <section class="sf-cat-desc-section">
+        <div class="container">
+            <p class="sf-cat-description">
+                {{ category.description }}
+            </p>
+        </div>
+    </section>
+{% endif %}
+
+
+<!-- =========================================================
      SERVICES GRID
 ========================================================= -->
+{% if services %}
+
 <section class="sf-services-page">
 
     <div class="container">
@@ -147,33 +157,6 @@
 
                 </div>
 
-            {% empty %}
-
-                <div class="col-12">
-
-                    <div class="sf-empty-state">
-
-                        <img
-                            src="{% static 'images/empty-services.png' %}"
-                            alt="No services"
-                            class="sf-empty-image"
-                        >
-
-                        <h5>No Services Yet</h5>
-
-                        <p>
-                            There are no services in this category yet.
-                            Check back soon!
-                        </p>
-
-                        <a href="{% url 'services:list' %}" class="sf-primary-btn">
-                            Browse All Services
-                        </a>
-
-                    </div>
-
-                </div>
-
             {% endfor %}
 
         </div>
@@ -233,6 +216,8 @@
     </div>
 
 </section>
+
+{% endif %}
 
 
 <!-- =========================================================
@@ -299,18 +284,58 @@
 <style>
 
 /* =========================================================
-   PAGE HEADER
+   CATEGORY HERO BANNER
 ========================================================= */
 
-.sf-page-header {
-    padding: 40px 0 40px;
-    background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 100%);
-    border-bottom: 1px solid var(--sf-border, #E2E8F0);
+.sf-cat-hero {
+    position: relative;
+    min-height: 360px;
+    overflow: hidden;
+    background: var(--sf-navy, #0F172A);
+    display: flex;
+    align-items: center;
 }
 
-/* Breadcrumb */
+.sf-cat-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.sf-cat-hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.sf-cat-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8, 25, 40, .35) 0%,
+            rgba(8, 25, 40, .65) 55%,
+            rgba(8, 25, 40, .88) 100%
+        );
+}
+
+.sf-cat-hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 60px 0 46px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 360px;
+}
+
+/* Breadcrumb over dark hero */
 .sf-breadcrumb {
-    margin-bottom: 22px;
+    margin-bottom: auto;
 }
 
 .sf-breadcrumb .breadcrumb {
@@ -321,76 +346,68 @@
 }
 
 .sf-breadcrumb .breadcrumb-item a {
-    color: var(--sf-blue, #2563EB);
+    color: rgba(255, 255, 255, .85);
     text-decoration: none;
     transition: opacity .2s ease;
 }
 
 .sf-breadcrumb .breadcrumb-item a:hover {
-    opacity: .75;
+    opacity: .7;
+    color: #FFFFFF;
 }
 
 .sf-breadcrumb .breadcrumb-item.active {
-    color: var(--sf-muted, #64748B);
+    color: rgba(255, 255, 255, .65);
 }
 
 .sf-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
     content: "/";
-    color: #CBD5E1;
+    color: rgba(255, 255, 255, .4);
     padding: 0 6px;
 }
 
-/* Category header */
-.sf-cat-header {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-bottom: 8px;
+/* Title block */
+.sf-cat-hero-text {
+    margin-top: 40px;
 }
 
-.sf-cat-thumb {
-    width: 84px;
-    height: 84px;
-    flex: 0 0 84px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #FFFFFF;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, .12);
+.sf-cat-hero-text h1 {
+    margin: 0 0 8px;
+    color: #FFFFFF;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-weight: 800;
+    letter-spacing: -.8px;
+    line-height: 1.05;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, .35);
+}
+
+.sf-cat-hero-meta {
+    margin: 0;
+    color: rgba(255, 255, 255, .82);
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, .4);
+}
+
+
+/* =========================================================
+   CATEGORY DESCRIPTION
+========================================================= */
+
+.sf-cat-desc-section {
+    padding: 40px 0 0;
     background: #FFFFFF;
 }
 
-.sf-cat-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.sf-cat-heading h1 {
-    margin: 0 0 4px;
-    color: var(--sf-text, #0F172A);
-    font-family: 'Manrope', 'Inter', sans-serif;
-    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
-    font-weight: 800;
-    letter-spacing: -.5px;
-    line-height: 1.1;
-}
-
-.sf-cat-heading p {
-    margin: 0;
-    color: var(--sf-muted, #64748B);
-    font-family: 'Manrope', 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-}
-
 .sf-cat-description {
-    margin: 14px 0 0;
-    max-width: 720px;
+    margin: 0;
+    max-width: 780px;
     color: var(--sf-muted, #64748B);
     font-family: 'Manrope', 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.7;
+    font-size: 14px;
+    line-height: 1.8;
 }
 
 
@@ -549,66 +566,6 @@
 
 
 /* =========================================================
-   EMPTY STATE
-========================================================= */
-
-.sf-empty-state {
-    padding: 70px 30px;
-    text-align: center;
-    border: 1px dashed #CBD5E1;
-    border-radius: 18px;
-    background: #FFFFFF;
-}
-
-.sf-empty-image {
-    display: block;
-    width: 120px;
-    height: 120px;
-    object-fit: contain;
-    margin: 0 auto 20px;
-    opacity: .85;
-}
-
-.sf-empty-state h5 {
-    margin: 0 0 8px;
-    color: var(--sf-text, #0F172A);
-    font-family: 'Manrope', 'Inter', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-}
-
-.sf-empty-state p {
-    margin: 0 auto 20px;
-    max-width: 420px;
-    color: var(--sf-muted, #64748B);
-    font-family: 'Manrope', 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.7;
-}
-
-.sf-primary-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    padding: 12px 22px;
-    border-radius: 8px;
-    background: var(--sf-blue, #2563EB);
-    color: #FFFFFF;
-    text-decoration: none;
-    font-family: 'Manrope', 'Inter', sans-serif;
-    font-size: 12px;
-    font-weight: 800;
-    transition: all .25s ease;
-}
-
-.sf-primary-btn:hover {
-    background: var(--sf-blue-dark, #1D4ED8);
-    color: #FFFFFF;
-    transform: translateY(-2px);
-}
-
-
-/* =========================================================
    PAGINATION
 ========================================================= */
 
@@ -649,7 +606,7 @@
 
 
 /* =========================================================
-   OTHER CATEGORIES  (square cards, same as categories page)
+   OTHER CATEGORIES
 ========================================================= */
 
 .sf-other-cats {
@@ -691,7 +648,6 @@
     line-height: 1.7;
 }
 
-/* Square category card — consistent with categories page */
 .sf-category-card {
     display: block;
     text-decoration: none;
@@ -771,6 +727,11 @@
 
 @media (max-width: 991px) {
 
+    .sf-cat-hero,
+    .sf-cat-hero-content {
+        min-height: 320px;
+    }
+
     .sf-services-page {
         padding: 50px 0 65px;
     }
@@ -788,35 +749,37 @@
 
 @media (max-width: 767px) {
 
-    .sf-page-header {
-        padding: 30px 0 30px;
+    .sf-cat-hero,
+    .sf-cat-hero-content {
+        min-height: 280px;
     }
 
-    .sf-breadcrumb {
-        margin-bottom: 18px;
+    .sf-cat-hero-content {
+        padding: 40px 0 32px;
     }
 
-    .sf-cat-header {
-        gap: 14px;
+    .sf-cat-hero-text {
+        margin-top: 28px;
     }
 
-    .sf-cat-thumb {
-        width: 64px;
-        height: 64px;
-        flex-basis: 64px;
-        border-width: 2px;
+    .sf-cat-hero-text h1 {
+        font-size: 1.8rem;
     }
 
-    .sf-cat-heading h1 {
-        font-size: 1.35rem;
+    .sf-cat-hero-meta {
+        font-size: 12px;
     }
 
-    .sf-cat-heading p {
+    .sf-breadcrumb .breadcrumb {
         font-size: 11px;
     }
 
+    .sf-cat-desc-section {
+        padding: 28px 0 0;
+    }
+
     .sf-cat-description {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .sf-services-page {
@@ -890,16 +853,6 @@
         display: none;
     }
 
-    .sf-empty-state {
-        padding: 50px 20px;
-    }
-
-    .sf-empty-image {
-        width: 90px;
-        height: 90px;
-        margin-bottom: 16px;
-    }
-
 }
 
 
@@ -909,14 +862,8 @@
 
 @media (max-width: 400px) {
 
-    .sf-cat-thumb {
-        width: 56px;
-        height: 56px;
-        flex-basis: 56px;
-    }
-
-    .sf-cat-heading h1 {
-        font-size: 1.2rem;
+    .sf-cat-hero-text h1 {
+        font-size: 1.55rem;
     }
 
     .sf-service-body h3 {

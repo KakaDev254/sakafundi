@@ -438,16 +438,6 @@
 
                 </div>
 
-            {% empty %}
-
-                <div class="col-12">
-
-                    <div class="sf-empty">
-                        <p>No categories available yet.</p>
-                    </div>
-
-                </div>
-
             {% endfor %}
 
         </div>
@@ -717,7 +707,7 @@
                     FOR ARTISANS
                 </span>
 
-                <h2>
+                <h2 class="sf-marketplace-heading">
                     Your skills can take you further.
                 </h2>
 
@@ -996,11 +986,9 @@
     --sf-navy: #0F172A;
     --sf-navy-dark: #0B1220;
 
-    /* BLUE — primary */
     --sf-blue: #2563EB;
     --sf-blue-dark: #1D4ED8;
 
-    /* YELLOW — accent */
     --sf-yellow: #EAB308;
     --sf-yellow-dark: #CA8A04;
 
@@ -1062,17 +1050,6 @@
 
 .sf-announcement-inner span i {
     color: var(--sf-blue);
-}
-
-.sf-announcement-inner a {
-    color: var(--sf-blue);
-    text-decoration: none;
-    font-weight: 700;
-    transition: all .2s ease;
-}
-
-.sf-announcement-inner a:hover {
-    color: var(--sf-blue-dark);
 }
 
 
@@ -1370,21 +1347,10 @@
     font-weight: 700;
 }
 
-.sf-avatar-1 {
-    background: #8D6E63;
-}
-
-.sf-avatar-2 {
-    background: #546E7A;
-}
-
-.sf-avatar-3 {
-    background: #78909C;
-}
-
-.sf-avatar-4 {
-    background: #6D4C41;
-}
+.sf-avatar-1 { background: #8D6E63; }
+.sf-avatar-2 { background: #546E7A; }
+.sf-avatar-3 { background: #78909C; }
+.sf-avatar-4 { background: #6D4C41; }
 
 .sf-stars {
     color: var(--sf-yellow);
@@ -1614,7 +1580,6 @@
     background: var(--sf-blue);
 }
 
-/* Card wrapper */
 .sf-category-card {
     position: relative;
     display: block;
@@ -1656,7 +1621,6 @@
     transform: scale(1.06);
 }
 
-/* Chevron toggle button */
 .sf-category-toggle {
     position: absolute;
     right: 10px;
@@ -1702,19 +1666,6 @@
 
 .sf-category-card:hover h3 {
     color: var(--sf-blue);
-}
-
-.sf-empty {
-    padding: 50px;
-    text-align: center;
-    color: var(--sf-muted);
-    border: 1px dashed #CBD5E1;
-    border-radius: 14px;
-    background: white;
-}
-
-.sf-empty p {
-    margin: 0;
 }
 
 
@@ -1841,15 +1792,8 @@
 }
 
 @keyframes sfFade {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .sf-step {
@@ -1924,7 +1868,7 @@
     padding: 60px;
     border-radius: 22px;
     background: var(--sf-navy);
-    color: white;
+    color: #FFFFFF;
 }
 
 .sf-marketplace-content {
@@ -1934,10 +1878,12 @@
 }
 
 .sf-kicker-light {
-    color: var(--sf-yellow);
+    color: var(--sf-yellow) !important;
 }
 
-.sf-marketplace-content h2 {
+/* Hero-style CTA heading — force white always */
+.sf-marketplace-box .sf-marketplace-heading,
+.sf-marketplace-box h2.sf-marketplace-heading {
     max-width: 570px;
     margin: 0 0 15px;
     font-family: 'Manrope', 'Inter', sans-serif;
@@ -1945,13 +1891,14 @@
     line-height: 1.05;
     letter-spacing: -.7px;
     font-weight: 800;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
 }
 
 .sf-marketplace-content p {
     max-width: 520px;
     margin: 0 0 25px;
-    color: rgba(255,255,255,.7);
+    color: rgba(255,255,255,.75) !important;
     font-size: 14px;
     line-height: 1.7;
 }
@@ -1969,7 +1916,7 @@
     gap: 9px;
     padding: 13px 18px;
     border-radius: 8px;
-    color: var(--sf-navy);
+    color: var(--sf-navy) !important;
     background: var(--sf-yellow);
     text-decoration: none;
     font-size: 12px;
@@ -1978,20 +1925,20 @@
 }
 
 .sf-primary-btn:hover {
-    color: var(--sf-navy);
+    color: var(--sf-navy) !important;
     background: #FACC15;
     transform: translateY(-2px);
 }
 
 .sf-text-btn {
-    color: rgba(255,255,255,.75);
+    color: rgba(255,255,255,.8) !important;
     text-decoration: none;
     font-size: 12px;
     font-weight: 600;
 }
 
 .sf-text-btn:hover {
-    color: white;
+    color: #FFFFFF !important;
 }
 
 .sf-marketplace-visual {
@@ -2073,6 +2020,7 @@
     display: block;
     font-size: 12px;
     margin-bottom: 3px;
+    color: var(--sf-text);
 }
 
 .sf-floating-card span {
@@ -2260,13 +2208,8 @@
         padding: 14px;
     }
 
-    .sf-trust-item strong {
-        font-size: 11px;
-    }
-
-    .sf-trust-item span {
-        font-size: 9px;
-    }
+    .sf-trust-item strong { font-size: 11px; }
+    .sf-trust-item span   { font-size: 9px; }
 
     .sf-marketplace-box {
         padding: 45px;
@@ -2280,13 +2223,8 @@
         width: 38%;
     }
 
-    .sf-floating-card-main {
-        right: 10px;
-    }
-
-    .sf-floating-card-small {
-        right: -10px;
-    }
+    .sf-floating-card-main { right: 10px; }
+    .sf-floating-card-small { right: -10px; }
 }
 
 
@@ -2301,13 +2239,7 @@
         font-size: 10px;
     }
 
-    .sf-announcement-inner a {
-        font-size: 10px;
-    }
-
-
     /* Hero */
-
     .sf-hero,
     .sf-hero-container {
         min-height: auto;
@@ -2323,13 +2255,8 @@
             );
     }
 
-    .sf-hero-container {
-        align-items: stretch;
-    }
-
-    .sf-hero-content {
-        padding: 72px 0 40px;
-    }
+    .sf-hero-container { align-items: stretch; }
+    .sf-hero-content   { padding: 72px 0 40px; }
 
     .sf-hero-eyebrow {
         margin-bottom: 18px;
@@ -2363,15 +2290,8 @@
         border-radius: 11px;
     }
 
-    .sf-search-icon {
-        width: 40px;
-        flex-basis: 40px;
-        font-size: 13px;
-    }
-
-    .sf-search input {
-        font-size: 12px;
-    }
+    .sf-search-icon { width: 40px; flex-basis: 40px; font-size: 13px; }
+    .sf-search input { font-size: 12px; }
 
     .sf-search button {
         height: 45px;
@@ -2379,29 +2299,14 @@
         font-size: 11px;
     }
 
-    .sf-popular-searches {
-        display: none;
-    }
+    .sf-popular-searches { display: none; }
 
-    .sf-hero-trust {
-        margin-top: 20px;
-    }
-
-    .sf-trust-copy span {
-        font-size: 9px;
-    }
-
-    .sf-hero-card {
-        display: none;
-    }
-
-    .sf-video-controls {
-        margin-top: 20px;
-    }
-
+    .sf-hero-trust { margin-top: 20px; }
+    .sf-trust-copy span { font-size: 9px; }
+    .sf-hero-card { display: none; }
+    .sf-video-controls { margin-top: 20px; }
 
     /* Trust strip */
-
     .sf-trust-item {
         min-height: 82px;
         padding: 12px 8px;
@@ -2415,25 +2320,15 @@
         font-size: 11px;
     }
 
-    .sf-trust-item strong {
-        font-size: 9px;
-    }
+    .sf-trust-item strong { font-size: 9px; }
+    .sf-trust-item span   { font-size: 8px; }
 
-    .sf-trust-item span {
-        font-size: 8px;
-    }
-
-    .sf-trust-strip .col-6:nth-child(2) .sf-trust-item {
-        border-right: 0;
-    }
-
+    .sf-trust-strip .col-6:nth-child(2) .sf-trust-item { border-right: 0; }
     .sf-trust-strip .col-6:nth-child(-n+2) .sf-trust-item {
         border-bottom: 1px solid var(--sf-border);
     }
 
-
     /* Sections */
-
     .sf-categories,
     .sf-how,
     .sf-testimonials,
@@ -2456,16 +2351,10 @@
         font-size: 12px;
     }
 
-    .sf-outline-btn {
-        margin-top: 18px;
-    }
-
+    .sf-outline-btn { margin-top: 18px; }
 
     /* Categories */
-
-    .sf-category-image {
-        border-radius: 11px;
-    }
+    .sf-category-image { border-radius: 11px; }
 
     .sf-category-card h3 {
         margin-top: 8px;
@@ -2479,13 +2368,9 @@
         bottom: 44px;
     }
 
-    .sf-category-toggle i {
-        font-size: 10px;
-    }
-
+    .sf-category-toggle i { font-size: 10px; }
 
     /* How it works */
-
     .sf-work-toggle {
         width: 100%;
         margin-bottom: 35px;
@@ -2498,9 +2383,7 @@
         font-size: 10px;
     }
 
-    .sf-step {
-        padding: 18px;
-    }
+    .sf-step { padding: 18px; }
 
     .sf-step-icon {
         width: 46px;
@@ -2509,13 +2392,8 @@
         font-size: 15px;
     }
 
-    .sf-step h3 {
-        font-size: 12px;
-    }
-
-    .sf-step p {
-        font-size: 10px;
-    }
+    .sf-step h3 { font-size: 12px; }
+    .sf-step p  { font-size: 10px; }
 
     .sf-step-number {
         top: 13px;
@@ -2523,67 +2401,43 @@
         font-size: 9px;
     }
 
-
     /* Marketplace */
-
-    .sf-marketplace-cta {
-        padding: 0 0 65px;
-    }
+    .sf-marketplace-cta { padding: 0 0 65px; }
 
     .sf-marketplace-box {
         min-height: 0;
         padding: 40px 25px;
     }
 
-    .sf-marketplace-content {
-        width: 100%;
-    }
+    .sf-marketplace-content { width: 100%; }
 
-    .sf-marketplace-content h2 {
+    .sf-marketplace-box .sf-marketplace-heading,
+    .sf-marketplace-box h2.sf-marketplace-heading {
         font-size: 2.7rem;
     }
 
-    .sf-marketplace-content p {
-        font-size: 12px;
-    }
-
-    .sf-marketplace-visual {
-        display: none;
-    }
-
+    .sf-marketplace-content p { font-size: 12px; }
+    .sf-marketplace-visual { display: none; }
 
     /* Testimonials */
-
-    .sf-testimonial {
-        padding: 23px;
-    }
+    .sf-testimonial { padding: 23px; }
 
     .sf-testimonial > p {
         min-height: auto;
         font-size: 12px;
     }
 
-
     /* Final */
+    .sf-final-content h2 { font-size: 3rem; }
+    .sf-final-content p  { font-size: 12px; }
 
-    .sf-final-content h2 {
-        font-size: 3rem;
-    }
-
-    .sf-final-content p {
-        font-size: 12px;
-    }
-
-    .sf-final-buttons {
-        flex-direction: column;
-    }
+    .sf-final-buttons { flex-direction: column; }
 
     .sf-final-primary,
     .sf-final-secondary {
         width: 100%;
         justify-content: center;
     }
-
 }
 
 
@@ -2594,43 +2448,21 @@
 @media (max-width: 400px) {
 
     .sf-hero,
-    .sf-hero-container {
-        min-height: auto;
-    }
+    .sf-hero-container { min-height: auto; }
 
-    .sf-hero-content {
-        padding: 64px 0 32px;
-    }
-
-    .sf-hero h1 {
-        font-size: 2.35rem;
-    }
-
-    .sf-hero-description {
-        font-size: 12px;
-    }
-
-    .sf-role-btn {
-        font-size: 10px;
-    }
-
-    .sf-search button {
-        padding: 0 13px;
-    }
+    .sf-hero-content { padding: 64px 0 32px; }
+    .sf-hero h1      { font-size: 2.35rem; }
+    .sf-hero-description { font-size: 12px; }
+    .sf-role-btn     { font-size: 10px; }
+    .sf-search button { padding: 0 13px; }
 
     .sf-section-heading h2,
     .sf-centered-heading h2 {
         font-size: 2.15rem;
     }
 
-    .sf-step {
-        padding: 15px;
-    }
-
-    .sf-step p {
-        font-size: 9px;
-    }
-
+    .sf-step { padding: 15px; }
+    .sf-step p { font-size: 9px; }
 }
 
 </style>
@@ -2647,14 +2479,13 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     const videos = document.querySelectorAll(".sf-hero-video");
-    const dots = document.querySelectorAll(".sf-video-dot");
+    const dots   = document.querySelectorAll(".sf-video-dot");
 
     if (videos.length) {
 
         let currentIndex = 0;
         const rotateTime = 8000;
         let rotateTimer;
-
 
         function playVideo(index) {
 
@@ -2669,7 +2500,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             });
 
-
             const video = videos[index];
 
             if (video) {
@@ -2682,56 +2512,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (playPromise !== undefined) {
                     playPromise.catch(function () {});
                 }
-
             }
 
-
             dots.forEach(function (dot, i) {
-
-                dot.classList.toggle(
-                    "active",
-                    i === index
-                );
-
+                dot.classList.toggle("active", i === index);
             });
 
-
             currentIndex = index;
-
         }
-
 
         function nextVideo() {
-
-            const nextIndex =
-                (currentIndex + 1) % videos.length;
-
+            const nextIndex = (currentIndex + 1) % videos.length;
             playVideo(nextIndex);
-
         }
-
 
         function startRotation() {
-
             clearInterval(rotateTimer);
-
-            rotateTimer =
-                setInterval(nextVideo, rotateTime);
-
+            rotateTimer = setInterval(nextVideo, rotateTime);
         }
-
 
         playVideo(0);
         startRotation();
-
 
         dots.forEach(function (dot) {
 
             dot.addEventListener("click", function () {
 
-                const index =
-                    parseInt(this.dataset.index, 10);
-
+                const index = parseInt(this.dataset.index, 10);
                 playVideo(index);
                 startRotation();
 
@@ -2739,33 +2546,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
+        document.addEventListener("visibilitychange", function () {
 
-        document.addEventListener(
-            "visibilitychange",
-            function () {
+            if (document.hidden) {
 
-                if (document.hidden) {
+                clearInterval(rotateTimer);
 
-                    clearInterval(rotateTimer);
+                videos.forEach(function (video) {
+                    try { video.pause(); } catch (error) {}
+                });
 
-                    videos.forEach(function (video) {
+            } else {
 
-                        try {
-                            video.pause();
-                        } catch (error) {}
-
-                    });
-
-                } else {
-
-                    playVideo(currentIndex);
-                    startRotation();
-
-                }
-
+                playVideo(currentIndex);
+                startRotation();
             }
-        );
-
+        });
     }
 
 
@@ -2773,52 +2569,30 @@ document.addEventListener("DOMContentLoaded", function () {
        HOW IT WORKS TOGGLE
     ===================================================== */
 
-    const workButtons =
-        document.querySelectorAll(".sf-work-toggle-btn");
-
-    const workPanels =
-        document.querySelectorAll(".sf-work-panel");
-
+    const workButtons = document.querySelectorAll(".sf-work-toggle-btn");
+    const workPanels  = document.querySelectorAll(".sf-work-panel");
 
     workButtons.forEach(function (button) {
 
         button.addEventListener("click", function () {
 
-            const target =
-                this.dataset.target;
-
+            const target = this.dataset.target;
 
             workButtons.forEach(function (btn) {
-
                 btn.classList.remove("active");
-                btn.setAttribute(
-                    "aria-selected",
-                    "false"
-                );
-
+                btn.setAttribute("aria-selected", "false");
             });
-
 
             this.classList.add("active");
-
-            this.setAttribute(
-                "aria-selected",
-                "true"
-            );
-
+            this.setAttribute("aria-selected", "true");
 
             workPanels.forEach(function (panel) {
-
                 panel.classList.toggle(
                     "active",
-                    panel.id ===
-                    "sf-panel-" + target
+                    panel.id === "sf-panel-" + target
                 );
-
             });
-
         });
-
     });
 
 
@@ -2826,31 +2600,17 @@ document.addEventListener("DOMContentLoaded", function () {
        SEARCH INPUT
     ===================================================== */
 
-    const searchInput =
-        document.querySelector(".sf-search input");
+    const searchInput = document.querySelector(".sf-search input");
 
     if (searchInput) {
 
-        searchInput.addEventListener(
-            "focus",
-            function () {
+        searchInput.addEventListener("focus", function () {
+            this.closest(".sf-search").classList.add("focused");
+        });
 
-                this.closest(".sf-search")
-                    .classList.add("focused");
-
-            }
-        );
-
-        searchInput.addEventListener(
-            "blur",
-            function () {
-
-                this.closest(".sf-search")
-                    .classList.remove("focused");
-
-            }
-        );
-
+        searchInput.addEventListener("blur", function () {
+            this.closest(".sf-search").classList.remove("focused");
+        });
     }
 
 
@@ -2871,24 +2631,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 const toRemove = activePanel;
 
                 setTimeout(function () {
-
                     if (toRemove && !toRemove.classList.contains("show")) {
                         toRemove.remove();
                     }
-
                 }, 200);
 
                 activePanel = null;
-
             }
 
             if (activeBtn) {
-
                 activeBtn.setAttribute("aria-expanded", "false");
                 activeBtn = null;
-
             }
-
         }
 
         function openPanel(btn) {
@@ -2909,7 +2663,7 @@ document.addEventListener("DOMContentLoaded", function () {
             panel.innerHTML = template.innerHTML;
             document.body.appendChild(panel);
 
-            const btnRect = btn.getBoundingClientRect();
+            const btnRect    = btn.getBoundingClientRect();
             const panelWidth = panel.offsetWidth || 220;
             const panelHeight = panel.offsetHeight || 200;
 
@@ -2921,7 +2675,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 left = window.innerWidth - panelWidth - 12;
             }
 
-            // Prefer opening below; flip above if there is not enough room
             let top = btnRect.bottom + 8;
 
             if (top + panelHeight > window.innerHeight - 12) {
@@ -2929,22 +2682,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 top = btnRect.top - panelHeight - 8;
 
                 if (top < 12) top = 12;
-
             }
 
-            panel.style.top = top + "px";
+            panel.style.top  = top + "px";
             panel.style.left = left + "px";
 
             requestAnimationFrame(function () {
-
                 panel.classList.add("show");
-
             });
 
             activePanel = panel;
             activeBtn = btn;
             btn.setAttribute("aria-expanded", "true");
-
         }
 
         document.addEventListener("click", function (e) {
@@ -2963,19 +2712,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 return;
-
             }
 
             if (activePanel && !e.target.closest(".sf-category-dropdown-panel")) {
                 closePanel();
             }
-
         });
 
         document.addEventListener("keydown", function (e) {
-
             if (e.key === "Escape") closePanel();
-
         });
 
         window.addEventListener("scroll", closePanel, true);

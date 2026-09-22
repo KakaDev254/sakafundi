@@ -22,7 +22,7 @@
 
             <p>
                 Explore every category on SakaFundi and find the right
-                professional for your next project.
+                artisan for your next project.
             </p>
 
         </div>
@@ -45,59 +45,87 @@
 
                 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
 
-                    <a
-                        href="{% url 'services:category_detail' category.slug %}"
-                        class="sf-category-card"
-                    >
+                    <div class="sf-category-card">
 
-                        <div class="sf-category-image">
-
-                            {% if category.image %}
-
-                                <img
-                                    src="{{ category.image.url }}"
-                                    alt="{{ category.name }}"
-                                >
-
-                            {% else %}
-
-                                <img
-                                    src="{% static 'images/category-default.jpg' %}"
-                                    alt="{{ category.name }}"
-                                >
-
-                            {% endif %}
-
-                            <span class="sf-category-arrow">
-                                <i class="fas fa-arrow-up"></i>
-                            </span>
-
-                        </div>
-
-                        <h3>
-                            {{ category.name }}
-                        </h3>
-
-                        <span class="sf-category-count">
-                            {{ category.service_count }}
-                            service{{ category.service_count|pluralize }}
-                        </span>
-
-                    </a>
-
-                </div>
-
-            {% empty %}
-
-                <div class="col-12">
-
-                    <div class="sf-empty">
-                        <img
-                            src="{% static 'images/empty-categories.png' %}"
-                            alt="No categories"
-                            class="sf-empty-image"
+                        <!-- Image links to parent category -->
+                        <a
+                            href="{% url 'services:category_detail' category.slug %}"
+                            class="sf-category-image-link"
                         >
-                        <p>No categories available yet.</p>
+                            <div class="sf-category-image">
+
+                                {% if category.image %}
+                                    <img
+                                        src="{{ category.image.url }}"
+                                        alt="{{ category.name }}"
+                                    >
+                                {% else %}
+                                    <img
+                                        src="{% static 'images/category-default.jpg' %}"
+                                        alt="{{ category.name }}"
+                                    >
+                                {% endif %}
+
+                            </div>
+                        </a>
+
+                        <!-- Chevron toggle (only if the category has subcategories) -->
+                        {% if category.has_subcategories %}
+                            <button
+                                type="button"
+                                class="sf-category-toggle"
+                                data-category-id="{{ category.id }}"
+                                aria-expanded="false"
+                                aria-label="Show {{ category.name }} subcategories"
+                            >
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+
+                            <!-- Hidden template cloned into a floating panel -->
+                            <div
+                                class="sf-category-dropdown-content"
+                                data-category-id="{{ category.id }}"
+                                hidden
+                            >
+                                <div class="dropdown-header">
+                                    <a
+                                        href="{% url 'services:category_detail' category.slug %}"
+                                        class="dropdown-all-link"
+                                    >
+                                        All {{ category.name }}
+                                    </a>
+                                </div>
+                                <hr class="dropdown-divider">
+                                {% for sub in category.subcategories.all %}
+                                    {% if sub.is_active %}
+                                        <a
+                                            href="{% url 'services:category_detail' sub.slug %}"
+                                            class="dropdown-sub-link"
+                                        >
+                                            {{ sub.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Name + service count -->
+                        <a
+                            href="{% url 'services:category_detail' category.slug %}"
+                            class="sf-category-name-link"
+                        >
+                            <h3>
+                                {{ category.name }}
+                            </h3>
+
+                            {% if category.service_count %}
+                                <span class="sf-category-count">
+                                    {{ category.service_count }}
+                                    service{{ category.service_count|pluralize }}
+                                </span>
+                            {% endif %}
+                        </a>
+
                     </div>
 
                 </div>
@@ -166,7 +194,14 @@
     background: #FFFFFF;
 }
 
+/* Card wrapper */
 .sf-category-card {
+    position: relative;
+    display: block;
+}
+
+.sf-category-image-link,
+.sf-category-name-link {
     display: block;
     text-decoration: none;
     color: inherit;
@@ -177,7 +212,7 @@
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: 14px;
-    background: white;
+    background: #FFFFFF;
     border: 1px solid var(--sf-border, #E2E8F0);
     box-shadow: 0 5px 20px rgba(16,42,67,.04);
     transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease;
@@ -201,27 +236,39 @@
     transform: scale(1.06);
 }
 
-.sf-category-arrow {
+/* Chevron toggle button */
+.sf-category-toggle {
     position: absolute;
     right: 10px;
-    bottom: 10px;
-    width: 30px;
-    height: 30px;
-    display: flex;
+    bottom: 52px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: none;
     border-radius: 50%;
-    color: white;
-    background: rgba(15,23,42,.85);
-    font-size: 10px;
-    opacity: 0;
-    transform: translateY(5px);
+    background: rgba(255, 255, 255, .95);
+    color: var(--sf-blue, #2563EB);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .18);
+    cursor: pointer;
     transition: all .25s ease;
+    z-index: 3;
 }
 
-.sf-category-card:hover .sf-category-arrow {
-    opacity: 1;
-    transform: translateY(0);
+.sf-category-toggle:hover {
+    background: var(--sf-blue, #2563EB);
+    color: #FFFFFF;
+    transform: scale(1.08);
+}
+
+.sf-category-toggle i {
+    font-size: 12px;
+    transition: transform .3s ease;
+}
+
+.sf-category-toggle[aria-expanded="true"] i {
+    transform: rotate(180deg);
 }
 
 .sf-category-card h3 {
@@ -247,30 +294,74 @@
 }
 
 
-/* ---------- Empty state ---------- */
+/* =========================================================
+   FLOATING SUBCATEGORY DROPDOWN PANEL
+========================================================= */
 
-.sf-empty {
-    padding: 60px 40px;
-    text-align: center;
-    color: var(--sf-muted, #64748B);
-    border: 1px dashed #CBD5E1;
-    border-radius: 14px;
-    background: white;
+.sf-category-dropdown-panel {
+    position: fixed;
+    min-width: 220px;
+    max-width: 300px;
+    background: #FFFFFF;
+    border: 1px solid var(--sf-border, #E2E8F0);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    padding: 8px;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity .15s ease, transform .15s ease, visibility .15s ease;
 }
 
-.sf-empty-image {
+.sf-category-dropdown-panel.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.sf-category-dropdown-panel .dropdown-header {
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--sf-border, #E2E8F0);
+}
+
+.sf-category-dropdown-panel .dropdown-all-link {
     display: block;
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin: 0 auto 14px;
-    opacity: .8;
-}
-
-.sf-empty p {
-    margin: 0;
+    padding: 8px 12px;
     font-family: 'Manrope', 'Inter', sans-serif;
     font-size: 13px;
+    font-weight: 700;
+    color: var(--sf-blue, #2563EB);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background .15s ease;
+}
+
+.sf-category-dropdown-panel .dropdown-all-link:hover {
+    background: #EFF6FF;
+}
+
+.sf-category-dropdown-panel .dropdown-divider {
+    margin: 4px 0;
+    border-color: #F1F5F9;
+}
+
+.sf-category-dropdown-panel .dropdown-sub-link {
+    display: block;
+    padding: 8px 12px;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--sf-text, #0F172A);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background .15s ease, color .15s ease;
+}
+
+.sf-category-dropdown-panel .dropdown-sub-link:hover {
+    background: #EFF6FF;
+    color: var(--sf-blue, #2563EB);
 }
 
 
@@ -309,12 +400,148 @@
         font-size: 10px;
     }
 
-    .sf-category-arrow {
-        display: none;
+    .sf-category-toggle {
+        width: 28px;
+        height: 28px;
+        right: 8px;
+        bottom: 44px;
+    }
+
+    .sf-category-toggle i {
+        font-size: 10px;
     }
 
 }
 
 </style>
+
+
+<script>
+
+/* =====================================================
+   CATEGORY CARD SUBCATEGORY DROPDOWN
+===================================================== */
+(function () {
+
+    let activePanel = null;
+    let activeBtn = null;
+
+    function closePanel() {
+
+        if (activePanel) {
+
+            activePanel.classList.remove("show");
+            const toRemove = activePanel;
+
+            setTimeout(function () {
+
+                if (toRemove && !toRemove.classList.contains("show")) {
+                    toRemove.remove();
+                }
+
+            }, 200);
+
+            activePanel = null;
+
+        }
+
+        if (activeBtn) {
+
+            activeBtn.setAttribute("aria-expanded", "false");
+            activeBtn = null;
+
+        }
+
+    }
+
+    function openPanel(btn) {
+
+        closePanel();
+
+        const categoryId = btn.dataset.categoryId;
+        if (!categoryId) return;
+
+        const template = document.querySelector(
+            '.sf-category-dropdown-content[data-category-id="' + categoryId + '"]'
+        );
+
+        if (!template) return;
+
+        const panel = document.createElement("div");
+        panel.className = "sf-category-dropdown-panel";
+        panel.innerHTML = template.innerHTML;
+        document.body.appendChild(panel);
+
+        const btnRect = btn.getBoundingClientRect();
+        const panelWidth = panel.offsetWidth || 220;
+        const panelHeight = panel.offsetHeight || 200;
+
+        let left = btnRect.left + btnRect.width - panelWidth;
+
+        if (left < 12) left = 12;
+
+        if (left + panelWidth > window.innerWidth - 12) {
+            left = window.innerWidth - panelWidth - 12;
+        }
+
+        // Prefer opening below; flip above if there is not enough room
+        let top = btnRect.bottom + 8;
+
+        if (top + panelHeight > window.innerHeight - 12) {
+
+            top = btnRect.top - panelHeight - 8;
+
+            if (top < 12) top = 12;
+
+        }
+
+        panel.style.top = top + "px";
+        panel.style.left = left + "px";
+
+        requestAnimationFrame(function () {
+            panel.classList.add("show");
+        });
+
+        activePanel = panel;
+        activeBtn = btn;
+        btn.setAttribute("aria-expanded", "true");
+
+    }
+
+    document.addEventListener("click", function (e) {
+
+        const btn = e.target.closest(".sf-category-toggle");
+
+        if (btn) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (activeBtn === btn) {
+                closePanel();
+            } else {
+                openPanel(btn);
+            }
+
+            return;
+
+        }
+
+        if (activePanel && !e.target.closest(".sf-category-dropdown-panel")) {
+            closePanel();
+        }
+
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closePanel();
+    });
+
+    window.addEventListener("scroll", closePanel, true);
+    window.addEventListener("resize", closePanel);
+
+})();
+
+</script>
 
 {% endblock %}
