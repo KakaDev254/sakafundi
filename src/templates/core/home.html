@@ -360,13 +360,11 @@
 
                 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
 
-                    <div class="sf-category-card">
+                    {% if category.has_subcategories %}
 
-                        <!-- Image links to parent category -->
-                        <a
-                            href="{% url 'services:category_detail' category.slug %}"
-                            class="sf-category-image-link"
-                        >
+                        <!-- PARENT with subcategories — NOT clickable, only chevron opens dropdown -->
+                        <div class="sf-category-card sf-category-card-static">
+
                             <div class="sf-category-image">
 
                                 {% if category.image %}
@@ -382,10 +380,8 @@
                                 {% endif %}
 
                             </div>
-                        </a>
 
-                        <!-- Chevron toggle (only if the category has subcategories) -->
-                        {% if category.has_subcategories %}
+                            <!-- Chevron toggle -->
                             <button
                                 type="button"
                                 class="sf-category-toggle"
@@ -422,19 +418,45 @@
                                     {% endif %}
                                 {% endfor %}
                             </div>
-                        {% endif %}
 
-                        <!-- Name below the card -->
-                        <a
-                            href="{% url 'services:category_detail' category.slug %}"
-                            class="sf-category-name-link"
-                        >
+                            <!-- Static name (not a link) -->
                             <h3>
                                 {{ category.name }}
                             </h3>
+
+                        </div>
+
+                    {% else %}
+
+                        <!-- PARENT without subcategories — fully clickable -->
+                        <a
+                            href="{% url 'services:category_detail' category.slug %}"
+                            class="sf-category-card"
+                        >
+
+                            <div class="sf-category-image">
+
+                                {% if category.image %}
+                                    <img
+                                        src="{{ category.image.url }}"
+                                        alt="{{ category.name }}"
+                                    >
+                                {% else %}
+                                    <img
+                                        src="{% static 'images/category-default.jpg' %}"
+                                        alt="{{ category.name }}"
+                                    >
+                                {% endif %}
+
+                            </div>
+
+                            <h3>
+                                {{ category.name }}
+                            </h3>
+
                         </a>
 
-                    </div>
+                    {% endif %}
 
                 </div>
 
@@ -505,86 +527,47 @@
             <div class="row g-4">
 
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">01</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-search"></i>
                         </div>
-
                         <h3>Find a Service</h3>
-
-                        <p>
-                            Search for the skill or service you need.
-                        </p>
-
+                        <p>Search for the skill or service you need.</p>
                     </div>
-
                 </div>
 
-
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">02</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-comments"></i>
                         </div>
-
                         <h3>Talk & Agree</h3>
-
-                        <p>
-                            Connect with the artisan and agree on the job.
-                        </p>
-
+                        <p>Connect with the artisan and agree on the job.</p>
                     </div>
-
                 </div>
 
-
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">03</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-mobile-alt"></i>
                         </div>
-
                         <h3>Pay Securely</h3>
-
-                        <p>
-                            Make your payment conveniently through M-PESA.
-                        </p>
-
+                        <p>Make your payment conveniently through M-PESA.</p>
                     </div>
-
                 </div>
 
-
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">04</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-check"></i>
                         </div>
-
                         <h3>Get It Done</h3>
-
-                        <p>
-                            Review the completed work and close the job.
-                        </p>
-
+                        <p>Review the completed work and close the job.</p>
                     </div>
-
                 </div>
 
             </div>
@@ -601,86 +584,47 @@
             <div class="row g-4">
 
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">01</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-user-plus"></i>
                         </div>
-
                         <h3>Create Your Profile</h3>
-
-                        <p>
-                            Sign up and tell customers what you do.
-                        </p>
-
+                        <p>Sign up and tell customers what you do.</p>
                     </div>
-
                 </div>
 
-
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">02</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-briefcase"></i>
                         </div>
-
                         <h3>List Your Services</h3>
-
-                        <p>
-                            Showcase your skills, experience and services.
-                        </p>
-
+                        <p>Showcase your skills, experience and services.</p>
                     </div>
-
                 </div>
 
-
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">03</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-bell"></i>
                         </div>
-
                         <h3>Receive Requests</h3>
-
-                        <p>
-                            Connect with customers looking for your skills.
-                        </p>
-
+                        <p>Connect with customers looking for your skills.</p>
                     </div>
-
                 </div>
 
-
                 <div class="col-6 col-md-3">
-
                     <div class="sf-step">
-
                         <div class="sf-step-number">04</div>
-
                         <div class="sf-step-icon">
                             <i class="fas fa-wallet"></i>
                         </div>
-
                         <h3>Get Paid</h3>
-
-                        <p>
-                            Complete the job and receive your payment.
-                        </p>
-
+                        <p>Complete the job and receive your payment.</p>
                     </div>
-
                 </div>
 
             </div>
@@ -756,13 +700,8 @@
 
 
                 <div class="sf-floating-card sf-floating-card-small">
-
                     <i class="fas fa-check-circle"></i>
-
-                    <span>
-                        New opportunity
-                    </span>
-
+                    <span>New opportunity</span>
                 </div>
 
             </div>
@@ -782,142 +721,65 @@
     <div class="container">
 
         <div class="sf-centered-heading">
-
             <span class="sf-kicker">COMMUNITY</span>
-
-            <h2>
-                Built for people who get things done.
-            </h2>
-
-            <p>
-                See how customers and artisans are using SakaFundi.
-            </p>
-
+            <h2>Built for people who get things done.</h2>
+            <p>See how customers and artisans are using SakaFundi.</p>
         </div>
-
 
         <div class="row g-4">
 
-            <!-- Testimonial 1 -->
             <div class="col-md-4">
-
                 <article class="sf-testimonial">
-
-                    <div class="sf-quote-icon">
-                        <i class="fas fa-quote-left"></i>
-                    </div>
-
+                    <div class="sf-quote-icon"><i class="fas fa-quote-left"></i></div>
                     <div class="sf-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-
-                    <p>
-                        "Found an amazing graphic designer for my business.
-                        The process was simple and straightforward."
-                    </p>
-
+                    <p>"Found an amazing graphic designer for my business. The process was simple and straightforward."</p>
                     <div class="sf-person">
-
-                        <img
-                            src="{% static 'images/avatar1.jpg' %}"
-                            alt="Mary"
-                        >
-
+                        <img src="{% static 'images/avatar1.jpg' %}" alt="Mary">
                         <div>
                             <strong>Mary W.</strong>
                             <span>Nairobi</span>
                         </div>
-
                     </div>
-
                 </article>
-
             </div>
 
-
-            <!-- Testimonial 2 -->
             <div class="col-md-4">
-
                 <article class="sf-testimonial">
-
-                    <div class="sf-quote-icon">
-                        <i class="fas fa-quote-left"></i>
-                    </div>
-
+                    <div class="sf-quote-icon"><i class="fas fa-quote-left"></i></div>
                     <div class="sf-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-
-                    <p>
-                        "As a web developer, SakaFundi has helped me
-                        showcase my services and connect with clients."
-                    </p>
-
+                    <p>"As a web developer, SakaFundi has helped me showcase my services and connect with clients."</p>
                     <div class="sf-person">
-
-                        <img
-                            src="{% static 'images/avatar2.jpg' %}"
-                            alt="James"
-                        >
-
+                        <img src="{% static 'images/avatar2.jpg' %}" alt="James">
                         <div>
                             <strong>James K.</strong>
                             <span>Mombasa</span>
                         </div>
-
                     </div>
-
                 </article>
-
             </div>
 
-
-            <!-- Testimonial 3 -->
             <div class="col-md-4">
-
                 <article class="sf-testimonial">
-
-                    <div class="sf-quote-icon">
-                        <i class="fas fa-quote-left"></i>
-                    </div>
-
+                    <div class="sf-quote-icon"><i class="fas fa-quote-left"></i></div>
                     <div class="sf-rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-
-                    <p>
-                        "It's a convenient way to put my skills in front
-                        of customers who are actively looking for services."
-                    </p>
-
+                    <p>"It's a convenient way to put my skills in front of customers who are actively looking for services."</p>
                     <div class="sf-person">
-
-                        <img
-                            src="{% static 'images/avatar3.jpg' %}"
-                            alt="Sarah"
-                        >
-
+                        <img src="{% static 'images/avatar3.jpg' %}" alt="Sarah">
                         <div>
                             <strong>Sarah A.</strong>
                             <span>Kisumu</span>
                         </div>
-
                     </div>
-
                 </article>
-
             </div>
 
         </div>
@@ -936,13 +798,9 @@
 
         <div class="sf-final-content">
 
-            <span class="sf-kicker">
-                START TODAY
-            </span>
+            <span class="sf-kicker">START TODAY</span>
 
-            <h2>
-                Have a job to get done?
-            </h2>
+            <h2>Have a job to get done?</h2>
 
             <p>
                 Find the skills you need or join SakaFundi and
@@ -951,18 +809,12 @@
 
             <div class="sf-final-buttons">
 
-                <a
-                    href="{% url 'services:list' %}"
-                    class="sf-final-primary"
-                >
+                <a href="{% url 'services:list' %}" class="sf-final-primary">
                     <i class="fas fa-search"></i>
                     Find a Fundi
                 </a>
 
-                <a
-                    href="{% url 'accounts:register' %}"
-                    class="sf-final-secondary"
-                >
+                <a href="{% url 'accounts:register' %}" class="sf-final-secondary">
                     <i class="fas fa-user-plus"></i>
                     Join as a Fundi
                 </a>
@@ -1550,7 +1402,7 @@
 
 
 /* =========================================================
-   CATEGORIES  (with subcategory dropdown)
+   CATEGORIES
 ========================================================= */
 
 .sf-categories {
@@ -1580,16 +1432,17 @@
     background: var(--sf-blue);
 }
 
+/* Card wrapper (used by both link and static versions) */
 .sf-category-card {
     position: relative;
     display: block;
-}
-
-.sf-category-image-link,
-.sf-category-name-link {
-    display: block;
     text-decoration: none;
     color: inherit;
+}
+
+/* Static variant — parent category with subcategories: NOT clickable */
+.sf-category-card-static {
+    cursor: default;
 }
 
 .sf-category-image {
@@ -1609,6 +1462,13 @@
     box-shadow: 0 12px 30px rgba(37, 99, 235, .12);
 }
 
+/* Static card shouldn't lift on hover of the whole card — but the chevron can still light up */
+.sf-category-card-static:hover .sf-category-image {
+    transform: none;
+    border-color: var(--sf-border);
+    box-shadow: 0 5px 20px rgba(16,42,67,.04);
+}
+
 .sf-category-image img {
     width: 100%;
     height: 100%;
@@ -1619,6 +1479,10 @@
 
 .sf-category-card:hover .sf-category-image img {
     transform: scale(1.06);
+}
+
+.sf-category-card-static:hover .sf-category-image img {
+    transform: none;
 }
 
 .sf-category-toggle {
@@ -1664,7 +1528,8 @@
     transition: color .2s ease;
 }
 
-.sf-category-card:hover h3 {
+/* Only the anchor version reacts to hover */
+.sf-category-card:not(.sf-category-card-static):hover h3 {
     color: var(--sf-blue);
 }
 
@@ -1881,7 +1746,6 @@
     color: var(--sf-yellow) !important;
 }
 
-/* Hero-style CTA heading — force white always */
 .sf-marketplace-box .sf-marketplace-heading,
 .sf-marketplace-box h2.sf-marketplace-heading {
     max-width: 570px;
@@ -2211,19 +2075,11 @@
     .sf-trust-item strong { font-size: 11px; }
     .sf-trust-item span   { font-size: 9px; }
 
-    .sf-marketplace-box {
-        padding: 45px;
-    }
+    .sf-marketplace-box { padding: 45px; }
+    .sf-marketplace-content { width: 62%; }
+    .sf-marketplace-visual  { width: 38%; }
 
-    .sf-marketplace-content {
-        width: 62%;
-    }
-
-    .sf-marketplace-visual {
-        width: 38%;
-    }
-
-    .sf-floating-card-main { right: 10px; }
+    .sf-floating-card-main  { right: 10px; }
     .sf-floating-card-small { right: -10px; }
 }
 
@@ -2274,10 +2130,7 @@
         margin-bottom: 20px;
     }
 
-    .sf-role-switch {
-        display: flex;
-        width: 100%;
-    }
+    .sf-role-switch { display: flex; width: 100%; }
 
     .sf-role-btn {
         flex: 1;

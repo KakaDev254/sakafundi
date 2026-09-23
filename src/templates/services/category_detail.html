@@ -221,7 +221,7 @@
 
 
 <!-- =========================================================
-     OTHER CATEGORIES
+     OTHER CATEGORIES  (with subcategory dropdown)
 ========================================================= -->
 <section class="sf-other-cats">
 
@@ -244,13 +244,11 @@
 
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
 
-                        <div class="sf-category-card">
+                        {% if cat.has_subcategories %}
 
-                            <!-- Image links to parent category -->
-                            <a
-                                href="{% url 'services:category_detail' cat.slug %}"
-                                class="sf-category-image-link"
-                            >
+                            <!-- PARENT with subcategories — NOT clickable, only chevron -->
+                            <div class="sf-category-card sf-category-card-static">
+
                                 <div class="sf-category-image">
 
                                     {% if cat.image %}
@@ -260,10 +258,7 @@
                                     {% endif %}
 
                                 </div>
-                            </a>
 
-                            <!-- Chevron toggle (only if the category has subcategories) -->
-                            {% if cat.has_subcategories %}
                                 <button
                                     type="button"
                                     class="sf-category-toggle"
@@ -274,7 +269,6 @@
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
 
-                                <!-- Hidden template cloned into a floating panel -->
                                 <div
                                     class="sf-category-dropdown-content"
                                     data-category-id="{{ cat.id }}"
@@ -300,19 +294,34 @@
                                         {% endif %}
                                     {% endfor %}
                                 </div>
-                            {% endif %}
 
-                            <!-- Name below the card -->
+                                <h3>{{ cat.name|truncatechars:24 }}</h3>
+
+                            </div>
+
+                        {% else %}
+
+                            <!-- PARENT without subcategories — fully clickable -->
                             <a
                                 href="{% url 'services:category_detail' cat.slug %}"
-                                class="sf-category-name-link"
+                                class="sf-category-card"
                             >
-                                <h3>
-                                    {{ cat.name|truncatechars:20 }}
-                                </h3>
+
+                                <div class="sf-category-image">
+
+                                    {% if cat.image %}
+                                        <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
+                                    {% else %}
+                                        <img src="{% static 'images/category-default.jpg' %}" alt="{{ cat.name }}">
+                                    {% endif %}
+
+                                </div>
+
+                                <h3>{{ cat.name|truncatechars:24 }}</h3>
+
                             </a>
 
-                        </div>
+                        {% endif %}
 
                     </div>
 
@@ -695,13 +704,13 @@
 .sf-category-card {
     position: relative;
     display: block;
-}
-
-.sf-category-image-link,
-.sf-category-name-link {
-    display: block;
     text-decoration: none;
     color: inherit;
+}
+
+/* Static variant — parent category with subcategories: NOT clickable */
+.sf-category-card-static {
+    cursor: default;
 }
 
 .sf-category-image {
@@ -721,6 +730,13 @@
     box-shadow: 0 12px 30px rgba(37, 99, 235, .12);
 }
 
+/* Static card should NOT lift on hover */
+.sf-category-card-static:hover .sf-category-image {
+    transform: none;
+    border-color: var(--sf-border, #E2E8F0);
+    box-shadow: 0 5px 20px rgba(16, 42, 67, .04);
+}
+
 .sf-category-image img {
     width: 100%;
     height: 100%;
@@ -731,6 +747,10 @@
 
 .sf-category-card:hover .sf-category-image img {
     transform: scale(1.06);
+}
+
+.sf-category-card-static:hover .sf-category-image img {
+    transform: none;
 }
 
 /* Chevron toggle button */
@@ -778,7 +798,8 @@
     transition: color .2s ease;
 }
 
-.sf-category-card:hover h3 {
+/* Only the anchor version reacts to hover */
+.sf-category-card:not(.sf-category-card-static):hover h3 {
     color: var(--sf-blue, #2563EB);
 }
 
