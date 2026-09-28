@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Pay Deposit — Order #{{ order.id }} — SakaFundi{% endblock %}
+
+{% block content %}
+<style>
+.pd-page { background: #F8FAFB; padding: 40px 0 80px; font-family: 'Manrope','Inter',sans-serif; }
+.pd-container { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+.pd-card { background: #FFF; border: 1px solid #E2E8F0; border-radius: 16px; padding: 26px; box-shadow: 0 4px 16px rgba(15,23,42,.03); }
+.pd-kicker { color: #2563EB; font-size: 11px; font-weight: 800; letter-spacing: 2px; display: block; margin-bottom: 8px; }
+.pd-card h1 { margin: 0 0 6px; color: #0F172A; font-size: 1.4rem; font-weight: 800; }
+.pd-card p.lead { color: #64748B; font-size: 13px; line-height: 1.6; margin: 0 0 22px; }
+.pd-summary { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px 18px; margin-bottom: 22px; }
+.pd-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; color: #475569; }
+.pd-row strong { color: #0F172A; font-weight: 700; }
+.pd-row.total { padding-top: 12px; margin-top: 8px; border-top: 1px solid #E2E8F0; font-size: 15px; font-weight: 800; }
+.pd-row.total strong { color: #2563EB; }
+.pd-label { display: block; margin-bottom: 6px; color: #0F172A; font-size: 12.5px; font-weight: 700; }
+.pd-input { width: 100%; padding: 12px 14px; border: 1px solid #E2E8F0; border-radius: 10px; background: #FFF; font-family: 'Manrope','Inter',sans-serif; font-size: 14px; }
+.pd-input:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+.pd-radios { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.pd-radio { display: flex; gap: 12px; padding: 14px; border: 1px solid #E2E8F0; border-radius: 10px; cursor: pointer; background: #FFF; transition: all .2s ease; }
+.pd-radio:hover { border-color: #93C5FD; background: #F8FAFC; }
+.pd-radio input[type=radio] { accent-color: #2563EB; margin-top: 3px; }
+.pd-radio-label { flex: 1; font-size: 13.5px; font-weight: 600; color: #0F172A; }
+.pd-radio-desc { color: #64748B; font-size: 11.5px; font-weight: 500; display: block; margin-top: 3px; }
+.pd-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px 20px; border-radius: 10px; border: none; cursor: pointer; font-family: 'Manrope','Inter',sans-serif; font-size: 14px; font-weight: 800; text-decoration: none; transition: all .2s ease; }
+.pd-btn-primary { background: #2563EB; color: #FFF; box-shadow: 0 4px 14px rgba(37,99,235,.28); }
+.pd-btn-primary:hover { background: #1D4ED8; transform: translateY(-1px); }
+.pd-btn-outline { background: #FFF; color: #0F172A; border: 1px solid #E2E8F0; margin-top: 10px; }
+.pd-mock-banner { padding: 12px 14px; background: #FEF3C7; border: 1px solid #FDE68A; color: #78350F; border-radius: 10px; font-size: 12.5px; line-height: 1.6; margin-bottom: 18px; }
+</style>
+
+<section class="pd-page">
+    <div class="pd-container">
+        <div class="pd-card">
+            <span class="pd-kicker">ORDER DEPOSIT</span>
+            <h1>Pay deposit for Order #{{ order.id }}</h1>
+            <p class="lead">{{ order.title }}</p>
+
+            {% if mpesa_mock %}
+            <div class="pd-mock-banner">
+                <i class="fas fa-flask"></i>
+                <strong>Demo mode.</strong> Real M-PESA is disabled.
+                The flow will simulate a successful payment so you can test.
+            </div>
+            {% endif %}
+
+            <div class="pd-summary">
+                <div class="pd-row"><span>Job price</span><strong>KSh {{ order.agreed_price|floatformat:0|intcomma }}</strong></div>
+                <div class="pd-row"><span>Escrow fee (3%)</span><strong>KSh {{ order.escrow_service_fee|floatformat:0|intcomma }}</strong></div>
+                <div class="pd-row total"><span>Deposit due now</span><strong>KSh {{ order.deposit_amount|floatformat:0|intcomma }}</strong></div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                <div style="padding:12px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;
+                    {% if message.tags == 'error' %}background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;
+                    {% else %}background:#EFF6FF;color:#1E3A8A;border:1px solid #DBEAFE;{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <label class="pd-label">Payment method</label>
+                <div class="pd-radios">
+                    <label class="pd-radio">
+                        <input type="radio" name="payment_method" value="mpesa" checked onchange="togglePhone()">
+                        <div class="pd-radio-label">
+                            M-PESA
+                            <span class="pd-radio-desc">A prompt will be sent to your phone.</span>
+                        </div>
+                    </label>
+                    {% if wallet.balance >= amount %}
+                    <label class="pd-radio">
+                        <input type="radio" name="payment_method" value="wallet" onchange="togglePhone()">
+                        <div class="pd-radio-label">
+                            Wallet balance (KSh {{ wallet.balance|floatformat:0|intcomma }})
+                            <span class="pd-radio-desc">Pay instantly from your SakaFundi wallet.</span>
+                        </div>
+                    </label>
+                    {% endif %}
+                </div>
+
+                <div id="phoneField">
+                    <label class="pd-label" for="phone_number">M-PESA phone number</label>
+                    <input type="tel" name="phone_number" id="phone_number"
+                           class="pd-input" placeholder="07XX XXX XXX"
+                           value="{{ default_phone }}">
+                </div>
+
+                <button type="submit" class="pd-btn pd-btn-primary" style="margin-top: 20px;">
+                    <i class="fas fa-lock"></i> Pay KSh {{ order.deposit_amount|floatformat:0|intcomma }}
+                </button>
+                <a href="{% url 'projects:order_detail' order.id %}" class="pd-btn pd-btn-outline">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+function togglePhone() {
+    const method = document.querySelector('input[name="payment_method"]:checked').value;
+    document.getElementById('phoneField').style.display = method === 'mpesa' ? 'block' : 'none';
+}
+togglePhone();
+</script>
+{% endblock %}

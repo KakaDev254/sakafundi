@@ -1,0 +1,490 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Order #{{ order.id }} — SakaFundi{% endblock %}
+
+{% block content %}
+
+<style>
+.od-page {
+    background: #F8FAFB;
+    padding: 30px 0 80px;
+    font-family: 'Manrope', 'Inter', sans-serif;
+}
+.od-container { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+
+.od-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; margin-bottom: 22px; flex-wrap: wrap;
+}
+.od-header h1 {
+    margin: 0; color: #0F172A; font-size: 1.5rem;
+    font-weight: 800; letter-spacing: -0.4px;
+}
+.od-header p {
+    margin: 4px 0 0; color: #64748B; font-size: 12.5px;
+}
+.od-status {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 50px;
+    font-size: 12px; font-weight: 700;
+    background: #EFF6FF; color: #1D4ED8;
+}
+.od-status.warn { background: #FEF3C7; color: #92400E; }
+.od-status.ok { background: #DCFCE7; color: #166534; }
+.od-status.err { background: #FEE2E2; color: #991B1B; }
+
+.od-grid {
+    display: grid; gap: 18px;
+    grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+    .od-grid { grid-template-columns: 1.5fr 1fr; }
+}
+
+.od-card {
+    background: #FFF; border: 1px solid #E2E8F0;
+    border-radius: 14px; padding: 20px 22px;
+    box-shadow: 0 4px 16px rgba(15,23,42,0.03);
+    margin-bottom: 16px;
+}
+.od-card h2 {
+    margin: 0 0 14px; color: #0F172A;
+    font-size: 0.98rem; font-weight: 800;
+    display: flex; align-items: center; gap: 8px;
+}
+.od-card h2 i { color: #2563EB; font-size: 13px; }
+
+.od-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; font-size: 12.5px;
+    color: #475569; border-bottom: 1px solid #F1F5F9;
+}
+.od-row:last-child { border-bottom: none; }
+.od-row strong { color: #0F172A; font-weight: 700; }
+
+.od-total-row {
+    display: flex; justify-content: space-between;
+    padding: 12px 0 0; margin-top: 8px;
+    border-top: 2px solid #E2E8F0;
+    font-size: 14px; font-weight: 800;
+}
+.od-total-row .amt { color: #2563EB; font-size: 1.1rem; }
+
+.od-line-items {
+    width: 100%; border-collapse: collapse;
+    font-size: 12.5px;
+}
+.od-line-items th {
+    text-align: left; padding: 8px 6px;
+    color: #64748B; font-weight: 700;
+    font-size: 11px; text-transform: uppercase;
+    border-bottom: 1px solid #E2E8F0;
+}
+.od-line-items td {
+    padding: 10px 6px; color: #0F172A;
+    border-bottom: 1px solid #F1F5F9;
+}
+.od-line-items tr:last-child td { border-bottom: none; }
+.od-line-items .r { text-align: right; }
+
+.od-samples {
+    display: flex; flex-wrap: wrap; gap: 10px;
+}
+.od-sample-thumb {
+    width: 120px; height: 120px;
+    border-radius: 10px; overflow: hidden;
+    border: 2px solid #2563EB;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+}
+.od-sample-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+.od-inspiration-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.od-inspiration {
+    aspect-ratio: 1; border-radius: 10px; overflow: hidden;
+    background: #F8FAFC; border: 1px solid #E2E8F0;
+}
+.od-inspiration img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.od-actions {
+    display: flex; flex-direction: column; gap: 10px;
+}
+.od-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 12px 20px; border-radius: 10px;
+    border: none; cursor: pointer;
+    font-family: 'Manrope','Inter',sans-serif;
+    font-size: 13px; font-weight: 800;
+    text-decoration: none; transition: all .2s ease;
+    width: 100%;
+}
+.od-btn-primary {
+    background: #2563EB; color: #FFF;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.28);
+}
+.od-btn-primary:hover { background: #1D4ED8; transform: translateY(-1px); }
+.od-btn-success {
+    background: #16A34A; color: #FFF;
+    box-shadow: 0 4px 14px rgba(22,163,74,0.28);
+}
+.od-btn-success:hover { background: #15803D; transform: translateY(-1px); }
+.od-btn-outline {
+    background: #FFF; color: #0F172A; border: 1px solid #E2E8F0;
+}
+.od-btn-outline:hover { border-color: #2563EB; color: #2563EB; }
+.od-btn-danger {
+    background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA;
+}
+.od-btn-danger:hover { background: #FECACA; }
+
+.od-warn-box {
+    padding: 12px 14px; border-radius: 10px;
+    background: #FEF3C7; border: 1px solid #FDE68A;
+    color: #78350F; font-size: 12px; line-height: 1.6;
+    margin-bottom: 12px;
+}
+.od-warn-box i { color: #92400E; margin-right: 4px; }
+
+.od-info-box {
+    padding: 12px 14px; border-radius: 10px;
+    background: #EFF6FF; border: 1px solid #DBEAFE;
+    color: #1E3A8A; font-size: 12px; line-height: 1.6;
+    margin-bottom: 12px;
+}
+.od-info-box i { color: #2563EB; margin-right: 4px; }
+
+.od-log {
+    padding: 10px 0; border-bottom: 1px solid #F1F5F9;
+    font-size: 12px;
+}
+.od-log:last-child { border-bottom: none; }
+.od-log-time { color: #94A3B8; font-size: 11px; }
+.od-log-text { color: #475569; margin-top: 3px; }
+
+.od-note {
+    padding: 12px 14px; border-radius: 10px;
+    background: #F8FAFC; border: 1px solid #E2E8F0;
+    color: #475569; font-size: 12.5px; line-height: 1.7;
+    white-space: pre-line;
+}
+</style>
+
+<section class="od-page">
+<div class="od-container">
+
+    <div class="od-header">
+        <div>
+            <h1>Order #{{ order.id }}</h1>
+            <p>{{ order.title }}</p>
+        </div>
+        <span class="od-status
+            {% if order.status == 'completed' %}ok
+            {% elif order.status == 'declined' or order.status == 'cancelled' or order.status == 'disputed' %}err
+            {% elif order.status == 'pending_acceptance' or order.status == 'submitted' %}warn
+            {% endif %}">
+            <i class="fas fa-circle" style="font-size: 6px;"></i>
+            {{ order.get_status_display }}
+        </span>
+    </div>
+
+    <div class="od-grid">
+
+        <!-- LEFT -->
+        <div>
+            <!-- Parties -->
+            <div class="od-card">
+                <h2><i class="fas fa-users"></i> Parties</h2>
+                <div class="od-row">
+                    <span>Client</span>
+                    <strong>{{ order.customer.get_full_name|default:order.customer.username }}</strong>
+                </div>
+                <div class="od-row">
+                    <span>Fundi</span>
+                    <strong>{{ order.provider.get_full_name|default:order.provider.username }}</strong>
+                </div>
+                {% if order.service %}
+                <div class="od-row">
+                    <span>Service</span>
+                    <strong>{{ order.service.title }}</strong>
+                </div>
+                {% endif %}
+                {% if order.estimated_days %}
+                <div class="od-row">
+                    <span>Estimated duration</span>
+                    <strong>{{ order.estimated_days }} day{{ order.estimated_days|pluralize }}</strong>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Brief -->
+            <div class="od-card">
+                <h2><i class="fas fa-clipboard-list"></i> Job brief</h2>
+                <div class="od-note">{{ order.description }}</div>
+
+                {% if order.materials_mode %}
+                <div class="od-row" style="margin-top: 14px;">
+                    <span>Materials</span>
+                    <strong>{{ order.get_materials_mode_display }}</strong>
+                </div>
+                {% endif %}
+                {% if order.materials_notes %}
+                <div class="od-note" style="margin-top: 10px;">{{ order.materials_notes }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Sample -->
+            {% if order.selected_sample %}
+            <div class="od-card">
+                <h2><i class="fas fa-image"></i> Reference sample</h2>
+                <div class="od-samples">
+                    <div class="od-sample-thumb">
+                        <img src="{{ order.selected_sample.image.url }}"
+                             alt="{{ order.selected_sample.title }}">
+                    </div>
+                </div>
+                <p style="margin: 10px 0 0; color: #64748B; font-size: 12px;">
+                    {{ order.selected_sample.title|default:order.selected_sample.service.title }}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Inspirations -->
+            {% if inspirations %}
+            <div class="od-card">
+                <h2><i class="fas fa-lightbulb"></i> Client's inspiration</h2>
+                <div class="od-inspiration-grid">
+                    {% for ins in inspirations %}
+                    <div class="od-inspiration">
+                        {% if ins.image %}<img src="{{ ins.image.url }}" alt="Inspiration">{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Line items -->
+            {% if line_items %}
+            <div class="od-card">
+                <h2><i class="fas fa-list"></i> Line items</h2>
+                <table class="od-line-items">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th class="r">Qty</th>
+                            <th class="r">Unit price</th>
+                            <th class="r">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in line_items %}
+                        <tr>
+                            <td>
+                                {{ item.title }}
+                                {% if item.provided_by == 'client' %}
+                                <span style="color:#92400E; font-size:10px;"> (client)</span>
+                                {% endif %}
+                            </td>
+                            <td class="r">{{ item.quantity }} {{ item.unit }}</td>
+                            <td class="r">KSh {{ item.unit_price|floatformat:0|intcomma }}</td>
+                            <td class="r"><strong>KSh {{ item.line_total|floatformat:0|intcomma }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            <!-- Status log -->
+            {% if status_logs %}
+            <div class="od-card">
+                <h2><i class="fas fa-history"></i> Activity</h2>
+                {% for log in status_logs %}
+                <div class="od-log">
+                    <div class="od-log-time">{{ log.created_at|date:"M d, Y · H:i" }}</div>
+                    <div class="od-log-text">
+                        {% if log.from_status %}
+                            {{ log.from_status }} → <strong>{{ log.to_status }}</strong>
+                        {% else %}
+                            <strong>{{ log.to_status }}</strong>
+                        {% endif %}
+                        {% if log.note %} · {{ log.note }}{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- RIGHT -->
+        <div>
+            <!-- Quotation -->
+            <div class="od-card">
+                <h2><i class="fas fa-file-invoice-dollar"></i> Quotation</h2>
+                <div class="od-row">
+                    <span>Job price</span>
+                    <strong>KSh {{ order.agreed_price|floatformat:0|intcomma }}</strong>
+                </div>
+                <div class="od-row">
+                    <span>Escrow fee (3%)</span>
+                    <strong>KSh {{ order.escrow_service_fee|floatformat:0|intcomma }}</strong>
+                </div>
+                <div class="od-row">
+                    <span>Platform fee (10%, paid by fundi)</span>
+                    <strong>KSh {{ order.platform_fee|floatformat:0|intcomma }}</strong>
+                </div>
+                <div class="od-total-row">
+                    <span>Total</span>
+                    <span class="amt">KSh {{ order.customer_total|floatformat:0|intcomma }}</span>
+                </div>
+                <div class="od-row" style="margin-top: 12px;">
+                    <span>Deposit ({{ order.deposit_percent|floatformat:0 }}%)</span>
+                    <strong>KSh {{ order.deposit_amount|floatformat:0|intcomma }}</strong>
+                </div>
+                <div class="od-row">
+                    <span>Balance on completion</span>
+                    <strong>KSh {{ order.balance_amount|floatformat:0|intcomma }}</strong>
+                </div>
+                <div class="od-row">
+                    <span>Fundi receives</span>
+                    <strong>KSh {{ order.provider_payout|floatformat:0|intcomma }}</strong>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="od-card">
+                <h2><i class="fas fa-bolt"></i> Actions</h2>
+                <div class="od-actions">
+
+                    {% if can_accept %}
+                        <form method="post" action="{% url 'projects:order_accept' order.id %}">
+                            {% csrf_token %}
+                            <div class="od-warn-box">
+                                <i class="fas fa-info-circle"></i>
+                                Confirm the duration and accept.
+                            </div>
+                            <input type="number" name="estimated_days" min="1"
+                                   placeholder="Estimated days"
+                                   style="width:100%; padding:10px 12px; border:1px solid #E2E8F0; border-radius:10px; margin-bottom:8px; font-size:13px;">
+                            <input type="number" name="agreed_price" step="100" min="100"
+                                   placeholder="Adjust price if needed (optional)"
+                                   value="{{ order.agreed_price|floatformat:0 }}"
+                                   style="width:100%; padding:10px 12px; border:1px solid #E2E8F0; border-radius:10px; margin-bottom:10px; font-size:13px;">
+                            <button class="od-btn od-btn-success">
+                                <i class="fas fa-check"></i> Accept order
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'projects:order_decline' order.id %}">
+                            {% csrf_token %}
+                            <textarea name="reason" rows="2" placeholder="Reason (optional)"
+                                      style="width:100%; padding:10px 12px; border:1px solid #E2E8F0; border-radius:10px; margin-bottom:8px; font-size:12.5px;"></textarea>
+                            <button class="od-btn od-btn-danger">
+                                <i class="fas fa-times"></i> Decline order
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if can_cancel %}
+                        <form method="post" action="{% url 'projects:order_cancel' order.id %}">
+                            {% csrf_token %}
+                            <button class="od-btn od-btn-outline">
+                                <i class="fas fa-ban"></i> Cancel order
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if can_pay_deposit %}
+                        <div class="od-warn-box">
+                            <i class="fas fa-lock"></i>
+                            Pay the deposit to lock in the order.
+                        </div>
+                        <a href="{% url 'payments:process_order_deposit' order.id %}"
+                           class="od-btn od-btn-primary">
+                            <i class="fas fa-mobile-alt"></i>
+                            Pay KSh {{ order.deposit_amount|floatformat:0|intcomma }} deposit
+                        </a>
+                    {% endif %}
+
+                    {% if can_start %}
+                        <button class="od-btn od-btn-primary">
+                            <i class="fas fa-play"></i> Start work
+                        </button>
+                    {% endif %}
+
+                    {% if can_request_milestone %}
+                        <button class="od-btn od-btn-outline">
+                            <i class="fas fa-eye"></i> Request 50% view / fit
+                        </button>
+                    {% endif %}
+
+                    {% if can_submit %}
+                        <button class="od-btn od-btn-primary">
+                            <i class="fas fa-upload"></i> Submit work for approval
+                        </button>
+                    {% endif %}
+
+                    {% if can_approve %}
+                        <div class="od-warn-box">
+                            <i class="fas fa-shield-alt"></i>
+                            Approving releases KSh {{ order.provider_payout|floatformat:0|intcomma }}
+                            to the fundi's wallet. This cannot be undone.
+                        </div>
+                        <form method="post"
+                              action="{% url 'payments:release_order_balance' order.id %}"
+                              onsubmit="return confirm('Release KSh {{ order.provider_payout|floatformat:0|intcomma }} to the fundi? This cannot be undone.');">
+                            {% csrf_token %}
+                            <button type="submit" class="od-btn od-btn-success">
+                                <i class="fas fa-check-circle"></i> Approve & release balance
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    {% if order.status == 'pending_acceptance' and is_customer %}
+                        <p style="font-size: 12px; color: #64748B; text-align: center; margin: 8px 0 0;">
+                            Waiting for the fundi to accept. You'll be notified.
+                        </p>
+                    {% endif %}
+
+                    {% if order.status == 'deposit_paid' and is_provider %}
+                        <div class="od-info-box">
+                            <i class="fas fa-check-circle"></i>
+                            Deposit received. You can now start the work.
+                        </div>
+                    {% endif %}
+
+                    {% if order.status == 'completed' %}
+                        <div style="padding: 12px; border-radius: 10px; background: #DCFCE7; color: #166534; font-size: 12.5px; text-align: center; font-weight: 700;">
+                            <i class="fas fa-check-circle"></i> Order completed
+                        </div>
+                        {% if order.balance_paid_at %}
+                        <p style="font-size: 11px; color: #94A3B8; margin: 6px 0 0; text-align: center;">
+                            Payment released {{ order.balance_paid_at|date:"M d, Y" }}
+                        </p>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <!-- Chat -->
+            {% if is_customer or is_provider %}
+            <div class="od-card">
+                <h2><i class="fas fa-comments"></i> Conversation</h2>
+                <a href="{% url 'chat:start_with_user' order.provider.id %}"
+                   class="od-btn od-btn-outline" style="text-decoration: none;">
+                    <i class="fas fa-comment"></i> Open chat
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+</section>
+
+{% endblock %}

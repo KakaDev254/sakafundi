@@ -1,0 +1,467 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}New Order — {{ service.title }} — SakaFundi{% endblock %}
+
+{% block content %}
+
+<style>
+.of-page {
+    background: #F8FAFB;
+    padding: 30px 0 80px;
+    font-family: 'Manrope', 'Inter', sans-serif;
+}
+.of-container { max-width: 900px; margin: 0 auto; padding: 0 16px; }
+
+.of-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 22px; flex-wrap: wrap;
+}
+.of-header a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 8px; background: #FFF;
+    border: 1px solid #E2E8F0; color: #0F172A;
+    font-size: 12px; font-weight: 700; text-decoration: none;
+}
+.of-header a:hover { border-color: #2563EB; color: #2563EB; }
+.of-header h1 {
+    margin: 0; color: #0F172A; font-size: 1.5rem;
+    font-weight: 800; letter-spacing: -0.4px;
+}
+
+.of-kicker {
+    display: block; color: #2563EB; font-size: 11px;
+    font-weight: 800; letter-spacing: 2px; margin-bottom: 8px;
+}
+
+.of-card {
+    background: #FFF; border: 1px solid #E2E8F0;
+    border-radius: 16px; padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(15,23,42,0.03);
+}
+.of-card-head { margin-bottom: 18px; }
+.of-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 7px;
+    background: #EFF6FF; color: #2563EB;
+    font-size: 11px; font-weight: 800; margin-right: 8px;
+    vertical-align: middle;
+}
+.of-card h2 {
+    display: inline; margin: 0; color: #0F172A;
+    font-size: 1rem; font-weight: 800; vertical-align: middle;
+}
+.of-card-sub {
+    margin: 8px 0 0; color: #64748B;
+    font-size: 12.5px; line-height: 1.6;
+}
+
+.of-field { margin-bottom: 16px; }
+.of-label {
+    display: block; margin-bottom: 7px; color: #0F172A;
+    font-size: 12.5px; font-weight: 700;
+}
+.of-help {
+    display: block; margin-top: 6px; color: #64748B;
+    font-size: 11.5px; line-height: 1.5;
+}
+
+.of-field input[type=text],
+.of-field input[type=number],
+.of-field textarea,
+.of-field select {
+    width: 100%; padding: 11px 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px;
+    background: #FFF; color: #0F172A;
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: 13.5px; font-weight: 500;
+    transition: all .2s ease;
+}
+.of-field textarea { resize: vertical; min-height: 90px; }
+.of-field input:focus, .of-field textarea:focus {
+    outline: none; border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+/* Radio pills */
+.of-radios { display: flex; flex-direction: column; gap: 10px; }
+.of-radio {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px;
+    cursor: pointer; transition: all .2s ease;
+    background: #FFF;
+}
+.of-radio:hover { border-color: #93C5FD; background: #F8FAFC; }
+.of-radio input[type=radio] {
+    margin-top: 3px; accent-color: #2563EB;
+}
+.of-radio-label {
+    flex: 1; font-size: 13px; font-weight: 600;
+    color: #0F172A; line-height: 1.4;
+}
+.of-radio-desc {
+    display: block; color: #64748B; font-weight: 500;
+    font-size: 11.5px; margin-top: 3px;
+}
+
+/* Samples */
+.of-samples {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+.of-sample {
+    position: relative; aspect-ratio: 1;
+    border-radius: 12px; overflow: hidden;
+    border: 2px solid #E2E8F0; cursor: pointer;
+    background: #F8FAFC;
+    transition: all .2s ease;
+}
+.of-sample:hover { border-color: #93C5FD; transform: translateY(-2px); }
+.of-sample input[type=radio] {
+    position: absolute; opacity: 0; pointer-events: none;
+}
+.of-sample img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.of-sample-label {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 5px 8px;
+    background: linear-gradient(180deg, rgba(15,23,42,0), rgba(15,23,42,.85));
+    color: #FFF; font-size: 10.5px; font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.of-sample input[type=radio]:checked ~ .of-sample-check {
+    opacity: 1;
+}
+.of-sample-check {
+    position: absolute; top: 6px; right: 6px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #2563EB; color: #FFF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; opacity: 0; transition: opacity .2s ease;
+    z-index: 2;
+}
+.of-sample.selected {
+    border-color: #2563EB;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+.of-sample.selected .of-sample-check { opacity: 1; }
+
+/* Disclaimer */
+.of-disclaimer {
+    padding: 14px 16px; border-radius: 12px;
+    background: #FEF3C7; border: 1px solid #FDE68A;
+    color: #78350F;
+    font-size: 12.5px; line-height: 1.6;
+    margin-top: 12px;
+}
+.of-disclaimer i { color: #92400E; margin-right: 6px; }
+
+.of-check {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #E2E8F0; border-radius: 10px;
+    background: #FFF; cursor: pointer;
+    transition: all .2s ease;
+}
+.of-check:hover { border-color: #93C5FD; }
+.of-check input[type=checkbox] {
+    margin-top: 3px; accent-color: #2563EB; flex-shrink: 0;
+}
+.of-check-text {
+    font-size: 12.5px; color: #475569; line-height: 1.6;
+}
+.of-check-text strong { color: #0F172A; font-weight: 800; }
+
+/* Fee summary */
+.of-summary {
+    background: #0F172A; color: #FFF;
+    border-radius: 16px; padding: 22px 24px;
+    margin-bottom: 18px;
+}
+.of-summary h3 {
+    margin: 0 0 14px; font-size: 12px;
+    font-weight: 800; letter-spacing: 2px;
+    color: #EAB308; text-transform: uppercase;
+}
+.of-summary-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; font-size: 13px;
+    color: rgba(255,255,255,.8);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.of-summary-row:last-child { border-bottom: none; padding-bottom: 0; }
+.of-summary-row strong { color: #FFF; font-weight: 700; }
+.of-summary-total {
+    display: flex; justify-content: space-between;
+    padding: 14px 0 0; margin-top: 10px;
+    border-top: 2px solid rgba(255,255,255,.15);
+    font-size: 15px; font-weight: 800;
+}
+.of-summary-total .amt { color: #EAB308; font-size: 1.15rem; }
+
+.of-actions {
+    display: flex; gap: 12px; justify-content: flex-end;
+    flex-wrap: wrap; margin-top: 20px;
+}
+.of-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 13px 24px; border-radius: 10px;
+    border: none; cursor: pointer;
+    font-family: 'Manrope','Inter',sans-serif;
+    font-size: 13px; font-weight: 800;
+    text-decoration: none; transition: all .2s ease;
+}
+.of-btn-primary {
+    background: #2563EB; color: #FFF;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.28);
+}
+.of-btn-primary:hover { background: #1D4ED8; transform: translateY(-1px); }
+.of-btn-outline {
+    background: #FFF; color: #0F172A; border: 1px solid #E2E8F0;
+}
+.of-btn-outline:hover { border-color: #2563EB; color: #2563EB; }
+
+.of-errors {
+    margin-bottom: 18px; padding: 14px 16px;
+    border-radius: 12px; background: #FEF2F2;
+    border: 1px solid #FECACA; color: #991B1B;
+    font-size: 12.5px; line-height: 1.6;
+}
+.of-errors ul { margin: 6px 0 0; padding-left: 18px; }
+.of-errors li { margin-bottom: 4px; }
+
+@media (max-width: 640px) {
+    .of-card { padding: 18px 18px; border-radius: 14px; }
+    .of-summary { padding: 18px 18px; border-radius: 14px; }
+    .of-actions { flex-direction: column-reverse; }
+    .of-actions .of-btn { width: 100%; }
+}
+</style>
+
+<section class="of-page">
+<div class="of-container">
+
+    <div class="of-header">
+        <a href="{% url 'services:detail' service.id %}">
+            <i class="fas fa-arrow-left"></i> Back to service
+        </a>
+        <div>
+            <span class="of-kicker">NEW ORDER</span>
+            <h1>Order from {{ service.provider.get_full_name|default:service.provider.username }}</h1>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" novalidate id="orderForm">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="of-errors">
+                <strong>Please fix the following:</strong>
+                <ul>{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            </div>
+        {% endif %}
+
+        <!-- 1. SAMPLE -->
+        {% if samples %}
+        <div class="of-card">
+            <div class="of-card-head">
+                <span class="of-num">1</span>
+                <h2>Pick a sample of their work</h2>
+                <p class="of-card-sub">
+                    This is the reference the fundi will work from. Optional but recommended.
+                </p>
+            </div>
+            <div class="of-samples" id="sampleGrid">
+                {% for s in samples %}
+                    <label class="of-sample" data-sample-id="{{ s.id }}">
+                        <input type="radio" name="sample_radio" value="{{ s.id }}">
+                        <img src="{{ s.image.url }}" alt="{{ s.title|default:s.service.title }}">
+                        <span class="of-sample-check"><i class="fas fa-check"></i></span>
+                        <span class="of-sample-label">{{ s.title|default:s.service.title|truncatechars:20 }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            <input type="hidden" name="selected_sample_id" id="id_selected_sample_id" value="">
+        </div>
+        {% endif %}
+
+        <!-- 2. BRIEF -->
+        <div class="of-card">
+            <div class="of-card-head">
+                <span class="of-num">2</span>
+                <h2>What do you need done?</h2>
+            </div>
+
+            <div class="of-field">
+                <label class="of-label" for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                {{ form.title }}
+                {% if form.title.errors %}<span class="of-help" style="color:#DC2626;">{{ form.title.errors.0 }}</span>{% endif %}
+            </div>
+
+            <div class="of-field">
+                <label class="of-label" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}<span class="of-help" style="color:#DC2626;">{{ form.description.errors.0 }}</span>{% endif %}
+            </div>
+        </div>
+
+        <!-- 3. MATERIALS -->
+        <div class="of-card">
+            <div class="of-card-head">
+                <span class="of-num">3</span>
+                <h2>Materials</h2>
+                <p class="of-card-sub">Who provides the materials?</p>
+            </div>
+            <div class="of-radios">
+                {% for value, label in form.fields.materials_mode.choices %}
+                    <label class="of-radio">
+                        <input type="radio" name="materials_mode" value="{{ value }}"
+                               {% if form.materials_mode.value == value or not form.materials_mode.value and value == 'fundi_provides' %}checked{% endif %}>
+                        <div class="of-radio-label">
+                            {{ label }}
+                            {% if value == 'client_provides' %}
+                                <span class="of-radio-desc">You supply materials — used at your own risk (see disclaimer).</span>
+                            {% elif value == 'no_materials' %}
+                                <span class="of-radio-desc">Labour-only job.</span>
+                            {% endif %}
+                        </div>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div class="of-disclaimer">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Please note:</strong> any materials, tools, or design assets you provide are
+                at your own risk. SakaFundi will not be held responsible for loss or damage.
+            </div>
+
+            <div class="of-field" style="margin-top: 16px;">
+                <label class="of-label" for="{{ form.materials_notes.id_for_label }}">{{ form.materials_notes.label }}</label>
+                {{ form.materials_notes }}
+            </div>
+        </div>
+
+        <!-- 4. INSPIRATION -->
+        <div class="of-card">
+            <div class="of-card-head">
+                <span class="of-num">4</span>
+                <h2>Design inspiration <span style="font-weight: 500; color: #94A3B8; font-size: 12px;">(optional, up to 3)</span></h2>
+                <p class="of-card-sub">Upload reference images if you want a specific design.</p>
+            </div>
+            {% for i in "123"|make_list %}
+                <div class="of-field">
+                    <label class="of-label">Inspiration {{ i }}</label>
+                    <input type="file" name="inspiration_images" accept="image/*"
+                           style="width:100%; padding:9px 12px; border:1px dashed #CBD5E1; border-radius:10px; background:#F8FAFC; font-size:12.5px;">
+                    <input type="text" name="inspiration_notes" placeholder="Optional note"
+                           style="width:100%; margin-top:8px; padding:10px 12px; border:1px solid #E2E8F0; border-radius:10px; font-size:13px;">
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- 5. BUDGET -->
+        <div class="of-card">
+            <div class="of-card-head">
+                <span class="of-num">5</span>
+                <h2>Your budget</h2>
+                <p class="of-card-sub">
+                    The fundi can accept or counter. Escrow fee is added on top.
+                </p>
+            </div>
+
+            <div class="of-field">
+                <label class="of-label" for="{{ form.agreed_price.id_for_label }}">{{ form.agreed_price.label }}</label>
+                {{ form.agreed_price }}
+                {% if form.agreed_price.errors %}<span class="of-help" style="color:#DC2626;">{{ form.agreed_price.errors.0 }}</span>{% endif %}
+            </div>
+        </div>
+
+        <!-- 6. SUMMARY -->
+        <div class="of-summary" id="summaryCard">
+            <h3>Quotation Preview</h3>
+            <div class="of-summary-row"><span>Job price</span><strong id="sum-price">KSh 0</strong></div>
+            <div class="of-summary-row"><span>Escrow service fee ({{ escrow_fee_pct }}%)</span><strong id="sum-escrow">KSh 0</strong></div>
+            <div class="of-summary-row"><span>Total to pay</span><strong id="sum-total">KSh 0</strong></div>
+            <div class="of-summary-row"><span>Deposit now ({{ deposit_pct }}%)</span><strong id="sum-deposit">KSh 0</strong></div>
+            <div class="of-summary-row"><span>Balance on completion</span><strong id="sum-balance">KSh 0</strong></div>
+            <div class="of-summary-total">
+                <span>Payable now</span>
+                <span class="amt" id="sum-paynow">KSh 0</span>
+            </div>
+        </div>
+
+        <!-- 7. DISCLAIMER -->
+        <div class="of-card">
+            <label class="of-check">
+                <input type="checkbox" name="disclaimer_accepted" required>
+                <div class="of-check-text">
+                    <strong>I agree to the SakaFundi terms.</strong>
+                    I understand that any materials, tools, or design assets I provide are
+                    at my own risk, and SakaFundi will not be held responsible for their
+                    loss, damage, or misuse.
+                </div>
+            </label>
+        </div>
+
+        <div class="of-actions">
+            <a href="{% url 'services:detail' service.id %}" class="of-btn of-btn-outline">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+            <button type="submit" class="of-btn of-btn-primary">
+                <i class="fas fa-paper-plane"></i> Send order to fundi
+            </button>
+        </div>
+
+    </form>
+</div>
+</section>
+
+<script>
+(function() {
+    // Sample selection
+    const grid = document.getElementById('sampleGrid');
+    const hiddenSample = document.getElementById('id_selected_sample_id');
+    if (grid) {
+        grid.querySelectorAll('.of-sample').forEach(function(label) {
+            label.addEventListener('click', function() {
+                grid.querySelectorAll('.of-sample').forEach(function(l){ l.classList.remove('selected'); });
+                label.classList.add('selected');
+                hiddenSample.value = label.dataset.sampleId || '';
+            });
+        });
+    }
+
+    // Live summary
+    const priceInput = document.getElementById('id_agreed_price');
+    const ESCROW_PCT = {{ escrow_fee_pct }};
+    const DEPOSIT_PCT = {{ deposit_pct }};
+
+    function fmt(n) {
+        return 'KSh ' + Math.round(n).toLocaleString('en-KE');
+    }
+    function update() {
+        const price = parseFloat(priceInput.value) || 0;
+        const escrow = price * ESCROW_PCT / 100;
+        const total = price + escrow;
+        const deposit = total * DEPOSIT_PCT / 100;
+        const balance = total - deposit;
+        document.getElementById('sum-price').textContent = fmt(price);
+        document.getElementById('sum-escrow').textContent = fmt(escrow);
+        document.getElementById('sum-total').textContent = fmt(total);
+        document.getElementById('sum-deposit').textContent = fmt(deposit);
+        document.getElementById('sum-balance').textContent = fmt(balance);
+        document.getElementById('sum-paynow').textContent = fmt(deposit);
+    }
+    if (priceInput) {
+        priceInput.addEventListener('input', update);
+        update();
+    }
+})();
+</script>
+
+{% endblock %}

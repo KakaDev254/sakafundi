@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Waiting for Payment — Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<style>
+.pw-page { background: #F8FAFB; padding: 60px 0 80px; font-family: 'Manrope','Inter',sans-serif; }
+.pw-container { max-width: 520px; margin: 0 auto; padding: 0 16px; text-align: center; }
+.pw-card { background: #FFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 40px 30px; box-shadow: 0 20px 50px rgba(15,23,42,.08); }
+.pw-spinner { width: 60px; height: 60px; margin: 0 auto 22px; border: 4px solid #EFF6FF; border-top-color: #2563EB; border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.pw-card h1 { margin: 0 0 10px; color: #0F172A; font-size: 1.3rem; font-weight: 800; }
+.pw-card p { margin: 0 0 20px; color: #64748B; font-size: 13px; line-height: 1.65; }
+.pw-amount { font-size: 2rem; font-weight: 800; color: #2563EB; margin: 20px 0; }
+.pw-status { padding: 14px 18px; border-radius: 12px; font-size: 13px; line-height: 1.55; margin-bottom: 18px; }
+.pw-status.processing { background: #EFF6FF; border: 1px solid #DBEAFE; color: #1E3A8A; }
+.pw-status.success { background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; }
+.pw-status.error { background: #FEE2E2; border: 1px solid #FECACA; color: #991B1B; }
+.pw-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 24px; border-radius: 10px; background: #2563EB; color: #FFF; font-family: 'Manrope','Inter',sans-serif; font-size: 13px; font-weight: 800; text-decoration: none; }
+</style>
+
+<section class="pw-page">
+    <div class="pw-container">
+        <div class="pw-card">
+            <div class="pw-spinner" id="spinner"></div>
+            <h1 id="headline">Waiting for your PIN</h1>
+            <p id="subtext">
+                A payment prompt has been sent to <strong>{{ transaction.mpesa_phone }}</strong>.
+                Enter your M-PESA PIN to complete the deposit.
+            </p>
+
+            <div class="pw-amount">KSh {{ order.deposit_amount|floatformat:0|intcomma }}</div>
+
+            <div class="pw-status processing" id="statusBox">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                Checking payment status…
+            </div>
+
+            <a href="{% url 'projects:order_detail' order.id %}" class="pw-btn" id="returnBtn" style="display: none;">
+                Continue
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    const statusUrl = "{{ status_url|escapejs }}";
+    const returnUrl = "{{ return_url|escapejs }}";
+    const spinner = document.getElementById('spinner');
+    const headline = document.getElementById('headline');
+    const subtext = document.getElementById('subtext');
+    const statusBox = document.getElementById('statusBox');
+    const returnBtn = document.getElementById('returnBtn');
+
+    let attempts = 0;
+    const MAX_ATTEMPTS = 40;  // ~2 minutes at 3s intervals
+
+    function showSuccess() {
+        spinner.style.display = 'none';
+        headline.textContent = 'Payment received';
+        subtext.textContent = 'Your deposit has been received. The fundi has been notified.';
+        statusBox.className = 'pw-status success';
+        statusBox.innerHTML = '<i class="fas fa-check-circle"></i> Paid. Redirecting…';
+        returnBtn.style.display = 'inline-flex';
+        setTimeout(function() { window.location.href = returnUrl; }, 1500);
+    }
+
+    function showFailure(reason) {
+        spinner.style.display = 'none';
+        headline.textContent = 'Payment not completed';
+        subtext.textContent = reason || 'The payment was cancelled or failed. You can try again.';
+        statusBox.className = 'pw-status error';
+        statusBox.innerHTML = '<i class="fas fa-times-circle"></i> ' + (reason || 'Failed');
+        returnBtn.style.display = 'inline-flex';
+        returnBtn.textContent = 'Back to order';
+    }
+
+    function poll() {
+        attempts++;
+        if (attempts > MAX_ATTEMPTS) {
+            showFailure('Timed out. If you entered your PIN, refresh in a minute.');
+            return;
+        }
+
+        fetch(statusUrl)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.status === 'completed') {
+                    showSuccess();
+                    return;
+                }
+                if (data.status === 'failed') {
+                    showFailure(data.reason || 'Payment failed.');
+                    return;
+                }
+                setTimeout(poll, 3000);
+            })
+            .catch(function() {
+                setTimeout(poll, 3000);
+            });
+    }
+
+    setTimeout(poll, 2000);
+})();
+</script>
+{% endblock %}

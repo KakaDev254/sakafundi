@@ -651,6 +651,7 @@ MPESA_INITIATOR_PASSWORD = config('MPESA_INITIATOR_PASSWORD', default='')
 MPESA_TIMEOUT_URL = config('MPESA_TIMEOUT_URL', default='')
 MPESA_RESULT_URL = config('MPESA_RESULT_URL', default='')
 
+MPESA_MOCK = config('MPESA_MOCK', default=(ENVIRONMENT != 'production'), cast=bool)
 # C2B (collection) callback URLs
 MPESA_C2B_VALIDATION_URL = config('MPESA_C2B_VALIDATION_URL', default='')
 MPESA_C2B_CONFIRMATION_URL = config('MPESA_C2B_CONFIRMATION_URL', default='')
