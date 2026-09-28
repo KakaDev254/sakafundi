@@ -6,99 +6,1107 @@
 {% block title %}{{ provider.get_full_name }} - SakaFundi{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-body text-center">
-                    <!-- Updated for Cloudinary -->
-                    <img src="{{ provider.profile_image.url }}" alt="{{ provider.get_full_name }}"
-                         class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #E2E8F0;">
-                    <h5 class="fw-bold">{{ provider.get_full_name }}</h5>
-                    <p class="text-secondary small">{{ provider.location|default:"Kenya" }}</p>
-                    <div class="text-warning mb-2">
-                        <i class="fas fa-star"></i> {{ provider.rating|floatformat:1 }}
-                        <small class="text-muted">({{ total_reviews }} reviews)</small>
-                    </div>
-                    <div class="d-grid gap-2">
-                        {% if can_review %}
-                            <a href="{% url 'reviews:create' provider.id %}" class="btn btn-primary rounded-3">
-                                <i class="fas fa-star"></i> Write a Review
+
+<style>
+/* =========================================================
+   PROVIDER PROFILE — Portfolio-first (Phase 2)
+========================================================= */
+
+.pp-wrap {
+    font-family: 'Manrope', 'Inter', sans-serif;
+    background: #F8FAFB;
+    padding: 0 0 60px;
+}
+
+/* ---------- HERO GALLERY ---------- */
+
+.pp-hero {
+    background: #0F172A;
+    padding: 24px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pp-hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.pp-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 200px;
+    gap: 10px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #0B1220;
+    padding: 10px;
+}
+
+.pp-gallery-item {
+    position: relative;
+    overflow: hidden;
+    background: #1E293B;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform .3s ease;
+}
+
+.pp-gallery-item:hover {
+    transform: scale(1.02);
+}
+
+.pp-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s ease;
+}
+
+.pp-gallery-item:hover img {
+    transform: scale(1.08);
+}
+
+.pp-gallery-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0) 40%, rgba(15, 23, 42, .75) 100%);
+    opacity: 0;
+    transition: opacity .3s ease;
+    pointer-events: none;
+}
+
+.pp-gallery-item:hover::after {
+    opacity: 1;
+}
+
+.pp-gallery-item-label {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    right: 12px;
+    z-index: 2;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: all .3s ease;
+    pointer-events: none;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .6);
+}
+
+.pp-gallery-item:hover .pp-gallery-item-label {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* make first two items span two rows on desktop for visual rhythm */
+.pp-gallery-item:nth-child(1),
+.pp-gallery-item:nth-child(6) {
+    grid-row: span 2;
+}
+
+.pp-gallery-empty {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+    color: rgba(255, 255, 255, .5);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    padding: 60px 20px;
+    border-radius: 12px;
+}
+
+.pp-gallery-empty i {
+    font-size: 40px;
+    opacity: .5;
+}
+
+/* ---------- IDENTITY CARD (overlapping the gallery) ---------- */
+
+.pp-identity-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    position: relative;
+    z-index: 5;
+}
+
+.pp-identity {
+    margin-top: -40px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 20px;
+    padding: 26px 28px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+}
+
+.pp-avatar {
+    flex: 0 0 84px;
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #FFFFFF;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+    background: #EFF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pp-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.pp-avatar-placeholder {
+    color: #2563EB;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.pp-identity-info {
+    flex: 1 1 auto;
+    min-width: 220px;
+}
+
+.pp-name {
+    margin: 0 0 6px;
+    color: #0F172A;
+    font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pp-verified-tick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #2563EB;
+    color: #FFFFFF;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+
+.pp-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    color: #64748B;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+.pp-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pp-meta i {
+    color: #94A3B8;
+    font-size: 11px;
+}
+
+.pp-meta .fa-star {
+    color: #EAB308 !important;
+}
+
+.pp-identity-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all .2s ease;
+    font-family: 'Manrope', 'Inter', sans-serif;
+}
+
+.pp-btn-primary {
+    background: #2563EB;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, .28);
+}
+
+.pp-btn-primary:hover {
+    background: #1D4ED8;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.pp-btn-yellow {
+    background: #EAB308;
+    color: #0F172A;
+    box-shadow: 0 4px 14px rgba(234, 179, 8, .28);
+}
+
+.pp-btn-yellow:hover {
+    background: #CA8A04;
+    color: #0F172A;
+    transform: translateY(-1px);
+}
+
+.pp-btn-outline {
+    background: #FFFFFF;
+    color: #0F172A;
+    border: 1px solid #E2E8F0;
+}
+
+.pp-btn-outline:hover {
+    border-color: #2563EB;
+    color: #2563EB;
+}
+
+/* ---------- BODY LAYOUT ---------- */
+
+.pp-body {
+    max-width: 1200px;
+    margin: 32px auto 0;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 992px) {
+    .pp-body {
+        grid-template-columns: 1fr 320px;
+    }
+}
+
+.pp-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pp-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pp-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 22px 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+.pp-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.pp-card-title {
+    margin: 0;
+    color: #0F172A;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.pp-card-title i {
+    color: #2563EB;
+    font-size: 14px;
+}
+
+.pp-card-sub {
+    color: #64748B;
+    font-size: 12.5px;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.pp-card-sub + .pp-card-sub {
+    margin-top: 10px;
+}
+
+/* ---------- SERVICES ---------- */
+
+.pp-services-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+@media (min-width: 640px) {
+    .pp-services-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.pp-service {
+    display: block;
+    padding: 14px 16px;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    background: #FFFFFF;
+    text-decoration: none;
+    transition: all .2s ease;
+}
+
+.pp-service:hover {
+    border-color: #2563EB;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, .08);
+    transform: translateY(-2px);
+}
+
+.pp-service-title {
+    margin: 0 0 4px;
+    color: #0F172A;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.pp-service-cat {
+    display: block;
+    color: #64748B;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.pp-service-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: #2563EB;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.pp-service-price span {
+    color: #94A3B8;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* ---------- SKILLS ---------- */
+
+.pp-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.pp-skill {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: 50px;
+    background: #EFF6FF;
+    color: #1D4ED8;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+/* ---------- SIDEBAR WIDGETS ---------- */
+
+.pp-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.pp-stat-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.pp-stat-row:first-child {
+    padding-top: 0;
+}
+
+.pp-stat-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #64748B;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.pp-stat-label i {
+    color: #94A3B8;
+    font-size: 12px;
+    width: 16px;
+    text-align: center;
+}
+
+.pp-stat-value {
+    color: #0F172A;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+/* ---------- LICENCE CHIPS ---------- */
+
+.pp-licence-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    color: #166534;
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.pp-licence-chip i {
+    font-size: 12px;
+}
+
+/* ---------- REVIEWS ---------- */
+
+.pp-rating-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.pp-rating-big {
+    text-align: center;
+}
+
+.pp-rating-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #0F172A;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.pp-rating-stars {
+    color: #EAB308;
+    font-size: 13px;
+    margin: 6px 0 4px;
+}
+
+.pp-rating-count {
+    color: #64748B;
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.pp-rating-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pp-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 11.5px;
+    color: #64748B;
+    font-weight: 600;
+}
+
+.pp-bar-label {
+    width: 26px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.pp-bar-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #F1F5F9;
+    overflow: hidden;
+}
+
+.pp-bar-fill {
+    height: 100%;
+    background: #EAB308;
+    border-radius: 3px;
+    transition: width .5s ease;
+}
+
+.pp-bar-count {
+    width: 26px;
+    text-align: right;
+    flex-shrink: 0;
+    color: #94A3B8;
+    font-size: 11px;
+}
+
+.pp-review {
+    padding: 16px 0;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.pp-review:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.pp-review:first-child {
+    padding-top: 0;
+}
+
+.pp-review-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.pp-review-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #EFF6FF;
+    color: #2563EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.pp-review-name {
+    color: #0F172A;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 2px;
+}
+
+.pp-review-date {
+    color: #94A3B8;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.pp-review-stars {
+    margin-left: auto;
+    color: #EAB308;
+    font-size: 11px;
+}
+
+.pp-review-text {
+    margin: 0;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.pp-empty {
+    padding: 30px 20px;
+    text-align: center;
+    color: #94A3B8;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 991px) {
+    .pp-gallery {
+        grid-template-columns: repeat(3, 1fr);
+        grid-auto-rows: 160px;
+    }
+
+    .pp-gallery-item:nth-child(1),
+    .pp-gallery-item:nth-child(6) {
+        grid-row: span 1;
+    }
+}
+
+@media (max-width: 767px) {
+    .pp-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 140px;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .pp-identity {
+        margin-top: -30px;
+        padding: 20px 18px;
+        gap: 16px;
+        border-radius: 16px;
+    }
+
+    .pp-avatar {
+        flex-basis: 68px;
+        width: 68px;
+        height: 68px;
+        border-width: 3px;
+    }
+
+    .pp-identity-actions {
+        width: 100%;
+    }
+
+    .pp-identity-actions .pp-btn {
+        flex: 1;
+    }
+
+    .pp-card {
+        padding: 18px 18px;
+        border-radius: 14px;
+    }
+
+    .pp-rating-summary {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .pp-gallery {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 120px;
+    }
+}
+</style>
+
+
+<section class="pp-wrap">
+
+    <!-- ============================================================
+         HERO PORTFOLIO GALLERY
+    ============================================================ -->
+    <div class="pp-hero">
+        <div class="pp-hero-inner">
+            <div class="pp-gallery">
+
+                {% if portfolio_gallery %}
+                    {% for item in portfolio_gallery %}
+                        <div class="pp-gallery-item"
+                             onclick="window.location.href='{% url 'services:detail' item.service.id %}'">
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}"
+                                     alt="{{ item.title|default:item.service.title }}"
+                                     loading="lazy">
+                            {% endif %}
+                            <span class="pp-gallery-item-label">
+                                {{ item.title|default:item.service.title|truncatechars:28 }}
+                            </span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="pp-gallery-empty">
+                        <i class="fas fa-images"></i>
+                        <span>No portfolio photos yet</span>
+                        {% if request.user == provider %}
+                            <a href="{% url 'services:create' %}"
+                               class="pp-btn pp-btn-yellow"
+                               style="margin-top: 8px;">
+                                <i class="fas fa-plus"></i> Add your first service
                             </a>
                         {% endif %}
-                        <a href="{% url 'chat:start_with_user' provider.id %}" class="btn btn-outline-primary rounded-3">
-                            <i class="fas fa-comment"></i> Message
-                        </a>
                     </div>
-                </div>
-            </div>
-            
-            <div class="card shadow-sm border-0 rounded-3 mt-3">
-                <div class="card-body">
-                    <h6 class="fw-bold" style="color: #0F172A;">Stats</h6>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Services</span>
-                        <strong>{{ total_services }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Projects Completed</span>
-                        <strong>{{ completed_projects }}</strong>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted small">Reviews</span>
-                        <strong>{{ total_reviews }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-8">
-            <!-- Bio -->
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-body">
-                    <h6 class="fw-bold" style="color: #0F172A;">About</h6>
-                    <p class="text-secondary">{{ provider.bio|default:"No bio provided" }}</p>
-                    
-                    {% if provider.skills %}
-                        <h6 class="fw-bold mt-3" style="color: #0F172A;">Skills</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            {% for skill in provider.skills %}
-                                <span class="badge bg-light text-dark">{{ skill }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <!-- Services -->
-            <div class="card shadow-sm border-0 rounded-3 mt-3">
-                <div class="card-header bg-white fw-semibold" style="color: #0F172A;">
-                    <i class="fas fa-tools" style="color: #2563EB;"></i> Services
-                </div>
-                <div class="card-body">
-                    {% if services %}
-                        {% for service in services %}
-                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                                <div>
-                                    <a href="{% url 'services:detail' service.id %}" class="text-primary text-decoration-none fw-semibold">
-                                        {{ service.title|truncatechars:30 }}
-                                    </a>
-                                    <br>
-                                    <small class="text-muted">{{ service.category.name }}</small>
-                                </div>
-                                <div class="text-end">
-                                    <span class="fw-bold text-primary">KSh {{ service.price_min|floatformat:0|intcomma }}</span>
-                                    <br>
-                                    <small class="text-muted">- {{ service.price_max|floatformat:0|intcomma }}</small>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-muted text-center py-3">No services available</p>
-                    {% endif %}
-                </div>
+                {% endif %}
+
             </div>
         </div>
     </div>
-</div>
+
+
+    <!-- ============================================================
+         IDENTITY CARD
+    ============================================================ -->
+    <div class="pp-identity-wrap">
+        <div class="pp-identity">
+
+            <div class="pp-avatar">
+                {% if provider_profile.face_photo %}
+                    <img src="{{ provider_profile.face_photo.url }}"
+                         alt="{{ provider.get_full_name }}">
+                {% elif provider.profile_image %}
+                    <img src="{{ provider.profile_image.url }}"
+                         alt="{{ provider.get_full_name }}">
+                {% else %}
+                    <span class="pp-avatar-placeholder">
+                        {{ provider.get_full_name|default:provider.username|slice:":1"|upper }}
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="pp-identity-info">
+                <h1 class="pp-name">
+                    {{ provider.get_full_name|default:provider.username }}
+                    {% if provider_profile.is_verified_provider %}
+                        <span class="pp-verified-tick" title="Verified provider">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    {% endif %}
+                </h1>
+
+                <div class="pp-meta">
+                    <span>
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ provider_profile.approximate_location }}
+                    </span>
+
+                    {% if provider.rating %}
+                        <span>
+                            <i class="fas fa-star"></i>
+                            {{ provider.rating|floatformat:1 }}
+                            <small>({{ total_reviews }})</small>
+                        </span>
+                    {% endif %}
+
+                    {% if completed_projects %}
+                        <span>
+                            <i class="fas fa-check-circle"></i>
+                            {{ completed_projects }} job{{ completed_projects|pluralize }} completed
+                        </span>
+                    {% endif %}
+
+                    {% if provider.years_experience %}
+                        <span>
+                            <i class="fas fa-clock"></i>
+                            {{ provider.years_experience }} yr{{ provider.years_experience|pluralize }} experience
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="pp-identity-actions">
+                {% if request.user.is_authenticated and request.user != provider %}
+                    <a href="{% url 'chat:start_with_user' provider.id %}"
+                       class="pp-btn pp-btn-primary">
+                        <i class="fas fa-comment"></i>
+                        Start Conversation
+                    </a>
+                {% endif %}
+
+                {% if total_services %}
+                    <a href="#services" class="pp-btn pp-btn-outline">
+                        <i class="fas fa-tools"></i>
+                        {{ total_services }} Service{{ total_services|pluralize }}
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+         BODY
+    ============================================================ -->
+    <div class="pp-body">
+
+        <!-- ============================================================
+             MAIN COLUMN
+        ============================================================ -->
+        <div class="pp-main">
+
+            <!-- SERVICES -->
+            <div class="pp-card" id="services">
+                <div class="pp-card-head">
+                    <h2 class="pp-card-title">
+                        <i class="fas fa-tools"></i>
+                        Services by {{ provider.get_full_name|default:provider.username|truncatechars:20 }}
+                    </h2>
+                </div>
+
+                {% if services %}
+                    <div class="pp-services-grid">
+                        {% for service in services %}
+                            <a href="{% url 'services:detail' service.id %}" class="pp-service">
+                                <h3 class="pp-service-title">
+                                    {{ service.title|truncatechars:38 }}
+                                </h3>
+                                <span class="pp-service-cat">{{ service.category.name }}</span>
+                                <div class="pp-service-price">
+                                    KSh {{ service.price_min|floatformat:0|intcomma }}
+                                    <span>– {{ service.price_max|floatformat:0|intcomma }}</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="pp-empty">No services listed yet.</div>
+                {% endif %}
+            </div>
+
+
+            <!-- ABOUT -->
+            <div class="pp-card">
+                <div class="pp-card-head">
+                    <h2 class="pp-card-title">
+                        <i class="fas fa-user"></i>
+                        About
+                    </h2>
+                </div>
+
+                {% if provider.bio %}
+                    <p class="pp-card-sub">{{ provider.bio|linebreaksbr }}</p>
+                {% else %}
+                    <p class="pp-card-sub" style="color: #94A3B8;">
+                        This fundi hasn't added a bio yet.
+                    </p>
+                {% endif %}
+
+                {% if provider.skills %}
+                    <h3 class="pp-card-title" style="font-size: 12.5px; margin-top: 20px;">
+                        <i class="fas fa-star"></i> Skills
+                    </h3>
+                    <div class="pp-skills">
+                        {% for skill in provider.skills %}
+                            <span class="pp-skill">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <!-- REVIEWS -->
+            <div class="pp-card">
+                <div class="pp-card-head">
+                    <h2 class="pp-card-title">
+                        <i class="fas fa-comments"></i>
+                        Reviews
+                    </h2>
+                    {% if can_review %}
+                        <a href="{% url 'reviews:create' provider.id %}"
+                           class="pp-btn pp-btn-outline"
+                           style="padding: 8px 14px; font-size: 11.5px;">
+                            <i class="fas fa-pen"></i> Write a Review
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% if total_reviews %}
+                    <!-- Rating summary -->
+                    <div class="pp-rating-summary">
+                        <div class="pp-rating-big">
+                            <div class="pp-rating-number">{{ provider.rating|floatformat:1 }}</div>
+                            <div class="pp-rating-stars">
+                                {% for i in "12345"|make_list %}
+                                    {% if forloop.counter <= provider.rating|floatformat:"0"|add:"0" %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="pp-rating-count">
+                                {{ total_reviews }} review{{ total_reviews|pluralize }}
+                            </div>
+                        </div>
+
+                        <div class="pp-rating-bars">
+                            {% for star, count in rating_distribution.items %}
+                                <div class="pp-bar-row">
+                                    <span class="pp-bar-label">{{ star }} <i class="fas fa-star"></i></span>
+                                    <div class="pp-bar-track">
+                                        {% if total_reviews %}
+                                            <div class="pp-bar-fill"
+                                                 style="width: {% widthratio count total_reviews 100 %}%;"></div>
+                                        {% endif %}
+                                    </div>
+                                    <span class="pp-bar-count">{{ count }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Review list -->
+                    {% for review in reviews %}
+                        <div class="pp-review">
+                            <div class="pp-review-head">
+                                <div class="pp-review-avatar">
+                                    {{ review.customer.get_full_name|default:review.customer.username|slice:":1"|upper }}
+                                </div>
+                                <div>
+                                    <p class="pp-review-name">
+                                        {{ review.customer.get_full_name|default:review.customer.username }}
+                                    </p>
+                                    <span class="pp-review-date">
+                                        {{ review.created_at|date:"M d, Y" }}
+                                    </span>
+                                </div>
+                                <div class="pp-review-stars">
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= review.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if review.comment %}
+                                <p class="pp-review-text">{{ review.comment }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    <div class="pp-empty">
+                        No reviews yet. Be the first to hire this fundi and leave feedback.
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <!-- ============================================================
+             SIDEBAR
+        ============================================================ -->
+        <aside class="pp-side">
+
+            <!-- STATS -->
+            <div class="pp-card">
+                <div class="pp-card-head">
+                    <h2 class="pp-card-title">
+                        <i class="fas fa-chart-bar"></i> Stats
+                    </h2>
+                </div>
+
+                <div class="pp-stat-row">
+                    <span class="pp-stat-label">
+                        <i class="fas fa-tools"></i> Services
+                    </span>
+                    <span class="pp-stat-value">{{ total_services }}</span>
+                </div>
+
+                <div class="pp-stat-row">
+                    <span class="pp-stat-label">
+                        <i class="fas fa-check-circle"></i> Jobs completed
+                    </span>
+                    <span class="pp-stat-value">{{ completed_projects }}</span>
+                </div>
+
+                <div class="pp-stat-row">
+                    <span class="pp-stat-label">
+                        <i class="fas fa-star"></i> Rating
+                    </span>
+                    <span class="pp-stat-value">
+                        {% if provider.rating %}{{ provider.rating|floatformat:1 }}{% else %}—{% endif %}
+                    </span>
+                </div>
+
+                <div class="pp-stat-row">
+                    <span class="pp-stat-label">
+                        <i class="fas fa-comments"></i> Reviews
+                    </span>
+                    <span class="pp-stat-value">{{ total_reviews }}</span>
+                </div>
+
+                {% if provider_profile.starting_price %}
+                    <div class="pp-stat-row">
+                        <span class="pp-stat-label">
+                            <i class="fas fa-tag"></i> From
+                        </span>
+                        <span class="pp-stat-value">
+                            KSh {{ provider_profile.starting_price|floatformat:0|intcomma }}
+                        </span>
+                    </div>
+                {% endif %}
+            </div>
+
+
+            <!-- VERIFICATION -->
+            {% if provider_profile.is_verified_provider or provider_profile.has_any_verified_licence %}
+                <div class="pp-card">
+                    <div class="pp-card-head">
+                        <h2 class="pp-card-title">
+                            <i class="fas fa-shield-alt"></i> Verified
+                        </h2>
+                    </div>
+
+                    {% if provider_profile.business_licence_verified %}
+                        <div class="pp-licence-chip">
+                            <i class="fas fa-check-circle"></i> Business licence verified
+                        </div>
+                    {% endif %}
+
+                    {% if provider_profile.nca_licence_verified %}
+                        <div class="pp-licence-chip">
+                            <i class="fas fa-check-circle"></i> NCA licence verified
+                        </div>
+                    {% endif %}
+
+                    {% if provider_profile.other_licence_verified %}
+                        <div class="pp-licence-chip">
+                            <i class="fas fa-check-circle"></i>
+                            {% if provider_profile.other_licence_name %}
+                                {{ provider_profile.other_licence_name }} verified
+                            {% else %}
+                                Professional licence verified
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+        </aside>
+
+    </div>
+
+</section>
+
 {% endblock %}
