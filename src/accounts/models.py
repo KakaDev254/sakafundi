@@ -9,28 +9,28 @@ from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
     """Custom User Model with Kenyan-specific fields"""
-    
+
     USER_TYPES = (
         ('customer', 'Customer'),
         ('provider', 'Service Provider'),
         ('both', 'Both'),
     )
-    
+
     VERIFICATION_STATUS = (
         ('pending', 'Pending Verification'),
         ('verified', 'Verified'),
         ('rejected', 'Rejected'),
     )
-    
+
     # Basic Info
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='customer')
     phone_number = models.CharField(max_length=15, unique=True)
     mpesa_phone = models.CharField(max_length=15, blank=True, null=True)
-    
+
     # Kenyan-specific
     id_number = models.CharField(max_length=20, blank=True, null=True)
     kra_pin = models.CharField(max_length=20, blank=True, null=True)
-    
+
     # Profile - Using CloudinaryField
     profile_image = CloudinaryField(
         'image',
@@ -42,7 +42,7 @@ class User(AbstractUser):
     bio = models.TextField(blank=True, null=True)
     location = models.CharField(max_length=200, blank=True, null=True)
     county = models.CharField(max_length=50, blank=True, null=True)
-    
+
     # Verification - Using CloudinaryField
     id_photo = CloudinaryField(
         'image',
@@ -52,49 +52,58 @@ class User(AbstractUser):
     )
     verification_notes = models.TextField(blank=True, null=True)
     verified_at = models.DateTimeField(null=True, blank=True)
-    
+
+    # ✅ FIX: verification_status was referenced in can_provide() and
+    # UserVerificationRequest.approve() but never defined as a field.
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VERIFICATION_STATUS,
+        default='pending',
+        help_text="Overall identity verification state for this user."
+    )
+
     # Provider-specific
     skills = models.JSONField(default=list, blank=True, null=True)
     years_experience = models.IntegerField(default=0)
     rating = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     total_projects = models.IntegerField(default=0)
     completed_projects = models.IntegerField(default=0)
-    
+
     # Wallet balance (cached from Wallet model)
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_earned = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_withdrawn = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_spent = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    
+
     # ============================================================
-    # EMAIL VERIFICATION (ADDED)
+    # EMAIL VERIFICATION
     # ============================================================
     email_verified = models.BooleanField(
         default=False,
         help_text="Indicates if the user's email has been verified"
     )
     email_verification_sent_at = models.DateTimeField(
-        null=True, 
+        null=True,
         blank=True,
         help_text="Timestamp when the verification email was last sent"
     )
     email_verification_token = models.CharField(
-        max_length=255, 
-        blank=True, 
+        max_length=255,
+        blank=True,
         null=True,
         help_text="Token for email verification"
     )
-    
+
     # ============================================================
-    # AUTO-LOGOUT (ADDED)
+    # AUTO-LOGOUT
     # ============================================================
     last_activity = models.DateTimeField(
-        null=True, 
+        null=True,
         blank=True,
         help_text="Last recorded user activity timestamp"
     )
     session_expiry = models.DateTimeField(
-        null=True, 
+        null=True,
         blank=True,
         help_text="When the current session should expire"
     )
@@ -102,33 +111,33 @@ class User(AbstractUser):
         default=False,
         help_text="Indicates if the user is currently online"
     )
-    
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_active = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-date_joined']
-    
+
     def __str__(self):
         return self.get_full_name() or self.username
-    
+
     def get_wallet_balance(self):
         try:
             return self.wallet.balance
-        except:
+        except Exception:
             return Decimal('0.00')
-    
+
     def is_provider(self):
         return self.user_type in ['provider', 'both']
-    
+
     def is_customer(self):
         return self.user_type in ['customer', 'both']
-    
+
     def can_provide(self):
         return self.is_provider() and self.verification_status == 'verified'
-    
+
     def update_rating(self):
         from reviews.models import Review
         reviews = Review.objects.filter(provider=self, is_public=True, is_hidden=False)
@@ -136,78 +145,67 @@ class User(AbstractUser):
             avg = reviews.aggregate(models.Avg('rating'))['rating__avg']
             self.rating = round(avg, 2)
             self.save()
-    
+
     def update_stats(self):
         from projects.models import Project
         self.total_projects = Project.objects.filter(provider=self).count()
         self.completed_projects = Project.objects.filter(
-            provider=self, 
+            provider=self,
             status='completed'
         ).count()
         self.save()
-    
+
     @property
     def full_name(self):
         return self.get_full_name() or self.username
-    
+
     # ============================================================
-    # EMAIL VERIFICATION METHODS (ADDED)
+    # EMAIL VERIFICATION METHODS
     # ============================================================
     def is_email_verified(self):
-        """Check if email is verified"""
         return self.email_verified
-    
+
     def mark_email_verified(self):
-        """Mark email as verified"""
         self.email_verified = True
         self.email_verification_sent_at = None
         self.email_verification_token = None
         self.save()
-    
+
     def generate_verification_token(self):
-        """Generate a new verification token"""
         import secrets
         token = secrets.token_urlsafe(32)
         self.email_verification_token = token
         self.email_verification_sent_at = timezone.now()
         self.save()
         return token
-    
+
     def verify_email_with_token(self, token):
-        """Verify email with token"""
         if self.email_verification_token == token:
-            # Check if token is not expired (24 hours)
             if self.email_verification_sent_at:
                 time_diff = timezone.now() - self.email_verification_sent_at
                 if time_diff.total_seconds() <= 86400:  # 24 hours
                     self.mark_email_verified()
                     return True
         return False
-    
+
     # ============================================================
-    # AUTO-LOGOUT METHODS (ADDED)
+    # AUTO-LOGOUT METHODS
     # ============================================================
     def update_activity(self):
-        """Update user's last activity timestamp"""
-        from django.utils import timezone
         self.last_activity = timezone.now()
         self.is_online = True
         self.save()
-    
+
     def set_session_expiry(self, seconds=3600):
-        """Set session expiry time"""
-        from django.utils import timezone
         self.session_expiry = timezone.now() + timezone.timedelta(seconds=seconds)
         self.save()
-    
+
     def is_session_expired(self):
-        """Check if current session has expired"""
         if self.session_expiry:
             return timezone.now() > self.session_expiry
         return True
-    
+
     def mark_offline(self):
-        """Mark user as offline"""
         self.is_online = False
         self.session_expiry = None
         self.save()
@@ -228,7 +226,7 @@ class UserBankAccount(models.Model):
         ('gtbank', 'GTBank'),
         ('other', 'Other'),
     )
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bank_accounts')
     bank_name = models.CharField(max_length=50, choices=BANK_CHOICES)
     account_name = models.CharField(max_length=200)
@@ -241,13 +239,13 @@ class UserBankAccount(models.Model):
     verification_token = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-is_default', '-created_at']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.get_bank_name_display()}"
-    
+
     def save(self, *args, **kwargs):
         if self.is_default:
             UserBankAccount.objects.filter(user=self.user).update(is_default=False)
@@ -257,8 +255,8 @@ class UserBankAccount(models.Model):
 class Wallet(models.Model):
     """User wallet/balance"""
     user = models.OneToOneField(
-        User, 
-        on_delete=models.CASCADE, 
+        User,
+        on_delete=models.CASCADE,
         related_name='wallet'
     )
     balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -266,35 +264,34 @@ class Wallet(models.Model):
     total_withdrawn = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_earned = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_spent = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    
-    # Limits
+
     daily_withdrawal_limit = models.DecimalField(
-        max_digits=12, 
-        decimal_places=2, 
+        max_digits=12,
+        decimal_places=2,
         default=100000
     )
     monthly_withdrawal_limit = models.DecimalField(
-        max_digits=12, 
-        decimal_places=2, 
+        max_digits=12,
+        decimal_places=2,
         default=500000
     )
-    
+
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     verification_token = models.CharField(max_length=255, blank=True, null=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"Wallet - {self.user.username} - {self.balance}"
-    
+
     def add_balance(self, amount, transaction_type='earning', description=''):
         self.balance += amount
         self.save()
         self.user.balance = self.balance
         self.user.save()
-        
+
         WalletTransaction.objects.create(
             wallet=self,
             transaction_type=transaction_type,
@@ -302,14 +299,14 @@ class Wallet(models.Model):
             balance_after=self.balance,
             description=description
         )
-    
+
     def deduct_balance(self, amount, transaction_type='payment', description=''):
         if self.balance >= amount:
             self.balance -= amount
             self.save()
             self.user.balance = self.balance
             self.user.save()
-            
+
             WalletTransaction.objects.create(
                 wallet=self,
                 transaction_type=transaction_type,
@@ -319,10 +316,10 @@ class Wallet(models.Model):
             )
             return True
         return False
-    
+
     def can_withdraw(self, amount):
         return self.balance >= amount and amount > 0 and self.is_active
-    
+
     def get_daily_withdrawal_total(self):
         today = timezone.now().date()
         total = WalletTransaction.objects.filter(
@@ -331,7 +328,7 @@ class Wallet(models.Model):
             created_at__date=today
         ).aggregate(models.Sum('amount'))['amount__sum'] or 0
         return abs(total)
-    
+
     def get_monthly_withdrawal_total(self):
         first_day = timezone.now().replace(day=1)
         total = WalletTransaction.objects.filter(
@@ -353,10 +350,10 @@ class WalletTransaction(models.Model):
         ('fee', 'Platform Fee'),
         ('bonus', 'Bonus'),
     )
-    
+
     wallet = models.ForeignKey(
-        Wallet, 
-        on_delete=models.CASCADE, 
+        Wallet,
+        on_delete=models.CASCADE,
         related_name='transactions'
     )
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
@@ -367,14 +364,14 @@ class WalletTransaction(models.Model):
     metadata = models.JSONField(default=dict, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['wallet', '-created_at']),
             models.Index(fields=['transaction_type', 'created_at']),
         ]
-    
+
     def __str__(self):
         return f"{self.transaction_type} - {self.wallet.user.username} - {self.amount}"
 
@@ -382,35 +379,35 @@ class WalletTransaction(models.Model):
 class UserNotificationPreference(models.Model):
     """User notification preferences"""
     user = models.OneToOneField(
-        User, 
-        on_delete=models.CASCADE, 
+        User,
+        on_delete=models.CASCADE,
         related_name='notification_preferences'
     )
-    
+
     email_enabled = models.BooleanField(default=True)
     email_project_updates = models.BooleanField(default=True)
     email_messages = models.BooleanField(default=True)
     email_payments = models.BooleanField(default=True)
     email_promotions = models.BooleanField(default=False)
-    
+
     push_enabled = models.BooleanField(default=True)
     push_project_updates = models.BooleanField(default=True)
     push_messages = models.BooleanField(default=True)
     push_payments = models.BooleanField(default=True)
-    
+
     in_app_enabled = models.BooleanField(default=True)
     in_app_project_updates = models.BooleanField(default=True)
     in_app_messages = models.BooleanField(default=True)
     in_app_payments = models.BooleanField(default=True)
-    
+
     sound_enabled = models.BooleanField(default=True)
     quiet_hours_enabled = models.BooleanField(default=False)
     quiet_hours_start = models.TimeField(null=True, blank=True)
     quiet_hours_end = models.TimeField(null=True, blank=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     def __str__(self):
         return f"Preferences for {self.user.username}"
 
@@ -422,19 +419,18 @@ class UserVerificationRequest(models.Model):
         ('address_verification', 'Address Verification'),
         ('professional_verification', 'Professional Verification'),
     )
-    
+
     STATUS_CHOICES = (
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
         ('in_progress', 'In Progress'),
     )
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='verification_requests')
     request_type = models.CharField(max_length=30, choices=REQUEST_TYPES)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    
-    # Using CloudinaryField for documents
+
     document = CloudinaryField(
         'file',
         folder='verification_docs',
@@ -443,38 +439,38 @@ class UserVerificationRequest(models.Model):
     )
     document_name = models.CharField(max_length=255)
     additional_info = models.TextField(blank=True, null=True)
-    
+
     admin_notes = models.TextField(blank=True, null=True)
     reviewed_by = models.ForeignKey(
-        User, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True, 
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='reviewed_verifications'
     )
     reviewed_at = models.DateTimeField(null=True, blank=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.request_type} - {self.status}"
-    
+
     def approve(self, admin_user, notes=None):
         self.status = 'approved'
         self.admin_notes = notes
         self.reviewed_by = admin_user
         self.reviewed_at = timezone.now()
         self.save()
-        
+
         if self.request_type == 'id_verification':
             self.user.verification_status = 'verified'
             self.user.verified_at = timezone.now()
             self.user.save()
-    
+
     def reject(self, admin_user, notes=None):
         self.status = 'rejected'
         self.admin_notes = notes
@@ -491,21 +487,21 @@ class UserDevice(models.Model):
         ('desktop', 'Desktop App'),
         ('tablet', 'Tablet'),
     )
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='devices')
     device_type = models.CharField(max_length=20, choices=DEVICE_TYPES)
     device_id = models.CharField(max_length=255)
     device_name = models.CharField(max_length=255, blank=True, null=True)
     registration_token = models.CharField(max_length=255)
-    
+
     is_active = models.BooleanField(default=True)
     last_active = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         unique_together = ['user', 'device_id']
         ordering = ['-last_active']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.device_type} - {self.device_name or self.device_id}"
 
@@ -519,14 +515,14 @@ class UserLoginHistory(models.Model):
     is_successful = models.BooleanField(default=True)
     failure_reason = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['user', '-created_at']),
             models.Index(fields=['ip_address', 'created_at']),
         ]
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.ip_address} - {self.created_at}"
 
@@ -544,16 +540,265 @@ class UserSecurityLog(models.Model):
         ('two_factor_enable', '2FA Enable'),
         ('two_factor_disable', '2FA Disable'),
     )
-    
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='security_logs')
     event_type = models.CharField(max_length=30, choices=EVENT_TYPES)
     ip_address = models.GenericIPAddressField()
     user_agent = models.TextField()
     details = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         ordering = ['-created_at']
-    
+
     def __str__(self):
         return f"{self.user.username} - {self.event_type} - {self.created_at}"
+
+
+# ============================================================
+# PROVIDER PROFILE — Phase 1
+# ============================================================
+
+KENYAN_COUNTIES = [
+    ('nairobi', 'Nairobi'),
+    ('mombasa', 'Mombasa'),
+    ('kisumu', 'Kisumu'),
+    ('nakuru', 'Nakuru'),
+    ('kiambu', 'Kiambu'),
+    ('machakos', 'Machakos'),
+    ('kajiado', 'Kajiado'),
+    ('murang_a', "Murang'a"),
+    ('nyeri', 'Nyeri'),
+    ('kirinyaga', 'Kirinyaga'),
+    ('embu', 'Embu'),
+    ('meru', 'Meru'),
+    ('tharaka_nithi', 'Tharaka-Nithi'),
+    ('kitui', 'Kitui'),
+    ('makueni', 'Makueni'),
+    ('nyandarua', 'Nyandarua'),
+    ('laikipia', 'Laikipia'),
+    ('samburu', 'Samburu'),
+    ('isiolo', 'Isiolo'),
+    ('marsabit', 'Marsabit'),
+    ('mandera', 'Mandera'),
+    ('wajir', 'Wajir'),
+    ('garissa', 'Garissa'),
+    ('tana_river', 'Tana River'),
+    ('lamu', 'Lamu'),
+    ('kilifi', 'Kilifi'),
+    ('taita_taveta', 'Taita-Taveta'),
+    ('kwale', 'Kwale'),
+    ('baringo', 'Baringo'),
+    ('elgeyo_marakwet', 'Elgeyo-Marakwet'),
+    ('west_pokot', 'West Pokot'),
+    ('turkana', 'Turkana'),
+    ('trans_nzoia', 'Trans Nzoia'),
+    ('uasin_gishu', 'Uasin Gishu'),
+    ('nandi', 'Nandi'),
+    ('kericho', 'Kericho'),
+    ('bomet', 'Bomet'),
+    ('narok', 'Narok'),
+    ('kakamega', 'Kakamega'),
+    ('vihiga', 'Vihiga'),
+    ('bungoma', 'Bungoma'),
+    ('busia', 'Busia'),
+    ('siaya', 'Siaya'),
+    ('homa_bay', 'Homa Bay'),
+    ('migori', 'Migori'),
+    ('kisii', 'Kisii'),
+    ('nyamira', 'Nyamira'),
+]
+
+
+class ProviderProfile(models.Model):
+    """
+    Provider-specific data.
+
+    Kept separate from User so:
+    - Customers don't carry unused fields
+    - We can expand provider features without touching the auth table
+    - Verification logic lives in one place
+    """
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='provider_profile'
+    )
+
+    # --------------------------------------------------------
+    # 1. Face photo — required for verified providers
+    # --------------------------------------------------------
+    face_photo = CloudinaryField(
+        'face_photo',
+        folder='provider_faces',
+        blank=True,
+        null=True,
+        help_text="Clear face photo. No glasses, hats, or filters."
+    )
+    face_photo_verified = models.BooleanField(
+        default=False,
+        help_text="Set by admin after confirming the face matches the ID."
+    )
+
+    # --------------------------------------------------------
+    # 2. ID / passport — private, never shown to customers
+    # --------------------------------------------------------
+    id_document = CloudinaryField(
+        'id_document',
+        folder='provider_ids',
+        blank=True,
+        null=True,
+        help_text="National ID or passport. Stored privately."
+    )
+    id_document_verified = models.BooleanField(
+        default=False,
+        help_text="Set by admin after confirming the document is authentic."
+    )
+    id_document_type = models.CharField(
+        max_length=20,
+        choices=[('national_id', 'National ID'), ('passport', 'Passport')],
+        blank=True,
+        null=True
+    )
+
+    # --------------------------------------------------------
+    # 3. Phone visibility + approximate location
+    # --------------------------------------------------------
+    phone_public = models.BooleanField(
+        default=False,
+        help_text="Flips True after the provider's first escrow deposit."
+    )
+    sub_county = models.CharField(max_length=80, blank=True, null=True)
+    ward = models.CharField(max_length=80, blank=True, null=True)
+
+    # --------------------------------------------------------
+    # 4. Portfolio cover + price range summary
+    # --------------------------------------------------------
+    starting_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Lowest price the provider will accept for a job."
+    )
+    max_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="Typical upper range for their work."
+    )
+
+    # --------------------------------------------------------
+    # 5. Licences — optional but rewarded with a verified tick
+    # --------------------------------------------------------
+    business_licence = CloudinaryField(
+        'business_licence',
+        folder='provider_licences',
+        blank=True,
+        null=True
+    )
+    business_licence_verified = models.BooleanField(default=False)
+
+    nca_licence = CloudinaryField(
+        'nca_licence',
+        folder='provider_licences',
+        blank=True,
+        null=True,
+        help_text="National Construction Authority licence, if applicable."
+    )
+    nca_licence_verified = models.BooleanField(default=False)
+
+    other_licence = CloudinaryField(
+        'other_licence',
+        folder='provider_licences',
+        blank=True,
+        null=True,
+        help_text="Any other professional licence (e.g. EPRA, NTSA)."
+    )
+    other_licence_name = models.CharField(max_length=120, blank=True, null=True)
+    other_licence_verified = models.BooleanField(default=False)
+
+    is_verified_provider = models.BooleanField(
+        default=False,
+        help_text="Grants the blue verified tick. Set by admin."
+    )
+    verified_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When the provider was granted the blue verified tick."
+    )
+
+    # --------------------------------------------------------
+    # 6. Shop photo — optional
+    # --------------------------------------------------------
+    shop_photo = CloudinaryField(
+        'shop_photo',
+        folder='provider_shops',
+        blank=True,
+        null=True
+    )
+
+    # --------------------------------------------------------
+    # Timestamps
+    # --------------------------------------------------------
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Provider Profile"
+        verbose_name_plural = "Provider Profiles"
+
+    def __str__(self):
+        return f"ProviderProfile — {self.user.username}"
+
+    # --------------------------------------------------------
+    # Convenience
+    # --------------------------------------------------------
+    def has_any_verified_licence(self):
+        return (
+            self.business_licence_verified
+            or self.nca_licence_verified
+            or self.other_licence_verified
+        )
+
+    def is_fully_verified(self):
+        """Face + ID + at least one licence — the gold standard."""
+        return (
+            self.face_photo_verified
+            and self.id_document_verified
+            and self.has_any_verified_licence()
+        )
+
+    def flip_phone_public_if_needed(self):
+        """Called after a deposit succeeds."""
+        from django.conf import settings
+        threshold = getattr(settings, 'PHONE_VISIBILITY_AFTER_DEPOSITS', 1)
+
+        if self.phone_public:
+            return
+
+        try:
+            from payments.models import Transaction
+            deposit_count = Transaction.objects.filter(
+                provider=self.user,
+                transaction_type='deposit',
+                status='success'
+            ).count()
+        except Exception:
+            deposit_count = 0
+
+        if deposit_count >= threshold:
+            self.phone_public = True
+            self.save(update_fields=['phone_public', 'updated_at'])
+
+    @property
+    def approximate_location(self):
+        """Return a display string like 'Kakamega, Mumias'."""
+        parts = []
+        if self.user.county:
+            parts.append(self.user.county)
+        if self.sub_county:
+            parts.append(self.sub_county)
+        return ", ".join(parts) if parts else "Kenya"

@@ -47,14 +47,12 @@ print("=" * 60, file=sys.stderr)
 # CLOUDINARY CONFIGURATION
 # ============================================================
 
-# Configure Cloudinary
 cloudinary.config(
     cloud_name=config('CLOUDINARY_CLOUD_NAME', default=''),
     api_key=config('CLOUDINARY_API_KEY', default=''),
     api_secret=config('CLOUDINARY_API_SECRET', default='')
 )
 
-# Cloudinary Storage Settings
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=''),
     'API_KEY': config('CLOUDINARY_API_KEY', default=''),
@@ -85,7 +83,7 @@ if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
         '127.0.0.1',
         '0.0.0.0',
     ]
-    
+
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
@@ -94,22 +92,22 @@ if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
-    
+
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    
+
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     USE_X_FORWARDED_HOST = True
     USE_X_FORWARDED_PORT = True
-    
+
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-    
+
 else:
     DEBUG = True
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
@@ -137,7 +135,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
-    
+
     # Third party apps
     'crispy_forms',
     'crispy_bootstrap5',
@@ -147,16 +145,16 @@ INSTALLED_APPS = [
     'import_export',
     'cloudinary',
     'cloudinary_storage',
-    
+
     # Allauth - Google only
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    
+
     # Channels
     'channels',
-    
+
     # Local apps
     'core',
     'accounts',
@@ -171,7 +169,7 @@ INSTALLED_APPS = [
 ]
 
 # ============================================================
-# MIDDLEWARE - ADDED AUTO-LOGOUT MIDDLEWARE
+# MIDDLEWARE - WITH AUTO-LOGOUT
 # ============================================================
 
 MIDDLEWARE = [
@@ -215,6 +213,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.site_settings',
                 'accounts.context_processors.user_settings',
+                'payments.context_processors.fee_settings',
             ],
         },
     },
@@ -224,9 +223,18 @@ TEMPLATES = [
 # DATABASE
 # ============================================================
 
-database_url = os.environ.get('DATABASE_URL')
+database_url = os.environ.get('DATABASE_URL', '').strip()
 
-if database_url:
+# Only use DATABASE_URL if it looks like a real URL with a scheme.
+# Guards against empty strings, stray "://", or malformed values
+# accidentally left in a .env file.
+USE_DATABASE_URL = (
+    bool(database_url)
+    and '://' in database_url
+    and not database_url.startswith('://')
+)
+
+if USE_DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(
             default=database_url,
@@ -235,6 +243,34 @@ if database_url:
         )
     }
     print(f"✅ DATABASE: Using PostgreSQL from DATABASE_URL", file=sys.stderr)
+
+elif database_url and not USE_DATABASE_URL:
+    print(
+        f"⚠️ DATABASE_URL is set but malformed — falling back. "
+        f"Value: {database_url[:40]!r}",
+        file=sys.stderr
+    )
+    if ENVIRONMENT == 'production':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_NAME', 'sakafundi'),
+                'USER': os.environ.get('DB_USER', 'sakafundi_user'),
+                'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+                'HOST': os.environ.get('DB_HOST', 'localhost'),
+                'PORT': os.environ.get('DB_PORT', '5432'),
+                'OPTIONS': {'sslmode': 'require'},
+            }
+        }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        print(f"🔧 DATABASE: Using SQLite for development", file=sys.stderr)
+
 elif ENVIRONMENT == 'production':
     DATABASES = {
         'default': {
@@ -244,12 +280,11 @@ elif ENVIRONMENT == 'production':
             'PASSWORD': os.environ.get('DB_PASSWORD', ''),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
-            'OPTIONS': {
-                'sslmode': 'require',
-            },
+            'OPTIONS': {'sslmode': 'require'},
         }
     }
     print(f"⚠️ DATABASE: Using PostgreSQL from individual variables", file=sys.stderr)
+
 else:
     DATABASES = {
         'default': {
@@ -280,7 +315,7 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 2
 
 # ============================================================
-# ALLAUTH SETTINGS - UPDATED FOR EMAIL VERIFICATION
+# ALLAUTH SETTINGS
 # ============================================================
 
 ACCOUNT_LOGIN_METHODS = {'email'}
@@ -301,7 +336,7 @@ ACCOUNT_RATE_LIMITS = {
 }
 
 # ============================================================
-# SOCIAL ACCOUNT SETTINGS - GOOGLE ONLY (ADD THIS SECTION)
+# SOCIAL ACCOUNT SETTINGS - GOOGLE ONLY
 # ============================================================
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -395,7 +430,7 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # ============================================================
-# EMAIL - UPDATED FOR ZOHO MAIL
+# EMAIL - ZOHO MAIL
 # ============================================================
 
 if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
@@ -408,7 +443,7 @@ if ENVIRONMENT == 'production' or 'RENDER' in os.environ:
     EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
     DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@sakafundi.com')
     EMAIL_TIMEOUT = 30
-    
+
     print(f"📧 EMAIL: Configured with Zoho Mail ({EMAIL_HOST}) for production", file=sys.stderr)
     print(f"📧 EMAIL: Sending from {DEFAULT_FROM_EMAIL}", file=sys.stderr)
 else:
@@ -420,10 +455,71 @@ else:
 # PLATFORM SETTINGS
 # ============================================================
 
+# Fundi-side commission — deducted from fundi's payout
 PLATFORM_FEE_PERCENTAGE = config('PLATFORM_FEE_PERCENTAGE', default=10, cast=int)
-DEPOSIT_DEFAULT_PERCENTAGE = 30
+
+# Customer-side escrow fee — added to the invoice total
+ESCROW_SERVICE_FEE_PERCENTAGE = config('ESCROW_SERVICE_FEE_PERCENTAGE', default=3, cast=int)
+
+# Default deposit percentage for order start
+DEPOSIT_DEFAULT_PERCENTAGE = config('DEPOSIT_DEFAULT_PERCENTAGE', default=30, cast=int)
+
+# Currency
 CURRENCY = 'KES'
 CURRENCY_SYMBOL = 'KSh'
+
+# ============================================================
+# ESCROW BACKEND
+# ============================================================
+# 'mpesa_direct'  → uses M-PESA Business One Account directly
+# 'psp_partner'   → routes through a licensed PSP
+#
+# Change this single value to swap the entire escrow implementation
+# without touching the order or payment flow.
+ESCROW_BACKEND = config('ESCROW_BACKEND', default='mpesa_direct')
+
+# Placeholder for future PSP integration
+PSP_PROVIDER = config('PSP_PROVIDER', default='')
+PSP_API_KEY = config('PSP_API_KEY', default='')
+PSP_API_SECRET = config('PSP_API_SECRET', default='')
+
+# ============================================================
+# SHIPPING
+# ============================================================
+# 'self_pickup'   → v1: fundi/customer arrange pickup themselves
+# 'manual'        → fundi enters a courier + tracking number
+# 'integrated'    → direct API integration with a courier
+SHIPPING_MODE = config('SHIPPING_MODE', default='self_pickup')
+
+# ============================================================
+# LOCATION VISIBILITY
+# ============================================================
+# Fundi's phone number only becomes public after this many deposits
+PHONE_VISIBILITY_AFTER_DEPOSITS = config('PHONE_VISIBILITY_AFTER_DEPOSITS', default=1, cast=int)
+
+# ============================================================
+# ORDER / PROJECT SETTINGS
+# ============================================================
+
+# Milestone threshold — when does the fundi get permission to
+# request a "view/fit" from the customer?
+MILESTONE_INSPECTION_PERCENTAGE = config(
+    'MILESTONE_INSPECTION_PERCENTAGE', default=50, cast=int
+)
+
+# Auto-cancel orders that aren't paid within this window
+ORDER_PAYMENT_WINDOW_HOURS = config('ORDER_PAYMENT_WINDOW_HOURS', default=24, cast=int)
+
+# Auto-approve releases after this many days if the customer
+# hasn't responded to a completion request
+AUTO_RELEASE_DAYS = config('AUTO_RELEASE_DAYS', default=7, cast=int)
+
+# ============================================================
+# FILE UPLOAD LIMITS
+# ============================================================
+
+MAX_UPLOAD_SIZE_MB = config('MAX_UPLOAD_SIZE_MB', default=5, cast=int)
+ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp']
 
 # ============================================================
 # SITE SETTINGS
@@ -524,16 +620,24 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'payments': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     },
 }
 
 # ============================================================
-# M-PESA SETTINGS
+# M-PESA SETTINGS (Daraja API)
 # ============================================================
 
 MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY', default='')
 MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET', default='')
 MPESA_PASSKEY = config('MPESA_PASSKEY', default='')
+
+# Shortcode — for Business One Account, this is the same shortcode
+# used for both collections (Paybill / C2B) and payouts (B2C)
 MPESA_SHORTCODE = config('MPESA_SHORTCODE', default='174379')
 
 if ENVIRONMENT == 'production':
@@ -541,9 +645,19 @@ if ENVIRONMENT == 'production':
 else:
     MPESA_BASE_URL = config('MPESA_BASE_URL', default='https://sandbox.safaricom.co.ke')
 
+# B2C payout credentials
 MPESA_INITIATOR_NAME = config('MPESA_INITIATOR_NAME', default='')
+MPESA_INITIATOR_PASSWORD = config('MPESA_INITIATOR_PASSWORD', default='')
 MPESA_TIMEOUT_URL = config('MPESA_TIMEOUT_URL', default='')
 MPESA_RESULT_URL = config('MPESA_RESULT_URL', default='')
+
+# C2B (collection) callback URLs
+MPESA_C2B_VALIDATION_URL = config('MPESA_C2B_VALIDATION_URL', default='')
+MPESA_C2B_CONFIRMATION_URL = config('MPESA_C2B_CONFIRMATION_URL', default='')
+
+# Escrow account reference prefix — used as the "Account Number" for Paybill
+# e.g. SKF-2024-001234  (SKF = SakaFundi)
+ESCROW_REFERENCE_PREFIX = config('ESCROW_REFERENCE_PREFIX', default='SKF')
 
 # ============================================================
 # DJANGO REDIS LOGGER
@@ -565,7 +679,7 @@ if 'RENDER' in os.environ:
         '127.0.0.1',
         '0.0.0.0',
     ]
-    
+
     CSRF_TRUSTED_ORIGINS = [
         'https://*.onrender.com',
         'https://sakafundi.onrender.com',
@@ -574,12 +688,12 @@ if 'RENDER' in os.environ:
         'http://*.onrender.com',
         'http://sakafundi.onrender.com',
     ]
-    
+
     DEBUG = False
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    
+
     # Force email settings
     EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
     EMAIL_HOST = config('EMAIL_HOST', default='smtp.zoho.com')
@@ -590,12 +704,12 @@ if 'RENDER' in os.environ:
     EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
     DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='info@sakafundi.com')
     EMAIL_TIMEOUT = 30
-    
+
     # Force session settings
     SESSION_COOKIE_AGE = 3600
     SESSION_SAVE_EVERY_REQUEST = True
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-    
+
     print(f"🚨 RENDER MODE ACTIVATED", file=sys.stderr)
     print(f"🔒 ALLOWED_HOSTS: {ALLOWED_HOSTS}", file=sys.stderr)
     print(f"🔒 CSRF_TRUSTED_ORIGINS: {CSRF_TRUSTED_ORIGINS}", file=sys.stderr)
